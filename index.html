@@ -98,7 +98,7 @@
   }
   /* Specific style for the second grid to have a light blue background */
   #categoryGrid2 {
-    background: var(--secondary-grid-bg); /* Lighter blue for the second grid */
+    background: #70A4D5; /* Changed to the intermediate blue color */
   }
 
   /* Default grid columns for small screens (under 768px) */
@@ -368,7 +368,7 @@
     font-weight: bold; /* Make it bold for emphasis */
   }
 
-  /* New style for manually entered Auftrag numbers (not FA/NA) */
+  /* New style for manually entered Auftrag numbers */
   .auftrag-manual-bold {
     color: var(--text); /* Dark gray (effectively black) */
     font-weight: bold;
@@ -408,8 +408,8 @@
     margin: 0 auto;
     box-shadow: none;
     border-radius: 6px; /* Match other buttons slightly */
-    padding: 8px 12px; /* Set padding to match addExtraPhotoBtn */
-    font-size: 1.5em; /* Set font-size to match addExtraPhotoBtn */
+    padding: 8px 12px; /* Original padding */
+    font-size: 1.5em; /* Original font-size */
   }
   .noteToggleBtn:hover { transform: scale(1.15); color: var(--primary); }
 
@@ -459,8 +459,8 @@
     display: inline-flex; /* Use flex to align icon and text/plus if any */
     align-items: center;
     justify-content: center;
-    padding: 8px 12px;
-    font-size: 1.5em; /* Larger icon size */
+    padding: 8px 12px; /* Original padding */
+    font-size: 1.5em; /* Original font size */
     border-radius: 5px;
     border: 1px solid var(--primary);
     background: var(--primary);
@@ -786,7 +786,7 @@
     <video id="cameraModalVideo" autoplay muted playsinline></video>
     <div class="modal-controls">
         <button id="cancelCameraButton"><i class="fas fa-times"></i></button> <!-- Icon for Abbrechen -->
-        <button id="takePhotoButton" style="padding: 14px 44px;"><i class="fas fa-camera"></i></button> <!-- Icon for Foto, increased padding -->
+        <button id="takePhotoButton" style="padding: 12px 18px; font-size: 2.25em;"><i class="fas fa-camera"></i></button> <!-- Icon for Foto, increased padding and font-size -->
     </div>
   </div>
 
@@ -1299,7 +1299,7 @@ const db = (() => {
       const canvas = document.createElement('canvas');
       canvas.width = scannerVideo.videoWidth;
       canvas.height = scannerVideo.videoHeight;
-      canvas.getContext('2d').drawImage(scannerVideo, 0, 0, canvas.width, canvas.height);
+      canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
       try {
           const barcodes = await detector.detect(canvas);
           const currentScanCode = barcodes.length > 0 ? barcodes[0].rawValue : null;
@@ -1421,7 +1421,7 @@ const db = (() => {
           <h2>${title}</h2>
           <p>${message}</p>
           <input type="text" id="customPromptInput" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
-          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+          <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
             <button id="customPromptCancelBtn" style="background: #ccc; color: var(--text); border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">Abbrechen</button>
             <button id="customPromptOkBtn" style="background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">OK</button>
           </div>
