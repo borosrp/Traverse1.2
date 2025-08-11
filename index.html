@@ -1305,7 +1305,7 @@ const db = (() => {
                       lastDetectedCodeToDisplay = null; // Clear displayed code
                       lastDetected.code = null; // Clear saved code
                       displayTimeoutId = null;
-                  }, 500); // Debounce time: 500ms
+                  }, 4000); // Debounce time: 4000ms
               }
           } else if (!currentScanCode && !lastDetectedCodeToDisplay && !displayTimeoutId) {
               // No barcode detected and nothing was previously detected (initial state or after debounce)
@@ -1374,6 +1374,7 @@ const db = (() => {
   // Eseménykezelők
   function saveScannedBarcode() {
       addNewEntry(lastDetected.code, lastDetected.image);
+      closeModal(scannerModal); // Close scanner modal after saving
   }
   function handleManualEntry() {
       // Using custom prompt for manual entry
