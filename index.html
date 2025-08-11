@@ -686,7 +686,6 @@
           <th>Bilder</th>
           <th><i class="fas fa-camera"></i></th>
           <th><i class="fas fa-trash-alt"></i></th>
-          <!-- Removed Termék infó column -->
         </tr>
       </thead>
       <tbody id="logBody"></tbody>
@@ -1053,15 +1052,13 @@ const db = (() => {
         <td>${i+1}</td>
         <td>${e.code}</td>
         <td>
-          ${formattedDate}
-
+          ${formattedDate}<br>
           <span style="font-size: 0.85em; color: var(--muted);">${formattedTime}</span>
         </td>
         <td><button class="noteToggleBtn ${e.note ? 'note-filled' : ''}" data-id="${e.id}" title="${noteTitle}" aria-label="${noteTitle}"><i class="fas ${e.note ? 'fa-book' : 'fa-plus'}"></i></button></td>
         <td class="photo-cell">${photosCellHtml}</td>
         <td><button class="addExtraPhotoBtn" data-id="${e.id}" title="Zusätzliches Bild"><i class="fas fa-camera"></i></button></td>
         <td><button class="deleteBtn" data-id="${e.id}" data-code="${e.code}" title="Löschen"><i class="fas fa-trash-alt"></i></button></td>
-        <!-- Removed product info button -->
       </tr>`;
     }).join('');
     attachTableEventListeners();
@@ -1082,7 +1079,6 @@ const db = (() => {
           }
       }));
       logBody.querySelectorAll('.addExtraPhotoBtn').forEach(btn => btn.addEventListener('click', openCameraModal));
-      // Removed event listener for product info button
   }
 
   // Törlés
