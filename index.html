@@ -63,17 +63,7 @@
     text-shadow: none; /* No text shadow */
   }
 
-  .app-logo {
-    position: absolute;
-    top: 0px;
-    right: 0px;
-    width: 25px; /* Reduced logo size */
-    height: 25px;
-    object-fit: contain;
-    border-radius: 5px; /* Slightly sharp corners */
-    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow to logo */
-    background: transparent; /* No background */
-  }
+  /* .app-logo was here, removed */
 
   .category-label-container { /* This container is no longer needed as label is moved into .controls */
     display: none; /* Hide if not used */
@@ -165,7 +155,7 @@
     font-size: 2.2em; /* Doubled font size for category label */
     text-align: center;
     min-width: 50px; /* Give it some minimum width */
-    color: var(--primary); /* Make the number blue */
+    /* Dynamically set color via JS */
     /* Removed frame styles from categoryLabel */
     background: none;
     padding: 0;
@@ -180,7 +170,7 @@
     padding: 14px 22px;
     border-radius: 6px;
     border: none;
-    background: var(--primary); /* Primary blue for controls */
+    background: var(--primary);
     color: #fff;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -590,7 +580,6 @@
     th:last-child { border-top-right-radius: 8px; }
     .photoRow img, .photo-cell img { width: 50px; height: 50px; border-radius: 4px; }
     .app-title { font-size: 1.2em; } /* Adjusted for mobile */
-    .app-logo { width: 25px; height: 25px; } /* Adjusted for mobile */
   }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -598,7 +587,6 @@
 <body>
   <div class="app-header">
     <h1 class="app-title">Traversendaten</h1> <!-- Changed to Traversendaten -->
-    <img src="https://raw.githubusercontent.com/borosrp/Lehmann/main/678faae0b502486ddb2840cc.png" alt="Traversen Logó" class="app-logo" />
   </div>
 
   <div class="grid" id="categoryGrid1"></div> <!-- First grid for buttons 1-16 -->
@@ -606,9 +594,9 @@
 
   <div id="mainControls">
     <div class="controls">
-        <div id="categoryLabel" style="font-weight: bold; font-size: 2.2em; text-align: center; color: var(--primary);"></div> <!-- Moved here and increased font-size -->
-        <button id="manualEntryBtn">Manuelle Eingabe</button>
-        <button id="openScannerBtn"><i class="fas fa-qrcode"></i> <i class="fas fa-barcode"></i></button>
+        <div id="categoryLabel" style="font-weight: bold; font-size: 2.2em; text-align: center;"></div> <!-- Removed hardcoded color here -->
+        <button id="manualEntryBtn"><i class="fas fa-keyboard"></i></button> <!-- Changed to keyboard icon -->
+        <button id="openScannerBtn"><i class="fas fa-barcode"></i></button> <!-- Only barcode icon -->
         <button id="clearCategoryBtn"><i class="fas fa-trash-alt"></i></button>
     </div>
   </div>
@@ -797,12 +785,18 @@ const db = (() => {
     btn.classList.add('active');
     currentCategory = num;
 
-    categoryLabel.textContent = `${num}`; // Only display the number
-    mainControls.style.display = 'block';
-    listSection.style.display = 'block';
-
+    // Dynamically set categoryLabel color based on content
     try {
         entries = await db.getEntriesForCategory(currentCategory);
+        categoryLabel.textContent = `${num}`; // Only display the number
+        if (entries.length === 0) {
+            categoryLabel.style.color = 'var(--muted)'; /* Light grey if empty */
+        } else {
+            categoryLabel.style.color = 'var(--primary)'; /* Blue if not empty */
+        }
+        mainControls.style.display = 'block';
+        listSection.style.display = 'block';
+
         renderTable();
         await updateCategoryButtonColors();
     }
@@ -959,7 +953,8 @@ const db = (() => {
         <td>${i+1}</td>
         <td>${e.code}</td>
         <td>
-          ${formattedDate}<br>
+          ${formattedDate}
+
           <span style="font-size: 0.85em; color: var(--muted);">${formattedTime}</span>
         </td>
         <td><button class="noteToggleBtn ${e.note ? 'note-filled' : ''}" data-id="${e.id}" title="${noteTitle}" aria-label="${noteTitle}"><i class="fas ${e.note ? 'fa-book' : 'fa-plus'}"></i></button></td>
@@ -991,7 +986,7 @@ const db = (() => {
   // Törlés
   async function handleDelete(event) {
       const id = parseInt(event.currentTarget.dataset.id);
-      const confirmed = await showCustomConfirm(`Sind Sie sicher, dass Sie den Eintrag mit der Traverse ${currentCategory} löschen möchten?`, 'Bestätigung');
+      const confirmed = await showCustomConfirm(`Sind Sie biztos, hogy a ${currentCategory} azonosítójú elemet törölni szeretnéd?`, 'Bestätigung');
       if (confirmed) {
           await db.deleteEntry(id);
           entries = entries.filter(e => e.id !== id);
@@ -1093,6 +1088,11 @@ const db = (() => {
           renderTable();
           await updateCategoryButtonColors(); // Update colors after adding new entry
 
+          // Update the categoryLabel color if a new entry is added to an empty category
+          if (entries.length === 1) { // If it was empty and now has one entry
+              categoryLabel.style.color = 'var(--primary)';
+          }
+
           const webAppUrl = 'https://script.google.com/macros/s/AKfycbz7cN31qlQVBxpMmJIpyyV-bDHaI-i3vxG06vPv3pKurSpdxVHDKcN95oJtfAME2P_5/exec';
           const dataForSheet = {
               code: newEntry.code,
@@ -1118,7 +1118,7 @@ const db = (() => {
   }
   function handleManualEntry() {
       // Using custom prompt for manual entry
-      showCustomPrompt('Bitte geben Sie den Produktnamen oder die Kennung ein:', 'Manuelle Eingabe').then(manualCode => {
+      showCustomPrompt('Kérjük, írja be a termék nevét vagy azonosítóját:', 'Manuelle Eingabe').then(manualCode => {
           if (manualCode && manualCode.trim() !== '') {
               addNewEntry(manualCode.trim(), null);
           }
@@ -1232,12 +1232,14 @@ const db = (() => {
   });
 
   clearCategoryBtn.addEventListener('click', async () => {
-    const confirmed = await showCustomConfirm(`Sind Sie sicher, dass Sie den Eintrag mit der Traverse ${currentCategory} löschen möchten?`, 'Bestätigung');
+    const confirmed = await showCustomConfirm(`Sind Sie biztos, hogy a ${currentCategory} azonosítójú elemet törölni szeretnéd?`, 'Bestätigung');
     if(confirmed){
       await db.clearCategory(currentCategory);
       entries = [];
       renderTable();
       await updateCategoryButtonColors(); // Update colors after clearing category
+      // Update the categoryLabel color after clearing the category
+      categoryLabel.style.color = 'var(--muted)'; /* Light grey after clearing */
     }
   });
 
