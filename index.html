@@ -217,8 +217,8 @@
     margin: 0 10px; /* Space between label and button group */
   }
 
-  /* Hide right label on small screens */
-  @media (max-width: 767px) { /* Apply this to screens smaller than 768px */
+  /* Hide right label on screens smaller than 768px */
+  @media (max-width: 767px) {
     #categoryLabelRight {
       display: none;
     }
@@ -911,15 +911,15 @@ const db = (() => {
     try {
         entries = await db.getEntriesForCategory(currentCategory);
         categoryLabelLeft.textContent = `${num}`; // Update left label
-        categoryLabelRight.textContent = `${num}`; // Update right label
+        // categoryLabelRight.textContent = `${num}`; // Removed update for right label
 
         const isEmpty = entries.length === 0;
         if (isEmpty) {
             categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey if empty */
-            categoryLabelRight.style.color = 'var(--muted)'; /* Light grey if empty */
+            // categoryLabelRight.style.color = 'var(--muted)'; /* Removed update for right label */
         } else {
             categoryLabelLeft.style.color = 'var(--primary)'; /* Blue if not empty */
-            categoryLabelRight.style.color = 'var(--primary)'; /* Blue if not empty */
+            // categoryLabelRight.style.color = 'var(--primary)'; /* Removed update for right label */
         }
         
         // Update control buttons color
@@ -1360,7 +1360,7 @@ const db = (() => {
   cancelCameraButton.addEventListener('click', () => closeModal(cameraModal));
 
   // Image modal navigation listeners
-  document.getElementById('imageModalPrevBtn').addEventListener('click', showPrevImage);
+  document.getElementById('imageModalPrevBtn').addEventListener('click', showNextImage);
   document.getElementById('imageModalNextBtn').addEventListener('click', showNextImage);
 
   imageModal.addEventListener('click', (e) => {
