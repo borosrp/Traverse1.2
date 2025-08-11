@@ -103,19 +103,19 @@
 
   /* Default grid columns for small screens (under 768px) */
   #categoryGrid1 {
-    grid-template-columns: repeat(4, minmax(0, 1fr)); /* 4 columns for 16 buttons (4 rows) */
+    grid-template-columns: repeat(4, minmax(70px, 1fr)); /* 4 columns for 16 buttons (4 rows) */
   }
   #categoryGrid2 {
-    grid-template-columns: repeat(4, minmax(0, 1fr)); /* 4 columns for 12 buttons (3 rows) */
+    grid-template-columns: repeat(4, minmax(70px, 1fr)); /* 4 columns for 12 buttons (3 rows) */
   }
 
   /* Media query for larger screens (768px and above) */
   @media (min-width: 768px) { /* Adjusted breakpoint to 768px */
     #categoryGrid1 {
-      grid-template-columns: repeat(8, minmax(0, 1fr)); /* 8 columns for 16 buttons (2 rows) */
+      grid-template-columns: repeat(8, minmax(70px, 1fr)); /* 8 columns for 16 buttons (2 rows) */
     }
     #categoryGrid2 {
-      grid-template-columns: repeat(6, minmax(0, 1fr)); /* 6 columns for 12 buttons (2 rows) */
+      grid-template-columns: repeat(6, minmax(70px, 1fr)); /* 6 columns for 12 buttons (2 rows) */
     }
   }
 
@@ -180,10 +180,10 @@
     z-index: 1000; /* Ensure it's above other content */
     display: none; /* Keep hidden initially */
     box-sizing: border-box; /* Include padding in width */
-    padding: 0 20px; /* Add horizontal padding to match body */
-    background: var(--card-bg); /* Background for the fixed bar */
-    border-top: 1px solid var(--border-color); /* Top border */
-    box-shadow: var(--shadow-soft); /* Add shadow for depth */
+    padding: 0; /* Remove padding from here, inner controls will handle it */
+    background: none; /* Make background transparent */
+    border-top: none; /* Remove border from here */
+    box-shadow: none; /* Remove shadow from here */
     flex-shrink: 0; /* Prevent footer from shrinking */
   }
 
@@ -721,7 +721,7 @@
             <button id="openScannerBtn"><i class="fas fa-barcode"></i></button> <!-- Only barcode icon -->
             <button id="clearCategoryBtn"><i class="fas fa-trash-alt"></i></button>
         </div>
-        <div id="categoryLabelRight" class="category-display-label"></div>
+        <!-- Removed categoryLabelRight from here -->
     </div>
   </div>
 
@@ -815,7 +815,7 @@ const db = (() => {
   const categoryGrid1 = document.getElementById('categoryGrid1');
   const categoryGrid2 = document.getElementById('categoryGrid2');
   const categoryLabelLeft = document.getElementById('categoryLabelLeft'); // Changed ID
-  const categoryLabelRight = document.getElementById('categoryLabelRight'); // New element
+  // const categoryLabelRight = document.getElementById('categoryLabelRight'); // Removed right label
   const mainControls = document.getElementById('mainControls');
   const listSection = document.getElementById('listSection');
   const logBody = document.getElementById('logBody');
