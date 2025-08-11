@@ -361,7 +361,6 @@
   .deleteBtn:active { transform: scale(0.95); }
 
   .noteToggleBtn {
-    font-size: 1.5em; /* Larger icon */
     background: none;
     border: 1px solid transparent; /* Default transparent border */
     cursor: pointer;
@@ -687,7 +686,7 @@
           <th>Bilder</th>
           <th><i class="fas fa-camera"></i></th>
           <th><i class="fas fa-trash-alt"></i></th>
-          <th>Termék infó ✨</th> <!-- New column for product info -->
+          <!-- Removed Termék infó column -->
         </tr>
       </thead>
       <tbody id="logBody"></tbody>
@@ -723,8 +722,8 @@
     <div class="note-modal-content">
       <h2>Notiz bearbeiten</h2>
       <textarea id="noteModalTextarea"></textarea>
-      <div style="display: flex; justify-content: space-between; align-items: center; gap: 10px;">
-        <button id="summarizeNoteBtn">Jegyzet összefoglalása ✨</button> <!-- New summarize button -->
+      <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+        <!-- Removed Jegyzet összefoglalása button -->
         <button id="noteModalSaveBtn">Speichern & Schließen</button>
       </div>
     </div>
@@ -805,7 +804,7 @@ const db = (() => {
   const noteModal = document.getElementById('noteModal');
   const noteModalTextarea = document.getElementById('noteModalTextarea');
   const noteModalSaveBtn = document.getElementById('noteModalSaveBtn');
-  const summarizeNoteBtn = document.getElementById('summarizeNoteBtn'); // New summarize button
+  // const summarizeNoteBtn = document.getElementById('summarizeNoteBtn'); // Removed summarize button
 
   // Gombok
   const openScannerBtn = document.getElementById('openScannerBtn');
@@ -1062,7 +1061,7 @@ const db = (() => {
         <td class="photo-cell">${photosCellHtml}</td>
         <td><button class="addExtraPhotoBtn" data-id="${e.id}" title="Zusätzliches Bild"><i class="fas fa-camera"></i></button></td>
         <td><button class="deleteBtn" data-id="${e.id}" data-code="${e.code}" title="Löschen"><i class="fas fa-trash-alt"></i></button></td>
-        <td><button class="getProductInfoBtn" data-id="${e.id}" title="Termék infó ✨"><i class="fas fa-info-circle"></i></button></td> <!-- New button for product info -->
+        <!-- Removed product info button -->
       </tr>`;
     }).join('');
     attachTableEventListeners();
@@ -1083,7 +1082,7 @@ const db = (() => {
           }
       }));
       logBody.querySelectorAll('.addExtraPhotoBtn').forEach(btn => btn.addEventListener('click', openCameraModal));
-      logBody.querySelectorAll('.getProductInfoBtn').forEach(btn => btn.addEventListener('click', getProductInfo)); // Attach listener for product info
+      // Removed event listener for product info button
   }
 
   // Törlés
@@ -1316,77 +1315,7 @@ const db = (() => {
       return canvas.toDataURL('image/jpeg', quality);
   }
 
-  // Gemini API hívás segédfüggvény exponenciális visszalépéssel
-  async function callGeminiAPI(prompt, retries = 3, delay = 1000) {
-      let chatHistory = [{ role: "user", parts: [{ text: prompt }] }];
-      const payload = { contents: chatHistory };
-      const apiKey = ""; // If you want to use models other than gemini-2.5-flash-preview-05-20 or imagen-3.0-generate-002, provide an API key here. Otherwise, leave this as-is.
-      const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
-
-      for (let i = 0; i < retries; i++) {
-          try {
-              const response = await fetch(apiUrl, {
-                  method: 'POST',
-                  headers: { 'Content-Type': 'application/json' },
-                  body: JSON.stringify(payload)
-              });
-              const result = await response.json();
-              if (result.candidates && result.candidates.length > 0 &&
-                  result.candidates[0].content && result.candidates[0].content.parts &&
-                  result.candidates[0].content.parts.length > 0) {
-                  return result.candidates[0].content.parts[0].text;
-              } else {
-                  throw new Error('Unexpected API response structure or missing content.');
-              }
-          } catch (error) {
-              if (i < retries - 1) {
-                  await new Promise(res => setTimeout(res, delay));
-                  delay *= 2; // Exponential backoff
-              } else {
-                  throw error; // Re-throw error after max retries
-              }
-          }
-      }
-  }
-
-  // Termék infó lekérése Gemini API-val
-  async function getProductInfo(event) {
-      const id = parseInt(event.currentTarget.dataset.id);
-      const entry = entries.find(e => e.id === id);
-      if (entry && entry.code) {
-          showCustomAlert('Termék információk lekérése... (Ez eltarthat egy ideig)', 'Termék infó ✨');
-          try {
-              const prompt = `Kérjük, adjon egy rövid leírást a következő termékkódról/azonosítóról: ${entry.code}. Ha nem tudja, akkor válaszoljon annyival, hogy "Nincs információ".`;
-              const responseText = await callGeminiAPI(prompt);
-              showCustomAlert(responseText, `Termék infó: ${entry.code}`);
-          } catch (error) {
-              console.error('Hiba a Gemini API hívás során:', error);
-              showCustomAlert('Hiba történt a termékinformációk lekérése során. Kérjük, próbálja újra később.', 'Hiba');
-          }
-      } else {
-          showCustomAlert('Nincs termékkód ehhez a bejegyzéshez.', 'Termék infó');
-      }
-  }
-
-  // Jegyzet összefoglalása Gemini API-val
-  async function summarizeNoteFromModal() {
-      const noteText = noteModalTextarea.value.trim();
-      if (noteText.length === 0) {
-          showCustomAlert('Nincs összefoglalható jegyzet.', 'Jegyzet összefoglalása');
-          return;
-      }
-
-      showCustomAlert('Jegyzet összefoglalása... (Ez eltarthat egy ideig)', 'Jegyzet összefoglalása ✨');
-      try {
-          const prompt = `Kérjük, foglalja össze a következő szöveget: "${noteText}"`;
-          const summaryText = await callGeminiAPI(prompt);
-          showCustomAlert(summaryText, 'Jegyzet összefoglalása');
-      } catch (error) {
-          console.error('Hiba a Gemini API hívás során:', error);
-          showCustomAlert('Hiba történt a jegyzet összefoglalása során. Kérjük, próbálja újra később.', 'Hiba');
-      }
-  }
-
+  // Removed Gemini API related functions: callGeminiAPI, getProductInfo, summarizeNoteFromModal
 
   // Listener-ek
   openScannerBtn.addEventListener('click', openScannerModal);
@@ -1394,7 +1323,7 @@ const db = (() => {
   scannerSaveBtn.addEventListener('click', saveScannedBarcode);
   manualEntryBtn.addEventListener('click', handleManualEntry);
   noteModalSaveBtn.addEventListener('click', saveNoteFromModal);
-  summarizeNoteBtn.addEventListener('click', summarizeNoteFromModal); // Attach listener for summarize button
+  // Removed event listener for summarize button
 
   takePhotoButton.addEventListener('click', takePhotoAndSave);
   cancelCameraButton.addEventListener('click', () => closeModal(cameraModal));
