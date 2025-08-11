@@ -30,6 +30,12 @@
     --shadow-active: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); /* Very strong pressed state shadow */
   }
 
+  html, body {
+    height: 100%; /* Ensure html and body take full height */
+    margin: 0;
+    padding: 0;
+  }
+
   body {
     font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; /* Professional sans-serif font */
     color: var(--text);
@@ -37,8 +43,8 @@
     line-height: 1.6; /* Improved line height */
     max-width: 960px; /* Slightly wider layout */
     margin: 5px auto; /* Further reduced top margin for the body */
-    padding: 0 20px 40px; /* More padding */
-    padding-bottom: 120px; /* Add padding to body to prevent content from being hidden by fixed footer */
+    display: flex; /* Use flexbox for overall layout */
+    flex-direction: column; /* Arrange children vertically */
   }
   body.modal-open {
       overflow: hidden;
@@ -53,6 +59,7 @@
     margin-bottom: 5px; /* Further reduced space below header */
     padding-bottom: 10px; /* Reduced padding for visual separation */
     border-bottom: 1px solid var(--border-color); /* Subtle line below header */
+    flex-shrink: 0; /* Prevent header from shrinking */
   }
 
   .app-title {
@@ -68,6 +75,14 @@
 
   .category-label-container { /* This container is no longer needed as label is moved into .controls */
     display: none; /* Hide if not used */
+  }
+
+  /* New flex container for the main scrollable content area */
+  #main-content-area {
+    flex: 1; /* Allow this area to grow and shrink */
+    overflow-y: auto; /* Enable vertical scrolling within this area */
+    padding: 0 20px 40px; /* Apply main content padding here */
+    box-sizing: border-box; /* Include padding in element's total width and height */
   }
 
   .grid { /* This style applies to both category grids */
@@ -232,8 +247,8 @@
   }
 
   #mainControls {
-    position: fixed; /* Fixed position */
-    bottom: 0; /* Align to the bottom */
+    position: sticky; /* Use sticky positioning */
+    bottom: 0; /* Stick to the bottom */
     left: 0;
     width: 100%; /* Full width */
     z-index: 1000; /* Ensure it's above other content */
@@ -243,6 +258,7 @@
     background: var(--card-bg); /* Background for the fixed bar */
     border-top: 1px solid var(--border-color); /* Top border */
     box-shadow: var(--shadow-soft); /* Add shadow for depth */
+    flex-shrink: 0; /* Prevent footer from shrinking */
   }
 
   .openScannerBtn {
@@ -283,7 +299,8 @@
 
   #listSection {
     margin-top: 30px;
-    display: none;
+    display: block; /* Ensure it's block to take width */
+    /* Removed overflow-y: auto from here, now handled by #main-content-area */
   }
 
   table {
@@ -337,6 +354,12 @@
   /* Removed subtle-blink animation from td.has-text-cell */
   td.has-text-cell {
     animation: none;
+  }
+
+  /* New style for Auftrag numbers starting with FA or NA */
+  .auftrag-colored {
+    color: var(--primary); /* Blue color */
+    font-weight: bold; /* Make it bold for emphasis */
   }
 
   button:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
@@ -660,8 +683,28 @@
     <h1 class="app-title">Traversendaten</h1> <!-- Changed to Traversendaten -->
   </div>
 
-  <div class="grid" id="categoryGrid1"></div> <!-- First grid for buttons 1-16 -->
-  <div class="grid" id="categoryGrid2"></div> <!-- Second grid for buttons 17-28 -->
+  <!-- New main content area to handle scrolling -->
+  <div id="main-content-area">
+    <div class="grid" id="categoryGrid1"></div> <!-- First grid for buttons 1-16 -->
+    <div class="grid" id="categoryGrid2"></div> <!-- Second grid for buttons 17-28 -->
+
+    <div id="listSection">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Auftrag</th>
+            <th>Datum</th>
+            <th>Notiz</th>
+            <th>Bilder</th>
+            <th><i class="fas fa-camera"></i></th>
+            <th><i class="fas fa-trash-alt"></i></th>
+          </tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+    </div>
+  </div> <!-- End of main-content-area -->
 
   <div id="mainControls">
     <div class="controls">
@@ -673,23 +716,6 @@
         </div>
         <div id="categoryLabelRight" class="category-display-label"></div>
     </div>
-  </div>
-
-  <div id="listSection">
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Auftrag</th>
-          <th>Datum</th>
-          <th>Notiz</th>
-          <th>Bilder</th>
-          <th><i class="fas fa-camera"></i></th>
-          <th><i class="fas fa-trash-alt"></i></th>
-        </tr>
-      </thead>
-      <tbody id="logBody"></tbody>
-    </table>
   </div>
 
   <div id="imageModal" class="modal-overlay">
@@ -722,7 +748,6 @@
       <h2>Notiz bearbeiten</h2>
       <textarea id="noteModalTextarea"></textarea>
       <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-        <!-- Removed Jegyzet összefoglalása button -->
         <button id="noteModalSaveBtn">Speichern & Schließen</button>
       </div>
     </div>
@@ -1047,10 +1072,13 @@ const db = (() => {
       const noteIcon = e.note ? '📖' : '➕';
       const noteTitle = e.note ? 'Notiz öffnen' : 'Notiz hinzufügen';
 
+      // Determine if the code should be colored
+      const codeClass = (e.code && (e.code.startsWith('FA') || e.code.startsWith('NA'))) ? 'auftrag-colored' : '';
+
       return `
       <tr data-id="${e.id}">
         <td>${i+1}</td>
-        <td>${e.code}</td>
+        <td class="${codeClass}">${e.code}</td>
         <td>
           ${formattedDate}<br>
           <span style="font-size: 0.85em; color: var(--muted);">${formattedTime}</span>
