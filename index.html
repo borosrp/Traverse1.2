@@ -71,7 +71,7 @@
 
   .grid { /* This style applies to both category grids */
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* Larger min-width for buttons */
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* Default for small screens: auto-fit columns with minimum 70px width */
     gap: 15px; /* More gap */
     margin-bottom: 10px; /* Reduced margin between grids */
     background: var(--card-bg); /* Default white background for grids */
@@ -83,6 +83,16 @@
   /* Specific style for the second grid to have a light blue background */
   #categoryGrid2 {
     background: var(--secondary-grid-bg); /* Lighter blue for the second grid */
+  }
+
+  /* Media query for larger screens to force two rows */
+  @media (min-width: 768px) { /* Adjust breakpoint as needed */
+    #categoryGrid1 {
+      grid-template-columns: repeat(8, 1fr); /* 16 buttons / 8 columns = 2 rows */
+    }
+    #categoryGrid2 {
+      grid-template-columns: repeat(6, 1fr); /* 12 buttons / 6 columns = 2 rows */
+    }
   }
 
   .grid button {
@@ -136,10 +146,8 @@
   .controls {
     margin-top: 25px;
     display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
+    justify-content: center; /* Center the entire group of labels and buttons */
     align-items: center;
-    justify-content: center;
     padding: 20px;
     background: var(--card-bg);
     border-radius: 8px;
@@ -147,22 +155,28 @@
     border: 1px solid var(--border-color);
   }
   /* Specific style for the category label within controls */
-  .controls #categoryLabel {
-    order: -1; /* Move to the beginning of the flex container */
-    margin: 0 15px; /* Add horizontal margin for spacing */
-    flex-shrink: 0; /* Prevent label from shrinking too much */
+  .controls .category-display-label { /* New common class for labels */
     font-weight: bold;
     font-size: 2.2em; /* Doubled font size for category label */
     text-align: center;
     min-width: 50px; /* Give it some minimum width */
-    /* Dynamically set color via JS */
-    /* Removed frame styles from categoryLabel */
+    /* Color will be set dynamically by JS */
     background: none;
     padding: 0;
     border-radius: 0;
     box-shadow: none;
     border: none;
     height: auto; /* Allow height to adjust to content */
+    flex-shrink: 0; /* Prevent label from shrinking too much */
+    margin: 0 10px; /* Space between label and button group */
+  }
+
+  .controls .control-buttons { /* New container for the buttons */
+    display: flex;
+    gap: 15px; /* Gap between buttons */
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
   }
 
   .controls button {
@@ -532,9 +546,7 @@
   .note-modal-content button:active { transform: scale(0.98); }
 
   /* Custom Alert/Confirm/Prompt Modals */
-  #customAlertModal .note-modal-content,
-  #customConfirmModal .note-modal-content,
-  #customPromptModal .note-modal-content {
+  #customAlertModal .note-modal-content,<br>  #customConfirmModal .note-modal-content,<br>  #customPromptModal .note-modal-content {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-medium); /* Applied stronger shadow */
@@ -594,10 +606,13 @@
 
   <div id="mainControls">
     <div class="controls">
-        <div id="categoryLabel" style="font-weight: bold; font-size: 2.2em; text-align: center;"></div> <!-- Removed hardcoded color here -->
-        <button id="manualEntryBtn"><i class="fas fa-keyboard"></i></button> <!-- Changed to keyboard icon -->
-        <button id="openScannerBtn"><i class="fas fa-barcode"></i></button> <!-- Only barcode icon -->
-        <button id="clearCategoryBtn"><i class="fas fa-trash-alt"></i></button>
+        <div id="categoryLabelLeft" class="category-display-label"></div>
+        <div class="control-buttons">
+            <button id="manualEntryBtn"><i class="fas fa-keyboard"></i></button> <!-- Changed to keyboard icon -->
+            <button id="openScannerBtn"><i class="fas fa-barcode"></i></button> <!-- Only barcode icon -->
+            <button id="clearCategoryBtn"><i class="fas fa-trash-alt"></i></button>
+        </div>
+        <div id="categoryLabelRight" class="category-display-label"></div>
     </div>
   </div>
 
@@ -705,7 +720,8 @@ const db = (() => {
   // DOM elemek
   const categoryGrid1 = document.getElementById('categoryGrid1');
   const categoryGrid2 = document.getElementById('categoryGrid2');
-  const categoryLabel = document.getElementById('categoryLabel'); // Moved outside mainControls
+  const categoryLabelLeft = document.getElementById('categoryLabelLeft'); // Changed ID
+  const categoryLabelRight = document.getElementById('categoryLabelRight'); // New element
   const mainControls = document.getElementById('mainControls');
   const listSection = document.getElementById('listSection');
   const logBody = document.getElementById('logBody');
@@ -785,14 +801,18 @@ const db = (() => {
     btn.classList.add('active');
     currentCategory = num;
 
-    // Dynamically set categoryLabel color based on content
+    // Dynamically set categoryLabel colors based on content
     try {
         entries = await db.getEntriesForCategory(currentCategory);
-        categoryLabel.textContent = `${num}`; // Only display the number
+        categoryLabelLeft.textContent = `${num}`; // Update left label
+        categoryLabelRight.textContent = `${num}`; // Update right label
+
         if (entries.length === 0) {
-            categoryLabel.style.color = 'var(--muted)'; /* Light grey if empty */
+            categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey if empty */
+            categoryLabelRight.style.color = 'var(--muted)'; /* Light grey if empty */
         } else {
-            categoryLabel.style.color = 'var(--primary)'; /* Blue if not empty */
+            categoryLabelLeft.style.color = 'var(--primary)'; /* Blue if not empty */
+            categoryLabelRight.style.color = 'var(--primary)'; /* Blue if not empty */
         }
         mainControls.style.display = 'block';
         listSection.style.display = 'block';
@@ -1088,9 +1108,10 @@ const db = (() => {
           renderTable();
           await updateCategoryButtonColors(); // Update colors after adding new entry
 
-          // Update the categoryLabel color if a new entry is added to an empty category
+          // Update the categoryLabel colors if a new entry is added to an empty category
           if (entries.length === 1) { // If it was empty and now has one entry
-              categoryLabel.style.color = 'var(--primary)';
+              categoryLabelLeft.style.color = 'var(--primary)';
+              categoryLabelRight.style.color = 'var(--primary)';
           }
 
           const webAppUrl = 'https://script.google.com/macros/s/AKfycbz7cN31qlQVBxpMmJIpyyV-bDHaI-i3vxG06vPv3pKurSpdxVHDKcN95oJtfAME2P_5/exec';
@@ -1238,8 +1259,9 @@ const db = (() => {
       entries = [];
       renderTable();
       await updateCategoryButtonColors(); // Update colors after clearing category
-      // Update the categoryLabel color after clearing the category
-      categoryLabel.style.color = 'var(--muted)'; /* Light grey after clearing */
+      // Update the categoryLabel colors after clearing the category
+      categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey after clearing */
+      categoryLabelRight.style.color = 'var(--muted)'; /* Light grey after clearing */
     }
   });
 
