@@ -171,16 +171,34 @@
   }
 
 
+  #mainControls {
+    position: fixed; /* Fixed position */
+    bottom: 0; /* Align to the bottom */
+    left: 0;
+    width: 100%; /* Full width */
+    z-index: 1000; /* Ensure it's above other content */
+    display: none; /* Keep hidden initially */
+    box-sizing: border-box; /* Include padding in width */
+    padding: 0 20px; /* Add horizontal padding to match body */
+    background: var(--card-bg); /* Background for the fixed bar */
+    border-top: 1px solid var(--border-color); /* Top border */
+    box-shadow: var(--shadow-soft); /* Add shadow for depth */
+    flex-shrink: 0; /* Prevent footer from shrinking */
+  }
+
   .controls {
-    margin-top: 25px;
+    margin-top: 0; /* Remove margin-top to make it a tighter fit */
     display: flex;
     justify-content: center; /* Center the entire group of labels and buttons */
     align-items: center;
-    padding: 20px;
+    padding: 10px 20px; /* Reduced vertical padding for a smaller frame */
     background: var(--card-bg);
-    border-radius: 8px;
-    box-shadow: var(--shadow-soft);
-    border: 1px solid var(--border-color);
+    border-radius: 8px; /* Apply border-radius here for the inner frame */
+    box-shadow: var(--shadow-soft); /* Apply shadow here for the inner frame */
+    border: 1px solid var(--border-color); /* Apply border here for the inner frame */
+    box-sizing: border-box; /* Include padding/border in element's total width/height */
+    max-width: fit-content; /* Make the inner frame fit its content */
+    margin: 10px auto; /* Center the inner frame and add some vertical margin */
   }
   /* Specific style for the category label within controls */
   .controls .category-display-label { /* New common class for labels */
@@ -202,7 +220,7 @@
   .controls .control-buttons { /* New container for the buttons */
     display: flex;
     gap: 15px; /* Gap between buttons */
-    flex-wrap: wrap;
+    flex-wrap: nowrap; /* Ensure buttons stay in one row */
     justify-content: center;
     align-items: center;
   }
@@ -246,35 +264,18 @@
     margin: 0 4px; /* Space between icons */
   }
 
-  #mainControls {
-    position: fixed; /* Fixed position */
-    bottom: 0; /* Align to the bottom */
-    left: 0;
-    width: 100%; /* Full width */
-    z-index: 1000; /* Ensure it's above other content */
-    display: none; /* Keep hidden initially */
-    box-sizing: border-box; /* Include padding in width */
-    padding: 0 20px; /* Add horizontal padding to match body */
-    background: var(--card-bg); /* Background for the fixed bar */
-    border-top: 1px solid var(--border-color); /* Top border */
-    box-shadow: var(--shadow-soft); /* Add shadow for depth */
-    flex-shrink: 0; /* Prevent footer from shrinking */
-  }
-
-  .openScannerBtn {
-      background-color: var(--primary);
-      color: white;
-      font-weight: bold;
-      /* Specific styles for the prominent Scannen button */
+  /* Specific styles for the prominent Scannen button */
+  /* Moved these styles to .controls button directly for consistency */
+  #openScannerBtn {
       padding: 18px 25px; /* Larger padding */
       font-size: 1.25em; /* Larger font size */
       box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3), 0 20px 40px rgba(0, 0, 0, 0.25); /* Even stronger shadow */
   }
-  .openScannerBtn:hover {
+  #openScannerBtn:hover {
       background-color: var(--primary-dark);
       box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3); /* Stronger hover shadow */
   }
-  .openScannerBtn:active {
+  #openScannerBtn:active {
       transform: scale(0.94); /* More pronounced active effect */
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.25); /* Deeper active shadow */
   }
@@ -289,7 +290,7 @@
   }
   #clearCategoryBtn:hover {
     background: #c82333; /* Darker red on hover */
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3); /* Stronger hover shadow */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3); /* Stronger hover hover shadow */
   }
   #clearCategoryBtn:active {
     transform: scale(0.96);
