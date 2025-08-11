@@ -217,11 +217,9 @@
     margin: 0 10px; /* Space between label and button group */
   }
 
-  /* Hide right label on screens smaller than 768px */
-  @media (max-width: 767px) {
-    #categoryLabelRight {
-      display: none;
-    }
+  /* Hide right label on all screens */
+  #categoryLabelRight {
+    display: none;
   }
 
   .controls .control-buttons { /* New container for the buttons */
@@ -561,6 +559,36 @@
       box-shadow: none;
   }
 
+  /* Style for the delete image button in the modal */
+  .delete-image-btn {
+    position: absolute;
+    top: 10px; /* Adjust as needed */
+    right: 10px; /* Adjust as needed */
+    z-index: 10001; /* Ensure it's above other elements */
+    background: var(--danger) !important; /* Red background for delete */
+    color: white !important;
+    border: none !important;
+    border-radius: 50% !important; /* Make it circular */
+    width: 40px; /* Fixed width */
+    height: 40px; /* Fixed height */
+    padding: 0; /* Remove padding for fixed size */
+    font-size: 1.2em; /* Icon size */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.2s ease;
+  }
+  .delete-image-btn:hover {
+    background: #c82333 !important; /* Darker red on hover */
+    box-shadow: var(--shadow-medium) !important;
+    transform: scale(1.1); /* Slightly larger on hover */
+  }
+  .delete-image-btn:active {
+    transform: scale(0.95);
+    box-shadow: var(--shadow-active);
+  }
+
 
   #scannerDetectedCode {
     margin-top: 18px;
@@ -730,8 +758,8 @@
     <div class="modal-controls">
       <button id="imageModalPrevBtn"><i class="fas fa-chevron-left"></i></button>
       <button id="imageModalNextBtn"><i class="fas fa-chevron-right"></i></button>
-      <button id="deleteImageBtn" class="delete-image-btn">Kép törlése</button> <!-- New delete image button -->
     </div>
+    <button id="deleteImageBtn" class="delete-image-btn"><i class="fas fa-trash-alt"></i></button> <!-- Moved delete button -->
   </div>
 
   <div id="cameraModal" class="modal-overlay">
@@ -1410,7 +1438,7 @@ const db = (() => {
   scannerSaveBtn.addEventListener('click', saveScannedBarcode);
   manualEntryBtn.addEventListener('click', handleManualEntry);
   noteModalSaveBtn.addEventListener('click', saveNoteFromModal);
-  // Removed event listener for summarize button
+  deleteImageBtn.addEventListener('click', deleteCurrentImage); // Attach listener for delete image button
 
   takePhotoButton.addEventListener('click', takePhotoAndSave);
   cancelCameraButton.addEventListener('click', () => closeModal(cameraModal));
