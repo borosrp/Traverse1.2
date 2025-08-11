@@ -380,7 +380,9 @@
     transition: all 0.2s ease;
     box-shadow: none;
     display: inline-block; /* Ensure it's inline-block for centering with text-align */
-    margin: 0 auto; /* Center block element */
+    margin: 0 auto;
+    box-shadow: none;
+    border-radius: 6px; /* Match other buttons slightly */
   }
   .deleteBtn:hover {
     background: var(--danger);
@@ -398,7 +400,7 @@
     line-height: 1;
     transition: transform 0.15s ease, color 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     display: inline-block; /* Ensure it's inline-block for centering with text-align */
-    margin: 0 auto; /* Center block element */
+    margin: 0 auto;
     box-shadow: none;
     border-radius: 6px; /* Match other buttons slightly */
   }
@@ -941,7 +943,6 @@ const db = (() => {
         entries = await db.getEntriesForCategory(currentCategory);
         categoryLabelLeft.textContent = `${num}`; // Update left label
         // categoryLabelRight.textContent = `${num}`; // Removed update for right label
-
         const isEmpty = entries.length === 0;
         if (isEmpty) {
             categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey if empty */
@@ -1094,7 +1095,7 @@ const db = (() => {
   // Function to delete the currently displayed image
   async function deleteCurrentImage() {
       if (!currentImageEntryId || currentModalImages.length === 0) {
-          showCustomAlert('Nincs törölhető kép.', 'Hiba');
+          showCustomAlert('Kein Bild zum Löschen vorhanden.', 'Fehler'); // Changed to German
           return;
       }
 
@@ -1422,8 +1423,8 @@ const db = (() => {
   }
   function captureFrame(videoElement, quality = 0.95) { // Updated quality to 0.95
       const canvas = document.createElement('canvas');
-      canvas.width = videoElement.videoWidth * 1.5; // Increased resolution by 1.5x
-      canvas.height = videoElement.videoHeight * 1.5; // Increased resolution by 1.5x
+      canvas.width = 3264; // Set fixed width to 3264px
+      canvas.height = 2448; // Set fixed height to 2448px
       canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
       return canvas.toDataURL('image/jpeg', quality);
   }
