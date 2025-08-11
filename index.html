@@ -680,7 +680,7 @@
     background: var(--bg);
     border: 1px solid var(--border-color);
     color: var(--text);
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); /* Stronger inset shadow */
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); /* Stronger inset inset shadow */
   }
   #customAlertCloseBtn, #customConfirmOkBtn, #customPromptOkBtn {
     background: var(--primary) !important;
@@ -1340,7 +1340,6 @@ const db = (() => {
   // Eseménykezelők
   function saveScannedBarcode() {
       addNewEntry(lastDetected.code, lastDetected.image);
-      closeModal(scannerModal);
   }
   function handleManualEntry() {
       // Using custom prompt for manual entry
@@ -1425,8 +1424,8 @@ const db = (() => {
   }
   function captureFrame(videoElement, quality = 0.95) { // Updated quality to 0.95
       const canvas = document.createElement('canvas');
-      canvas.width = 3264; // Set fixed width to 3264px
-      canvas.height = 2448; // Set fixed height to 2448px
+      canvas.width = 2448; // Set fixed width to 2448px
+      canvas.height = 3264; // Set fixed height to 3264px
       canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
       return canvas.toDataURL('image/jpeg', quality);
   }
