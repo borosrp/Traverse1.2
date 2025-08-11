@@ -71,7 +71,6 @@
 
   .grid { /* This style applies to both category grids */
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* Default for small screens: auto-fit columns with minimum 70px width */
     gap: 15px; /* More gap */
     margin-bottom: 10px; /* Reduced margin between grids */
     background: var(--card-bg); /* Default white background for grids */
@@ -85,14 +84,12 @@
     background: var(--secondary-grid-bg); /* Lighter blue for the second grid */
   }
 
-  /* Media query for larger screens to force two rows */
-  @media (min-width: 768px) { /* Adjust breakpoint as needed */
-    #categoryGrid1 {
-      grid-template-columns: repeat(8, 1fr); /* 16 buttons / 8 columns = 2 rows */
-    }
-    #categoryGrid2 {
-      grid-template-columns: repeat(6, 1fr); /* 12 buttons / 6 columns = 2 rows */
-    }
+  /* Fixed grid columns to ensure two rows */
+  #categoryGrid1 {
+    grid-template-columns: repeat(8, minmax(70px, 1fr)); /* 16 buttons / 8 columns = 2 rows */
+  }
+  #categoryGrid2 {
+    grid-template-columns: repeat(6, minmax(70px, 1fr)); /* 12 buttons / 6 columns = 2 rows */
   }
 
   .grid button {
