@@ -45,7 +45,7 @@
     margin: 5px auto; /* Further reduced top margin for the body */
     display: flex; /* Use flexbox for overall layout */
     flex-direction: column; /* Arrange children vertically */
-    padding-bottom: 120px; /* Add padding to body to prevent content from being hidden by fixed footer */
+    padding-bottom: 0; /* Remove padding from body, handled by main-scrollable-area */
   }
   body.modal-open {
       overflow: hidden;
@@ -82,7 +82,7 @@
   #main-scrollable-area {
     flex: 1; /* Allow this area to grow and shrink */
     overflow-y: auto; /* Enable vertical scrolling within this area */
-    padding: 0 20px 0; /* Apply main content padding here, no bottom padding as body has it */
+    padding: 0 20px 130px; /* Apply main content padding here, increased for safety */
     box-sizing: border-box; /* Include padding in element's total width and height */
   }
 
@@ -180,10 +180,10 @@
     z-index: 1000; /* Ensure it's above other content */
     display: none; /* Keep hidden initially */
     box-sizing: border-box; /* Include padding in width */
-    padding: 0; /* Remove padding from here, inner controls will handle it */
+    padding: 0; /* Removed padding from here */
     background: none; /* Make background transparent */
-    border-top: none; /* Remove border from here */
-    box-shadow: none; /* Remove shadow from here */
+    border-top: none; /* Removed border from here */
+    box-shadow: none; /* Removed shadow from here */
     flex-shrink: 0; /* Prevent footer from shrinking */
   }
 
