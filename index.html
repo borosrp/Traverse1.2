@@ -770,7 +770,7 @@
     <video id="cameraModalVideo" autoplay muted playsinline></video>
     <div class="modal-controls">
         <button id="cancelCameraButton"><i class="fas fa-times"></i></button> <!-- Icon for Abbrechen -->
-        <button id="takePhotoButton"><i class="fas fa-camera"></i></button> <!-- Icon for Foto -->
+        <button id="takePhotoButton" style="padding: 14px 44px;"><i class="fas fa-camera"></i></button> <!-- Icon for Foto, increased padding -->
     </div>
   </div>
 
@@ -781,7 +781,7 @@
     </div>
     <div class="modal-controls">
         <button id="scannerCancelBtn"><i class="fas fa-times"></i></button> <!-- Icon for Abbrechen -->
-        <button id="scannerSaveBtn" disabled><i class="fas fa-save"></i></button> <!-- Icon for Speichern -->
+        <button id="scannerSaveBtn" disabled style="padding: 14px 44px;"><i class="fas fa-save"></i></button> <!-- Icon for Speichern, increased padding -->
     </div>
   </div>
 
@@ -1305,7 +1305,7 @@ const db = (() => {
                       lastDetectedCodeToDisplay = null; // Clear displayed code
                       lastDetected.code = null; // Clear saved code
                       displayTimeoutId = null;
-                  }, 4000); // Debounce time: 4000ms
+                  }, 1500); // Debounce time: 1500ms
               }
           } else if (!currentScanCode && !lastDetectedCodeToDisplay && !displayTimeoutId) {
               // No barcode detected and nothing was previously detected (initial state or after debounce)
