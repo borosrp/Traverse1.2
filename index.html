@@ -45,6 +45,7 @@
     margin: 5px auto; /* Further reduced top margin for the body */
     display: flex; /* Use flexbox for overall layout */
     flex-direction: column; /* Arrange children vertically */
+    padding-bottom: 120px; /* Add padding to body to prevent content from being hidden by fixed footer */
   }
   body.modal-open {
       overflow: hidden;
@@ -81,7 +82,7 @@
   #main-scrollable-area {
     flex: 1; /* Allow this area to grow and shrink */
     overflow-y: auto; /* Enable vertical scrolling within this area */
-    padding: 0 20px 100px; /* Apply main content padding here, with space for fixed footer */
+    padding: 0 20px 0; /* Apply main content padding here, no bottom padding as body has it */
     box-sizing: border-box; /* Include padding in element's total width and height */
   }
 
@@ -100,16 +101,16 @@
     background: var(--secondary-grid-bg); /* Lighter blue for the second grid */
   }
 
-  /* Default grid columns for small screens (under 576px, ~7 inches) */
+  /* Default grid columns for small screens (under 768px) */
   #categoryGrid1 {
-    grid-template-columns: repeat(4, minmax(0, 1fr)); /* Changed minmax(70px, 1fr) to minmax(0, 1fr) */
+    grid-template-columns: repeat(4, minmax(0, 1fr)); /* 4 columns for 16 buttons (4 rows) */
   }
   #categoryGrid2 {
-    grid-template-columns: repeat(4, minmax(0, 1fr)); /* Changed minmax(70px, 1fr) to minmax(0, 1fr) */
+    grid-template-columns: repeat(4, minmax(0, 1fr)); /* 4 columns for 12 buttons (3 rows) */
   }
 
-  /* Media query for larger screens (576px and above, including tablets and laptops) */
-  @media (min-width: 576px) { /* Adjusted breakpoint to 576px */
+  /* Media query for larger screens (768px and above) */
+  @media (min-width: 768px) { /* Adjusted breakpoint to 768px */
     #categoryGrid1 {
       grid-template-columns: repeat(8, minmax(0, 1fr)); /* 8 columns for 16 buttons (2 rows) */
     }
@@ -187,20 +188,24 @@
   }
 
   .controls {
-    /* Removed margin-top, background, border-radius, box-shadow, border from here */
     display: flex;
     justify-content: center; /* Center the entire group of labels and buttons */
     align-items: center;
-    padding: 10px 0; /* Reduced vertical padding for a smaller frame, horizontal padding handled by #mainControls */
-    /* Removed max-width: fit-content; and margin: 10px auto; to allow it to fill the #mainControls width */
-    width: 100%; /* Make it fill the width of its parent (#mainControls) */
+    padding: 10px; /* Reduced padding for a smaller frame */
+    background: var(--card-bg); /* Background for the inner frame */
+    border-radius: 8px; /* Border-radius for the inner frame */
+    box-shadow: var(--shadow-soft); /* Shadow for the inner frame */
+    border: 1px solid var(--border-color); /* Border for the inner frame */
+    box-sizing: border-box; /* Include padding/border in element's total width/height */
+    max-width: fit-content; /* Make the inner frame fit its content */
+    margin: 10px auto; /* Center the inner frame and add some vertical margin */
+    flex-wrap: nowrap; /* Ensure elements stay in one line */
   }
   /* Specific style for the category label within controls */
   .controls .category-display-label { /* New common class for labels */
     font-weight: bold;
     font-size: 2.2em; /* Doubled font size for category label */
     text-align: center;
-    /* min-width: 50px; /* Removed min-width to allow shrinking */
     background: none;
     padding: 0;
     border-radius: 0;
@@ -210,6 +215,13 @@
     flex-shrink: 1; /* Allow label to shrink */
     flex-basis: auto; /* Allow label to determine its own base size */
     margin: 0 10px; /* Space between label and button group */
+  }
+
+  /* Hide right label on small screens */
+  @media (max-width: 767px) { /* Apply this to screens smaller than 768px */
+    #categoryLabelRight {
+      display: none;
+    }
   }
 
   .controls .control-buttons { /* New container for the buttons */
