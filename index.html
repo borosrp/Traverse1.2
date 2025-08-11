@@ -187,33 +187,28 @@
   }
 
   .controls {
-    margin-top: 0; /* Remove margin-top to make it a tighter fit */
+    /* Removed margin-top, background, border-radius, box-shadow, border from here */
     display: flex;
     justify-content: center; /* Center the entire group of labels and buttons */
     align-items: center;
-    padding: 10px 20px; /* Reduced vertical padding for a smaller frame */
-    background: var(--card-bg);
-    border-radius: 8px; /* Apply border-radius here for the inner frame */
-    box-shadow: var(--shadow-soft); /* Apply shadow here for the inner frame */
-    border: 1px solid var(--border-color); /* Apply border here for the inner frame */
-    box-sizing: border-box; /* Include padding/border in element's total width/height */
-    max-width: fit-content; /* Make the inner frame fit its content */
-    margin: 10px auto; /* Center the inner frame and add some vertical margin */
+    padding: 10px 0; /* Reduced vertical padding for a smaller frame, horizontal padding handled by #mainControls */
+    /* Removed max-width: fit-content; and margin: 10px auto; to allow it to fill the #mainControls width */
+    width: 100%; /* Make it fill the width of its parent (#mainControls) */
   }
   /* Specific style for the category label within controls */
   .controls .category-display-label { /* New common class for labels */
     font-weight: bold;
     font-size: 2.2em; /* Doubled font size for category label */
     text-align: center;
-    min-width: 50px; /* Give it some minimum width */
-    /* Color will be set dynamically by JS */
+    /* min-width: 50px; /* Removed min-width to allow shrinking */
     background: none;
     padding: 0;
     border-radius: 0;
     box-shadow: none;
     border: none;
     height: auto; /* Allow height to adjust to content */
-    flex-shrink: 0; /* Prevent label from shrinking too much */
+    flex-shrink: 1; /* Allow label to shrink */
+    flex-basis: auto; /* Allow label to determine its own base size */
     margin: 0 10px; /* Space between label and button group */
   }
 
