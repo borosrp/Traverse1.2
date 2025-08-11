@@ -408,8 +408,8 @@
     margin: 0 auto;
     box-shadow: none;
     border-radius: 6px; /* Match other buttons slightly */
-    padding: 8px 12px; /* Original padding */
-    font-size: 1.5em; /* Original font-size */
+    padding: 8px 12px; /* Adjusted padding to match addExtraPhotoBtn */
+    font-size: 1.5em; /* Adjusted font-size to match addExtraPhotoBtn */
   }
   .noteToggleBtn:hover { transform: scale(1.15); color: var(--primary); }
 
@@ -459,8 +459,8 @@
     display: inline-flex; /* Use flex to align icon and text/plus if any */
     align-items: center;
     justify-content: center;
-    padding: 8px 12px; /* Original padding */
-    font-size: 1.5em; /* Original font size */
+    padding: 8px 12px;
+    font-size: 1.5em; /* Larger icon size */
     border-radius: 5px;
     border: 1px solid var(--primary);
     background: var(--primary);
@@ -1369,8 +1369,8 @@ const db = (() => {
 
           // Update the categoryLabel colors if a new entry is added to an empty category
           if (entries.length === 1) { // If it was empty and now has one entry
-              categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey after clearing */
-              // categoryLabelRight.style.color = 'var(--muted)'; /* Removed update for right label */
+              categoryLabelLeft.style.color = 'var(--primary)';
+              // categoryLabelRight.style.color = 'var(--primary)'; // Removed update for right label
               // Update control buttons color
               updateControlButtonsColor(false);
           }
@@ -1421,7 +1421,7 @@ const db = (() => {
           <h2>${title}</h2>
           <p>${message}</p>
           <input type="text" id="customPromptInput" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
-          <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
             <button id="customPromptCancelBtn" style="background: #ccc; color: var(--text); border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">Abbrechen</button>
             <button id="customPromptOkBtn" style="background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">OK</button>
           </div>
