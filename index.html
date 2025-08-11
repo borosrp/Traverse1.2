@@ -885,6 +885,8 @@ const db = (() => {
   let noteEntryIdToUpdate = null;
   let scannerRafId = null;
   let lastDetected = { code: null, image: null };
+  let lastDetectedCodeToDisplay = null; // Stores the code that should be displayed
+  let displayTimeoutId = null; // To manage the debounce timeout
 
   // Global state for image modal carousel
   let currentModalImages = [];
@@ -1279,17 +1281,44 @@ const db = (() => {
       canvas.getContext('2d').drawImage(scannerVideo, 0, 0, canvas.width, canvas.height);
       try {
           const barcodes = await detector.detect(canvas);
-          if (barcodes.length > 0 && barcodes[0].rawValue !== lastDetected.code) {
-              lastDetected.code = barcodes[0].rawValue;
-              lastDetected.image = captureFrame(scannerVideo, 0.95); // Updated quality to 0.95
-              scannerDetectedCode.textContent = lastDetected.code; // Display detected code as text
+          const currentScanCode = barcodes.length > 0 ? barcodes[0].rawValue : null;
+
+          if (currentScanCode && currentScanCode !== lastDetectedCodeToDisplay) {
+              // New unique barcode detected
+              if (displayTimeoutId) {
+                  clearTimeout(displayTimeoutId);
+                  displayTimeoutId = null;
+              }
+              lastDetectedCodeToDisplay = currentScanCode;
+              lastDetected.code = currentScanCode; // Update lastDetected for saving
+              lastDetected.image = captureFrame(scannerVideo, 0.95); // Capture image
+              scannerDetectedCode.textContent = lastDetectedCodeToDisplay;
               scannerSaveBtn.disabled = false;
               navigator.vibrate?.(100);
-          } else {
-              scannerDetectedCode.innerHTML = '<i class="fas fa-search"></i>'; // Reset to icon if no code detected
+          } else if (!currentScanCode && lastDetectedCodeToDisplay) {
+              // No barcode detected in current frame, but one was previously displayed
+              // Start a timeout to clear the display if no barcode reappears
+              if (!displayTimeoutId) { // Only set timeout if one isn't already running
+                  displayTimeoutId = setTimeout(() => {
+                      scannerDetectedCode.innerHTML = '<i class="fas fa-search"></i>';
+                      scannerSaveBtn.disabled = true;
+                      lastDetectedCodeToDisplay = null; // Clear displayed code
+                      lastDetected.code = null; // Clear saved code
+                      displayTimeoutId = null;
+                  }, 500); // Debounce time: 500ms
+              }
+          } else if (!currentScanCode && !lastDetectedCodeToDisplay && !displayTimeoutId) {
+              // No barcode detected and nothing was previously detected (initial state or after debounce)
+              scannerDetectedCode.innerHTML = '<i class="fas fa-search"></i>';
               scannerSaveBtn.disabled = true;
           }
-      } catch (e) { console.error(e); }
+          // If currentScanCode is the same as lastDetectedCodeToDisplay, do nothing, keep current display.
+
+      } catch (e) {
+          console.error(e);
+          // Optionally, display a temporary error icon/message
+          // scannerDetectedCode.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: orange;"></i>';
+      }
       scannerRafId = requestAnimationFrame(scannerLoop);
   }
 
@@ -1424,6 +1453,13 @@ const db = (() => {
           cancelAnimationFrame(scannerRafId);
           scannerRafId = null;
       }
+      // Clear debounce timeout on modal close
+      if (displayTimeoutId) {
+          clearTimeout(displayTimeoutId);
+          displayTimeoutId = null;
+      }
+      lastDetectedCodeToDisplay = null; // Reset on close
+      lastDetected.code = null; // Reset on close
       modal.style.display = 'none';
       document.body.classList.remove('modal-open');
   }
