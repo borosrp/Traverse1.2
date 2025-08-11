@@ -84,12 +84,22 @@
     background: var(--secondary-grid-bg); /* Lighter blue for the second grid */
   }
 
-  /* Fixed grid columns to ensure two rows */
+  /* Default grid columns for mobile (or small screens) */
   #categoryGrid1 {
-    grid-template-columns: repeat(8, minmax(70px, 1fr)); /* 16 buttons / 8 columns = 2 rows */
+    grid-template-columns: repeat(4, minmax(70px, 1fr)); /* 4 columns for mobile (4x4=16) */
   }
   #categoryGrid2 {
-    grid-template-columns: repeat(6, minmax(70px, 1fr)); /* 12 buttons / 6 columns = 2 rows */
+    grid-template-columns: repeat(4, minmax(70px, 1fr)); /* 4 columns for mobile (3 rows of 4 for 12 buttons) */
+  }
+
+  /* Media query for Laptop/Tablet */
+  @media (min-width: 701px) { /* Adjust breakpoint as needed */
+    #categoryGrid1 {
+      grid-template-columns: repeat(8, minmax(70px, 1fr)); /* 8 columns for laptop/tablet (2x8=16) */
+    }
+    #categoryGrid2 {
+      grid-template-columns: repeat(6, minmax(70px, 1fr)); /* 6 columns for laptop/tablet (2x6=12) */
+    }
   }
 
   .grid button {
