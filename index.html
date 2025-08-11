@@ -769,17 +769,19 @@
   <div id="cameraModal" class="modal-overlay">
     <video id="cameraModalVideo" autoplay muted playsinline></video>
     <div class="modal-controls">
-        <button id="cancelCameraButton">Abbrechen</button>
-        <button id="takePhotoButton">Foto</button>
+        <button id="cancelCameraButton"><i class="fas fa-times"></i></button> <!-- Icon for Abbrechen -->
+        <button id="takePhotoButton"><i class="fas fa-camera"></i></button> <!-- Icon for Foto -->
     </div>
   </div>
 
   <div id="scannerModal" class="modal-overlay">
     <video id="scannerVideo" autoplay muted playslines></video>
-    <div id="scannerDetectedCode">Suche...</div>
+    <div id="scannerDetectedCode">
+      <i class="fas fa-search"></i> <!-- Replaced "Suche..." with search icon -->
+    </div>
     <div class="modal-controls">
-        <button id="scannerCancelBtn">Abbrechen</button>
-        <button id="scannerSaveBtn" disabled>Speichern</button>
+        <button id="scannerCancelBtn"><i class="fas fa-times"></i></button> <!-- Icon for Abbrechen -->
+        <button id="scannerSaveBtn" disabled><i class="fas fa-save"></i></button> <!-- Icon for Speichern -->
     </div>
   </div>
 
@@ -1265,7 +1267,7 @@ const db = (() => {
       if(!detector) { showCustomAlert('Ihr Browser unterstützt das Scannen von Barcodes nicht.', 'Fehler'); return; }
       lastDetected = { code: null, image: null };
       scannerSaveBtn.disabled = true;
-      scannerDetectedCode.textContent = 'Suche...';
+      scannerDetectedCode.innerHTML = '<i class="fas fa-search"></i>'; // Set icon directly
       await openModal(scannerModal, scannerVideo);
       scannerRafId = requestAnimationFrame(scannerLoop);
   }
@@ -1280,9 +1282,12 @@ const db = (() => {
           if (barcodes.length > 0 && barcodes[0].rawValue !== lastDetected.code) {
               lastDetected.code = barcodes[0].rawValue;
               lastDetected.image = captureFrame(scannerVideo, 0.95); // Updated quality to 0.95
-              scannerDetectedCode.textContent = lastDetected.code;
+              scannerDetectedCode.textContent = lastDetected.code; // Display detected code as text
               scannerSaveBtn.disabled = false;
               navigator.vibrate?.(100);
+          } else {
+              scannerDetectedCode.innerHTML = '<i class="fas fa-search"></i>'; // Reset to icon if no code detected
+              scannerSaveBtn.disabled = true;
           }
       } catch (e) { console.error(e); }
       scannerRafId = requestAnimationFrame(scannerLoop);
