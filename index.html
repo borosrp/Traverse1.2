@@ -1098,7 +1098,7 @@ const db = (() => {
           return;
       }
 
-      const confirmed = await showCustomConfirm('Biztosan törölni szeretnéd ezt a képet?', 'Kép törlése');
+      const confirmed = await showCustomConfirm('Möchten Sie dieses Bild wirklich löschen?', 'Bild löschen'); // Changed to German
       if (!confirmed) {
           return;
       }
@@ -1128,14 +1128,12 @@ const db = (() => {
           // Re-render table and update modal if still open
           renderTable();
 
-          if (entry.image || (entry.kepek && entry.kepek.length > 0)) {
-              // If there are still images, update the modal to show the next/previous valid image
-              const allRemainingImages = [entry.image, ...(entry.kepek || [])].filter(Boolean);
-              if (currentModalImageIndex >= allRemainingImages.length && allRemainingImages.length > 0) {
-                  currentModalImageIndex = allRemainingImages.length - 1; // Adjust index if last image was deleted
-              } else if (allRemainingImages.length === 0) {
-                  closeModal(imageModal); // Close modal if no images left
-                  return;
+          // After deletion, re-evaluate currentModalImages and currentModalImageIndex
+          const allRemainingImages = [entry.image, ...(entry.kepek || [])].filter(Boolean);
+          if (allRemainingImages.length > 0) {
+              // Adjust index if the deleted image was the last one
+              if (currentModalImageIndex >= allRemainingImages.length) {
+                  currentModalImageIndex = allRemainingImages.length - 1;
               }
               openImageModal(allRemainingImages, currentModalImageIndex, currentImageEntryId);
           } else {
@@ -1203,7 +1201,7 @@ const db = (() => {
   // Törlés
   async function handleDelete(event) {
       const id = parseInt(event.currentTarget.dataset.id);
-      const confirmed = await showCustomConfirm(`Sind Sie biztos, hogy a ${currentCategory} azonosítójú elemet törölni szeretnéd?`, 'Bestätigung');
+      const confirmed = await showCustomConfirm(`Sind Sie sicher, dass Sie den Eintrag mit der Traverse ${currentCategory} löschen möchten?`, 'Bestätigung'); // Changed to German
       if (confirmed) {
           await db.deleteEntry(id);
           entries = entries.filter(e => e.id !== id);
@@ -1343,7 +1341,7 @@ const db = (() => {
   }
   function handleManualEntry() {
       // Using custom prompt for manual entry
-      showCustomPrompt('Kérjük, írja be a termék nevét vagy azonosítóját:', 'Manuelle Eingabe').then(manualCode => {
+      showCustomPrompt('Bitte geben Sie den Produktnamen oder die Kennung ein:', 'Manuelle Eingabe').then(manualCode => { // Changed to German
           if (manualCode && manualCode.trim() !== '') {
               addNewEntry(manualCode.trim(), null);
           }
@@ -1460,7 +1458,7 @@ const db = (() => {
   });
 
   clearCategoryBtn.addEventListener('click', async () => {
-    const confirmed = await showCustomConfirm(`Sind Sie biztos, hogy a ${currentCategory} azonosítójú elemet törölni szeretnéd?`, 'Bestätigung');
+    const confirmed = await showCustomConfirm(`Sind Sie sicher, dass Sie den Eintrag mit der Traverse ${currentCategory} löschen möchten?`, 'Bestätigung'); // Changed to German
     if(confirmed){
       await db.clearCategory(currentCategory);
       entries = [];
