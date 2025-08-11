@@ -730,6 +730,7 @@
     <div class="modal-controls">
       <button id="imageModalPrevBtn"><i class="fas fa-chevron-left"></i></button>
       <button id="imageModalNextBtn"><i class="fas fa-chevron-right"></i></button>
+      <button id="deleteImageBtn" class="delete-image-btn">Kép törlése</button> <!-- New delete image button -->
     </div>
   </div>
 
@@ -835,7 +836,7 @@ const db = (() => {
   const noteModal = document.getElementById('noteModal');
   const noteModalTextarea = document.getElementById('noteModalTextarea');
   const noteModalSaveBtn = document.getElementById('noteModalSaveBtn');
-  // const summarizeNoteBtn = document.getElementById('summarizeNoteBtn'); // Removed summarize button
+  const deleteImageBtn = document.getElementById('deleteImageBtn'); // Get delete image button
 
   // Gombok
   const openScannerBtn = document.getElementById('openScannerBtn');
@@ -854,7 +855,7 @@ const db = (() => {
   // Global state for image modal carousel
   let currentModalImages = [];
   let currentModalImageIndex = 0;
-
+  let currentImageEntryId = null; // Store the ID of the entry whose image is currently displayed
 
   const detector = ('BarcodeDetector' in window) ? new BarcodeDetector({formats: ['qr_code','ean_13','ean_8','code_128','code_39','upc_a','upc_e']}) : null;
 
@@ -1016,9 +1017,10 @@ const db = (() => {
   }
 
   // Function to open the image modal with carousel capability
-  function openImageModal(images, startIndex) {
+  function openImageModal(images, startIndex, entryId) { // Added entryId parameter
       currentModalImages = images;
       currentModalImageIndex = startIndex;
+      currentImageEntryId = entryId; // Store the entry ID
 
       modalImage.src = currentModalImages[currentModalImageIndex];
       imageModal.style.display = 'flex';
@@ -1060,6 +1062,60 @@ const db = (() => {
           updateImageModalNavigation();
       }
   }
+
+  // Function to delete the currently displayed image
+  async function deleteCurrentImage() {
+      if (!currentImageEntryId || currentModalImages.length === 0) {
+          showCustomAlert('Nincs törölhető kép.', 'Hiba');
+          return;
+      }
+
+      const confirmed = await showCustomConfirm('Biztosan törölni szeretnéd ezt a képet?', 'Kép törlése');
+      if (!confirmed) {
+          return;
+      }
+
+      const entry = entries.find(e => e.id === currentImageEntryId);
+      if (entry) {
+          const imageUrlToDelete = currentModalImages[currentModalImageIndex];
+
+          if (entry.image === imageUrlToDelete) {
+              // If the main image is deleted
+              if (entry.kepek && entry.kepek.length > 0) {
+                  entry.image = entry.kepek.shift(); // Set first extra image as main
+              } else {
+                  entry.image = null; // No more images
+              }
+          } else if (entry.kepek) {
+              // If an extra image is deleted
+              const indexToDelete = entry.kepek.indexOf(imageUrlToDelete);
+              if (indexToDelete > -1) {
+                  entry.kepek.splice(indexToDelete, 1);
+              }
+          }
+
+          await db.updateEntry(entry);
+          entries = entries.map(e => e.id === entry.id ? entry : e); // Update local entries array
+
+          // Re-render table and update modal if still open
+          renderTable();
+
+          if (entry.image || (entry.kepek && entry.kepek.length > 0)) {
+              // If there are still images, update the modal to show the next/previous valid image
+              const allRemainingImages = [entry.image, ...(entry.kepek || [])].filter(Boolean);
+              if (currentModalImageIndex >= allRemainingImages.length && allRemainingImages.length > 0) {
+                  currentModalImageIndex = allRemainingImages.length - 1; // Adjust index if last image was deleted
+              } else if (allRemainingImages.length === 0) {
+                  closeModal(imageModal); // Close modal if no images left
+                  return;
+              }
+              openImageModal(allRemainingImages, currentModalImageIndex, currentImageEntryId);
+          } else {
+              closeModal(imageModal); // Close modal if no images left
+          }
+      }
+  }
+
 
   // Táblázat renderelés
   function renderTable(){
@@ -1110,7 +1166,7 @@ const db = (() => {
               const clickedImageSrc = event.target.src;
               const clickedImageIndex = allImageSources.indexOf(clickedImageSrc);
 
-              openImageModal(allImageSources, clickedImageIndex);
+              openImageModal(allImageSources, clickedImageIndex, entryId); // Pass entryId
           }
       }));
       logBody.querySelectorAll('.addExtraPhotoBtn').forEach(btn => btn.addEventListener('click', openCameraModal));
@@ -1360,7 +1416,7 @@ const db = (() => {
   cancelCameraButton.addEventListener('click', () => closeModal(cameraModal));
 
   // Image modal navigation listeners
-  document.getElementById('imageModalPrevBtn').addEventListener('click', showNextImage);
+  document.getElementById('imageModalPrevBtn').addEventListener('click', showPrevImage); // Corrected function call
   document.getElementById('imageModalNextBtn').addEventListener('click', showNextImage);
 
   imageModal.addEventListener('click', (e) => {
