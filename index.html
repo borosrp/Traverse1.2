@@ -43,8 +43,8 @@
     line-height: 1.6; /* Improved line height */
     max-width: 960px; /* Slightly wider layout */
     margin: 5px auto; /* Further reduced top margin for the body */
-    padding: 0 20px 40px; /* More padding */
-    padding-bottom: 120px; /* Add padding to body to prevent content from being hidden by fixed footer */
+    display: flex; /* Use flexbox for overall layout */
+    flex-direction: column; /* Arrange children vertically */
   }
   body.modal-open {
       overflow: hidden;
@@ -78,14 +78,12 @@
   }
 
   /* New flex container for the main scrollable content area */
-  /* This was removed in the requested version, content will scroll with body */
-  /* #main-content-area {
-    flex: 1;
-    overflow-y: auto;
-    padding: 0 20px;
-    padding-bottom: 100px;
-    box-sizing: border-box;
-  } */
+  #main-scrollable-area {
+    flex: 1; /* Allow this area to grow and shrink */
+    overflow-y: auto; /* Enable vertical scrolling within this area */
+    padding: 0 20px 100px; /* Apply main content padding here, with space for fixed footer */
+    box-sizing: border-box; /* Include padding in element's total width and height */
+  }
 
   .grid { /* This style applies to both category grids */
     display: grid;
@@ -260,6 +258,7 @@
     background: var(--card-bg); /* Background for the fixed bar */
     border-top: 1px solid var(--border-color); /* Top border */
     box-shadow: var(--shadow-soft); /* Add shadow for depth */
+    flex-shrink: 0; /* Prevent footer from shrinking */
   }
 
   .openScannerBtn {
@@ -685,25 +684,27 @@
     <h1 class="app-title">Traversendaten</h1> <!-- Changed to Traversendaten -->
   </div>
 
-  <div class="grid" id="categoryGrid1"></div> <!-- First grid for buttons 1-16 -->
-  <div class="grid" id="categoryGrid2"></div> <!-- Second grid for buttons 17-28 -->
+  <div id="main-scrollable-area">
+    <div class="grid" id="categoryGrid1"></div> <!-- First grid for buttons 1-16 -->
+    <div class="grid" id="categoryGrid2"></div> <!-- Second grid for buttons 17-28 -->
 
-  <div id="listSection">
-    <table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>Auftrag</th>
-          <th>Datum</th>
-          <th>Notiz</th>
-          <th>Bilder</th>
-          <th><i class="fas fa-camera"></i></th>
-          <th><i class="fas fa-trash-alt"></i></th>
-        </tr>
-      </thead>
-      <tbody id="logBody"></tbody>
-    </table>
-  </div>
+    <div id="listSection">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Auftrag</th>
+            <th>Datum</th>
+            <th>Notiz</th>
+            <th>Bilder</th>
+            <th><i class="fas fa-camera"></i></th>
+            <th><i class="fas fa-trash-alt"></i></th>
+          </tr>
+        </thead>
+        <tbody id="logBody"></tbody>
+      </table>
+    </div>
+  </div> <!-- End of main-scrollable-area -->
 
   <div id="mainControls">
     <div class="controls">
