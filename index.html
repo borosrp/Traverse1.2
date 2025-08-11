@@ -362,7 +362,7 @@
     animation: none;
   }
 
-  /* New style for Auftrag numbers starting with FA or NA or scanned */
+  /* New style for Auftrag numbers starting with FA or NA */
   .auftrag-colored {
     color: var(--primary); /* Blue color */
     font-weight: bold; /* Make it bold for emphasis */
@@ -402,13 +402,14 @@
     border: 1px solid transparent; /* Default transparent border */
     cursor: pointer;
     color: var(--muted); /* Muted color by default */
-    padding: 6px 10px;
     line-height: 1;
     transition: transform 0.15s ease, color 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
     display: inline-block; /* Ensure it's inline-block for centering with text-align */
     margin: 0 auto;
     box-shadow: none;
     border-radius: 6px; /* Match other buttons slightly */
+    padding: 8px 12px; /* Set padding to match addExtraPhotoBtn */
+    font-size: 1.5em; /* Set font-size to match addExtraPhotoBtn */
   }
   .noteToggleBtn:hover { transform: scale(1.15); color: var(--primary); }
 
@@ -419,7 +420,6 @@
     border-color: var(--primary); /* Primary blue border */
     box-shadow: var(--shadow-soft); /* Soft shadow for filled notes */
     animation: blink-blue-red 1.5s infinite alternate; /* Apply blinking animation */
-    padding: 8px 12px; /* Adjusted padding to match camera button */
   }
   .noteToggleBtn.note-filled:hover {
     background: var(--primary-dark);
