@@ -1422,8 +1422,8 @@ const db = (() => {
   }
   function captureFrame(videoElement, quality = 0.95) { // Updated quality to 0.95
       const canvas = document.createElement('canvas');
-      canvas.width = videoElement.videoWidth;
-      canvas.height = videoElement.videoHeight;
+      canvas.width = videoElement.videoWidth * 1.5; // Increased resolution by 1.5x
+      canvas.height = videoElement.videoHeight * 1.5; // Increased resolution by 1.5x
       canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
       return canvas.toDataURL('image/jpeg', quality);
   }
