@@ -368,6 +368,12 @@
     font-weight: bold; /* Make it bold for emphasis */
   }
 
+  /* New style for manually entered Auftrag numbers */
+  .auftrag-manual-bold {
+    color: var(--text); /* Dark gray (effectively black) */
+    font-weight: bold;
+  }
+
   button:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
   .deleteBtn {
     background: #f8d7da; /* Light red background */
@@ -412,12 +418,21 @@
     color: #fff; /* White icon for filled notes */
     border-color: var(--primary); /* Primary blue border */
     box-shadow: var(--shadow-soft); /* Soft shadow for filled notes */
+    animation: blink-blue-red 1.5s infinite alternate; /* Apply blinking animation */
   }
   .noteToggleBtn.note-filled:hover {
     background: var(--primary-dark);
     border-color: var(--primary-dark);
     box-shadow: var(--shadow-medium);
     transform: scale(1.15); /* Keep hover effect */
+    animation: none; /* Stop blinking on hover */
+  }
+
+  /* Keyframes for blinking animation */
+  @keyframes blink-blue-red {
+    0% { background-color: var(--primary); }
+    50% { background-color: var(--danger); } /* Red color */
+    100% { background-color: var(--primary); }
   }
 
 
@@ -1168,8 +1183,13 @@ const db = (() => {
       const noteIcon = e.note ? '📖' : '➕';
       const noteTitle = e.note ? 'Notiz öffnen' : 'Notiz hinzufügen';
 
-      // Determine if the code should be colored
-      const codeClass = (e.code && (e.code.startsWith('FA') || e.code.startsWith('NA'))) ? 'auftrag-colored' : '';
+      // Determine if the code should be colored based on source or FA/NA prefix
+      let codeClass = '';
+      if (e.code && (e.code.startsWith('FA') || e.code.startsWith('NA') || e.source === 'scanner')) {
+          codeClass = 'auftrag-colored';
+      } else if (e.source === 'manual') {
+          codeClass = 'auftrag-manual-bold';
+      }
 
       return `
       <tr data-id="${e.id}">
@@ -1323,7 +1343,7 @@ const db = (() => {
   }
 
   // Új bejegyzés mentés
-  async function addNewEntry(code, image) {
+  async function addNewEntry(code, image, source) { // Added source parameter
       if (!code) return;
       if (entries.find(e => e.code === code)) {
           showCustomAlert('Diese ID ist bereits in der lokalen Liste vorhanden.', 'Hinweis');
@@ -1335,7 +1355,8 @@ const db = (() => {
           note: '',
           image: image,
           kepek: [],
-          category: currentCategory
+          category: currentCategory,
+          source: source // Store the source
       };
 
       try {
@@ -1373,14 +1394,14 @@ const db = (() => {
 
   // Eseménykezelők
   function saveScannedBarcode() {
-      addNewEntry(lastDetected.code, lastDetected.image);
+      addNewEntry(lastDetected.code, lastDetected.image, 'scanner'); // Pass 'scanner' source
       closeModal(scannerModal); // Close scanner modal after saving
   }
   function handleManualEntry() {
       // Using custom prompt for manual entry
       showCustomPrompt('Bitte geben Sie den Produktnamen oder die Kennung ein:', 'Manuelle Eingabe').then(manualCode => { // Changed to German
           if (manualCode && manualCode.trim() !== '') {
-              addNewEntry(manualCode.trim(), null);
+              addNewEntry(manualCode.trim(), null, 'manual'); // Pass 'manual' source
           }
       });
   }
