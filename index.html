@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<title>Traverse Protokoll</title>
+<!-- Font Awesome for icons -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+  /* Otto Lehmann inspired design - Maximum 3D Effect */
+  :root {
+    --bg: #f5f5f5; /* Light gray background */
+    --text: #333333; /* Dark gray text */
+    --muted: #666666; /* Medium gray for muted elements */
+    --primary: #0056b3; /* Otto Lehmann's blue */
+    --primary-dark: #004085; /* Darker blue for hover */
+    --accent: #28a745; /* A professional green for accent/success */
+    --success: #28a745; /* Green for success messages */
+    --danger: #dc3545; /* Red for danger/delete */
+    --border-color: #e0e0e0; /* Light gray border - This is for general borders, not grid specific now */
+    --card-bg: #ffffff; /* White card backgrounds */
+    --row-alt-bg: #f8f8f8; /* Very light gray for alternating table rows */
+    --note1: #fff3cd; /* Light yellow for notes */
+    --note2: #ffeeba; /* Slightly darker yellow for notes */
+    --secondary-grid-bg: #e0f2f7; /* Lighter blue for the second grid */
+
+    /* Even more pronounced, layered shadows for maximum 3D effect */
+    --shadow-soft: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15); /* Very strong base shadow */
+    --shadow-medium: 0 15px 30px rgba(0, 0, 0, 0.35), 0 25px 50px rgba(0, 0, 0, 0.25); /* Extremely deep shadow for modals/hover */
+    --shadow-active: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); /* Very strong pressed state shadow */
+  }
+
+  body {
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; /* Professional sans-serif font */
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6; /* Improved line height */
+    max-width: 960px; /* Slightly wider layout */
+    margin: 5px auto; /* Further reduced top margin for the body */
+    padding: 0 20px 40px; /* More padding */
+  }
+  body.modal-open {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+  }
+
+  .app-header {
+    position: relative;
+    text-align: center;
+    margin-bottom: 5px; /* Further reduced space below header */
+    padding-bottom: 10px; /* Reduced padding for visual separation */
+    border-bottom: 1px solid var(--border-color); /* Subtle line below header */
+  }
+
+  .app-title {
+    margin: 0;
+    font-size: 1.32em; /* Increased font size by 10% (1.2em * 1.10 = 1.32em) */
+    font-weight: 700; /* Bold title */
+    letter-spacing: -0.5px; /* Tighter letter spacing */
+    color: var(--primary); /* Otto Lehmann's primary blue */
+    text-shadow: none; /* No text shadow */
+  }
+
+  .app-logo {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    width: 25px; /* Reduced logo size */
+    height: 25px;
+    object-fit: contain;
+    border-radius: 5px; /* Slightly sharp corners */
+    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow to logo */
+    background: transparent; /* No background */
+  }
+
+  .category-label-container { /* This container is no longer needed as label is moved into .controls */
+    display: none; /* Hide if not used */
+  }
+
+  .grid { /* This style applies to both category grids */
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* Larger min-width for buttons */
+    gap: 15px; /* More gap */
+    margin-bottom: 10px; /* Reduced margin between grids */
+    background: var(--card-bg); /* Default white background for grids */
+    padding: 20px;
+    border-radius: 8px; /* Softly rounded corners */
+    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow */
+    border: 1px solid var(--text); /* Stronger black border for the grid containers */
+  }
+  /* Specific style for the second grid to have a light blue background */
+  #categoryGrid2 {
+    background: var(--secondary-grid-bg); /* Lighter blue for the second grid */
+  }
+
+  .grid button {
+    padding: 20px 10px;
+    font-size: 1.2em;
+    border-radius: 6px; /* Slightly sharper button corners */
+    border: 1px solid var(--text); /* Changed to strong black border */
+    cursor: pointer;
+    background: var(--primary);
+    color: #ffffff;
+    user-select: none;
+    transition: all 0.2s ease;
+    /* Applied even stronger 3D shadow to grid buttons */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
+    text-shadow: none;
+  }
+  .grid button.empty-category {
+    background: var(--card-bg); /* White background for empty */
+    color: var(--text);
+    border-color: var(--text); /* Strong black border for empty category button */
+    box-shadow: none;
+  }
+  .grid button:active {
+    transform: scale(0.96); /* More pronounced press effect */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); /* Deeper inset shadow on active */
+  }
+  .grid button:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    /* Even stronger shadow on hover */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3);
+  }
+  .grid button.empty-category:hover {
+    background: var(--row-alt-bg); /* Light hover for empty */
+    border-color: var(--muted); /* Darker border on hover */
+    box-shadow: none;
+  }
+  .grid button.active {
+    background: var(--success);
+    color: #fff;
+    border-color: var(--success);
+    box-shadow: var(--shadow-medium);
+  }
+  .grid button.active.empty-category {
+    background: var(--success);
+    color: #fff;
+    border-color: var(--success);
+  }
+
+
+  .controls {
+    margin-top: 25px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--border-color);
+  }
+  /* Specific style for the category label within controls */
+  .controls #categoryLabel {
+    order: -1; /* Move to the beginning of the flex container */
+    margin: 0 15px; /* Add horizontal margin for spacing */
+    flex-shrink: 0; /* Prevent label from shrinking too much */
+    font-weight: bold;
+    font-size: 2.2em; /* Doubled font size for category label */
+    text-align: center;
+    min-width: 50px; /* Give it some minimum width */
+    color: var(--primary); /* Make the number blue */
+    /* Removed frame styles from categoryLabel */
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    height: auto; /* Allow height to adjust to content */
+  }
+
+  .controls button {
+    font-size: 1.1em;
+    padding: 14px 22px;
+    border-radius: 6px;
+    border: none;
+    background: var(--primary); /* Primary blue for controls */
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    /* Applied even stronger 3D shadow to control buttons */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
+    text-shadow: none;
+  }
+  .controls button:active {
+    transform: scale(0.96); /* More pronounced press effect */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); /* Deeper inset shadow on active */
+  }
+  .controls button:hover {
+    background: var(--primary-dark);
+    /* Even stronger shadow on hover */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3);
+  }
+  /* Style for the QR code icon within the button */
+  .controls button i {
+    margin: 0 4px; /* Space between icons */
+  }
+
+  #mainControls { display: none; }
+  #openScannerBtn {
+      background-color: var(--primary);
+      color: white;
+      font-weight: bold;
+      /* Specific styles for the prominent Scannen button */
+      padding: 18px 25px; /* Larger padding */
+      font-size: 1.25em; /* Larger font size */
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3), 0 20px 40px rgba(0, 0, 0, 0.25); /* Even stronger shadow */
+  }
+  #openScannerBtn:hover {
+      background-color: var(--primary-dark);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3); /* Stronger hover shadow */
+  }
+  #openScannerBtn:active {
+      transform: scale(0.94); /* More pronounced active effect */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.25); /* Deeper active shadow */
+  }
+
+  #clearCategoryBtn {
+    background: var(--danger);
+    /* Specific styles for the trash icon button */
+    padding: 14px 22px; /* Match other control buttons' padding */
+    font-size: 1.1em; /* Match other control buttons' font size */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15); /* Match other control buttons' shadow */
+    color: #fff; /* White icon color */
+  }
+  #clearCategoryBtn:hover {
+    background: #c82333; /* Darker red on hover */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3); /* Stronger hover shadow */
+  }
+  #clearCategoryBtn:active {
+    transform: scale(0.96);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+
+
+  #listSection {
+    margin-top: 30px;
+    display: none;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow for table */
+    table-layout: fixed; /* Ensures columns take up available space evenly */
+  }
+  th, td {
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 12px;
+    text-align: center; /* Centered text for all table cells */
+    vertical-align: middle;
+    color: var(--text);
+    overflow: hidden; /* Hide overflowing content */
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    white-space: nowrap; /* Prevent text from wrapping */
+  }
+  th {
+    background: #f0f0f0; /* Lighter gray header */
+    font-weight: 700;
+    color: var(--muted); /* Muted text for headers */
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: none;
+  }
+  th:first-child { border-top-left-radius: 8px; }
+  th:last-child { border-top-right-radius: 8px; }
+  tr:last-child td { border-bottom: none; }
+
+  /* Column widths for better layout */
+  th:nth-child(1), td:nth-child(1) { width: 5%; } /* # */
+  th:nth-child(2), td:nth-child(2) { width: 25%; } /* Auftrag */
+  th:nth-child(3), td:nth-child(3) { width: 15%; } /* Datum */
+  th:nth-child(4), td:nth-child(4) { width: 10%; } /* Notiz */
+  th:nth-child(5), td:nth-child(5) { width: 25%; } /* Bilder */
+  th:nth-child(6), td:nth-child(6) { width: 10%; } /* Camera Icon */
+  th:nth-child(7), td:nth-child(7) { width: 10%; } /* Trash Icon */
+
+
+  #logBody tr:nth-child(even) { background-color: var(--row-alt-bg); }
+
+  /* Removed subtle-blink animation from td.has-text-cell */
+  td.has-text-cell {
+    animation: none;
+  }
+
+  button:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+  .deleteBtn {
+    background: #f8d7da; /* Light red background */
+    color: var(--danger);
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    padding: 8px 12px;
+    font-size: 0.85em;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    box-shadow: none;
+    display: inline-block; /* Ensure it's inline-block for centering with text-align */
+    margin: 0 auto; /* Center block element */
+  }
+  .deleteBtn:hover {
+    background: var(--danger);
+    color: #fff;
+    box-shadow: var(--shadow-soft);
+  }
+  .deleteBtn:active { transform: scale(0.95); }
+
+  .noteToggleBtn {
+    font-size: 1.5em; /* Larger icon */
+    background: none;
+    border: 1px solid transparent; /* Default transparent border */
+    cursor: pointer;
+    color: var(--muted); /* Muted color by default */
+    padding: 6px 10px;
+    line-height: 1;
+    transition: transform 0.15s ease, color 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    display: inline-block; /* Ensure it's inline-block for centering with text-align */
+    margin: 0 auto; /* Center block element */
+    box-shadow: none;
+    border-radius: 6px; /* Match other buttons slightly */
+  }
+  .noteToggleBtn:hover { transform: scale(1.15); color: var(--primary); }
+
+  /* New style for noteToggleBtn when it has a note */
+  .noteToggleBtn.note-filled {
+    background: var(--primary); /* Primary blue background for filled notes */
+    color: #fff; /* White icon for filled notes */
+    border-color: var(--primary); /* Primary blue border */
+    box-shadow: var(--shadow-soft); /* Soft shadow for filled notes */
+  }
+  .noteToggleBtn.note-filled:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    box-shadow: var(--shadow-medium);
+    transform: scale(1.15); /* Keep hover effect */
+  }
+
+
+  .photoRow {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+    flex-wrap: nowrap; /* Changed to nowrap to keep images side-by-side within a photoRow */
+    justify-content: center; /* Center images within photoRow */
+  }
+  .photoRow img, .photo-cell img {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    object-fit: cover;
+    background: var(--card-bg);
+    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow for images */
+  }
+
+  .addExtraPhotoBtn { /* Specific style for the camera button */
+    display: inline-flex; /* Use flex to align icon and text/plus if any */
+    align-items: center;
+    justify-content: center;
+    padding: 8px 12px;
+    font-size: 1.5em; /* Larger icon size */
+    border-radius: 5px;
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-soft);
+    margin: 0 auto; /* Center block element */
+  }
+  .addExtraPhotoBtn:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    box-shadow: var(--shadow-medium);
+  }
+  .addExtraPhotoBtn:active {
+    transform: scale(0.95);
+    box-shadow: var(--shadow-active);
+  }
+
+
+  .modal-overlay {
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.6); /* Slightly lighter overlay */
+    display:none;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    z-index: 9999;
+    padding: 20px;
+  }
+  .modal-overlay video {
+    width: 90vw; /* Slightly narrower video */
+    max-width: 700px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: var(--shadow-medium); /* Applied stronger shadow for video modal */
+    border: 1px solid var(--border-color);
+  }
+  .modal-controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .modal-controls button {
+    font-size: 1.05em;
+    padding: 12px 20px;
+    border-radius: 5px;
+    border: none;
+    background: var(--primary);
+    color: #fff;
+    backdrop-filter: none; /* No blur */
+    box-shadow: var(--shadow-soft);
+  }
+  .modal-controls button:hover { background: var(--primary-dark); box-shadow: var(--shadow-medium); }
+  .modal-controls button:active { transform: scale(0.98); }
+
+  /* Image Modal Navigation Buttons */
+  #imageModal .modal-controls {
+      position: absolute; /* Position relative to .modal-overlay */
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px; /* Padding from edges */
+      pointer-events: none; /* Allow clicks to pass through to underlying image if no button */
+  }
+
+  #imageModal .modal-controls button {
+      font-size: 2em; /* Larger arrows */
+      padding: 10px 15px;
+      border-radius: 50%; /* Round buttons */
+      background: rgba(0,0,0,0.3); /* Darker translucent background for arrows */
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.5); /* Semi-transparent white border */
+      backdrop-filter: blur(5px);
+      cursor: pointer;
+      pointer-events: all; /* Make buttons clickable */
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      box-shadow: var(--shadow-soft); /* Soft shadow for arrows */
+  }
+  #imageModal .modal-controls button:hover {
+      background: rgba(0,0,0,0.5); /* Darker on hover */
+      box-shadow: var(--shadow-medium);
+  }
+  #imageModal .modal-controls button:active {
+      transform: scale(0.9) translateY(-50%); /* Adjusted active transform */
+  }
+  #imageModal .modal-controls button:disabled {
+      opacity: 0.3;
+      cursor: default;
+      box-shadow: none;
+  }
+
+
+  #scannerDetectedCode {
+    margin-top: 18px;
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--primary); /* Primary blue for detected code */
+    background: var(--card-bg);
+    padding: 10px 20px;
+    border-radius: 8px;
+    min-height: 2.5em;
+    text-align: center;
+    line-height: 2.5em;
+    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow */
+    border: 1px solid var(--border-color);
+  }
+
+  #imageModal img {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 8px;
+    box-shadow: var(--shadow-medium); /* Applied stronger shadow */
+    background: #000;
+    border: 1px solid var(--border-color);
+  }
+
+  .note-modal-content {
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 8px;
+    width: 90vw;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    box-shadow: var(--shadow-medium); /* Applied stronger shadow */
+    border: 1px solid var(--border-color);
+  }
+  .note-modal-content h2 {
+    margin: 0 0 10px;
+    font-size: 1.8em;
+    color: var(--primary);
+  }
+  .note-modal-content p {
+    color: var(--text);
+  }
+  .note-modal-content textarea {
+    width: 100%;
+    height: 160px;
+    font-size: 1.5em; /* Increased font size to 1.5em */
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background: var(--bg);
+    color: var(--text);
+    resize: vertical;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); /* Stronger inset shadow */
+  }
+  .note-modal-content button {
+    font-size: 1.05em;
+    padding: 12px 20px;
+    border-radius: 5px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    align-self: flex-end;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.2s ease;
+  }
+  .note-modal-content button:hover { background: var(--primary-dark); box-shadow: var(--shadow-medium); }
+  .note-modal-content button:active { transform: scale(0.98); }
+
+  /* Custom Alert/Confirm/Prompt Modals */
+  #customAlertModal .note-modal-content,
+  #customConfirmModal .note-modal-content,
+  #customPromptModal .note-modal-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-medium); /* Applied stronger shadow */
+  }
+  #customAlertModal h2, #customConfirmModal h2, #customPromptModal h2 {
+    color: var(--primary);
+  }
+  #customPromptInput {
+    background: var(--bg);
+    border: 1px solid var(--border-color);
+    color: var(--text);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); /* Stronger inset shadow */
+  }
+  #customAlertCloseBtn, #customConfirmOkBtn, #customPromptOkBtn {
+    background: var(--primary) !important;
+    color: white !important;
+    border: none !important;
+    box-shadow: var(--shadow-soft) !important;
+  }
+  #customConfirmCancelBtn, #customPromptCancelBtn {
+    background: #cccccc !important; /* Light gray for cancel */
+    color: var(--text) !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  #customAlertCloseBtn:hover, #customConfirmOkBtn:hover, #customPromptOkBtn:hover {
+    background: var(--primary-dark) !important;
+    box-shadow: var(--shadow-medium) !important;
+  }
+  #customConfirmCancelBtn:hover, #customPromptCancelBtn:hover {
+    background: #bbbbbb !important;
+  }
+
+
+  @media (max-width: 700px) {
+    body { padding: 0 15px 30px; }
+    .grid { padding: 15px; gap: 10px; }
+    .grid button { padding: 16px 8px; font-size: 1.1em; }
+    .controls { padding: 15px; gap: 10px; }
+    .controls button { padding: 12px 18px; font-size: 1em; }
+    table { display: block; overflow-x: auto; white-space: nowrap; border-radius: 8px; }
+    th:first-child { border-top-left-radius: 8px; }
+    th:last-child { border-top-right-radius: 8px; }
+    .photoRow img, .photo-cell img { width: 50px; height: 50px; border-radius: 4px; }
+    .app-title { font-size: 1.2em; } /* Adjusted for mobile */
+    .app-logo { width: 25px; height: 25px; } /* Adjusted for mobile */
+  }
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+  <div class="app-header">
+    <h1 class="app-title">Traversendaten</h1> <!-- Changed to Traversendaten -->
+    <img src="https://raw.githubusercontent.com/borosrp/Lehmann/main/678faae0b502486ddb2840cc.png" alt="Traversen Logó" class="app-logo" />
+  </div>
+
+  <div class="grid" id="categoryGrid1"></div> <!-- First grid for buttons 1-16 -->
+  <div class="grid" id="categoryGrid2"></div> <!-- Second grid for buttons 17-28 -->
+
+  <div id="mainControls">
+    <div class="controls">
+        <div id="categoryLabel" style="font-weight: bold; font-size: 2.2em; text-align: center; color: var(--primary);"></div> <!-- Moved here and increased font-size -->
+        <button id="manualEntryBtn">Manuelle Eingabe</button>
+        <button id="openScannerBtn"><i class="fas fa-qrcode"></i> <i class="fas fa-barcode"></i></button>
+        <button id="clearCategoryBtn"><i class="fas fa-trash-alt"></i></button>
+    </div>
+  </div>
+
+  <div id="listSection">
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Auftrag</th>
+          <th>Datum</th>
+          <th>Notiz</th>
+          <th>Bilder</th>
+          <th><i class="fas fa-camera"></i></th>
+          <th><i class="fas fa-trash-alt"></i></th>
+        </tr>
+      </thead>
+      <tbody id="logBody"></tbody>
+    </table>
+  </div>
+
+  <div id="imageModal" class="modal-overlay">
+    <img id="modalImage" src="" alt="Bild vergrötesn" />
+    <div class="modal-controls">
+      <button id="imageModalPrevBtn"><i class="fas fa-chevron-left"></i></button>
+      <button id="imageModalNextBtn"><i class="fas fa-chevron-right"></i></button>
+    </div>
+  </div>
+
+  <div id="cameraModal" class="modal-overlay">
+    <video id="cameraModalVideo" autoplay muted playsinline></video>
+    <div class="modal-controls">
+        <button id="cancelCameraButton">Abbrechen</button>
+        <button id="takePhotoButton">Foto</button>
+    </div>
+  </div>
+
+  <div id="scannerModal" class="modal-overlay">
+    <video id="scannerVideo" autoplay muted playslines></video>
+    <div id="scannerDetectedCode">Suche...</div>
+    <div class="modal-controls">
+        <button id="scannerCancelBtn">Abbrechen</button>
+        <button id="scannerSaveBtn" disabled>Speichern</button>
+    </div>
+  </div>
+
+  <div id="noteModal" class="modal-overlay">
+    <div class="note-modal-content">
+      <h2>Notiz bearbeiten</h2>
+      <textarea id="noteModalTextarea"></textarea>
+      <button id="noteModalSaveBtn">Speichern & Schließen</button>
+    </div>
+  </div>
+
+<script>
+/* --- IndexedDB (lokális DB) --- */
+const db = (() => {
+    let dbInstance;
+    function openDB() {
+        return new Promise((resolve, reject) => {
+            if (dbInstance) { resolve(dbInstance); return; }
+            const request = indexedDB.open('BarcodeDB_v2', 1);
+            request.onerror = (event) => reject('Datenbankfehler: ' + event.target.errorCode);
+            request.onsuccess = (event) => { dbInstance = event.target.result; resolve(dbInstance); };
+            request.onupgradeneeded = (event) => {
+                const db = event.target.result;
+                const objectStore = db.createObjectStore('entries', { keyPath: 'id', autoIncrement: true });
+                objectStore.createIndex('category', 'category', { unique: false });
+                objectStore.createIndex('category_code', ['category', 'code'], { unique: true });
+            };
+        });
+    }
+    async function performTransaction(storeName, mode, action) {
+        const db = await openDB();
+        const transaction = db.transaction(storeName, mode);
+        const store = transaction.objectStore(storeName);
+        return new Promise((resolve, reject) => {
+            const request = action(store);
+            request.onsuccess = () => resolve(request.result);
+            request.onerror = (event) => reject(event.target.error);
+        });
+    }
+    return {
+        addEntry: (entry) => performTransaction('entries', 'readwrite', store => store.add(entry)),
+        getEntriesForCategory: (category) => performTransaction('entries', 'readonly', store => store.index('category').getAll(category)),
+        updateEntry: (entry) => performTransaction('entries', 'readwrite', store => store.put(entry)),
+        deleteEntry: (id) => performTransaction('entries', 'readwrite', store => store.delete(id)),
+        getEntryCountForCategory: (category) => performTransaction('entries', 'readonly', store => store.index('category').count(category)), // New function to count entries
+        clearCategory: async (category) => {
+            const db = await openDB();
+            const transaction = db.transaction('entries', 'readwrite');
+            const store = transaction.objectStore('entries');
+            const index = store.index('category');
+            const request = index.openCursor(IDBKeyRange.only(category));
+            request.onsuccess = (event) => {
+                const cursor = event.target.result;
+                if (cursor) { store.delete(cursor.primaryKey); cursor.continue(); }
+            };
+            return new Promise((resolve, reject) => { transaction.oncomplete = () => resolve(); transaction.onerror = (event) => reject(event.target.error); });
+        }
+    };
+})();
+
+/* --- Fő alkalmazáslogika --- */
+(async function(){
+  // DOM elemek
+  const categoryGrid1 = document.getElementById('categoryGrid1');
+  const categoryGrid2 = document.getElementById('categoryGrid2');
+  const categoryLabel = document.getElementById('categoryLabel'); // Moved outside mainControls
+  const mainControls = document.getElementById('mainControls');
+  const listSection = document.getElementById('listSection');
+  const logBody = document.getElementById('logBody');
+
+  // Modálok
+  const imageModal = document.getElementById('imageModal');
+  const modalImage = document.getElementById('modalImage');
+  const cameraModal = document.getElementById('cameraModal');
+  const cameraModalVideo = document.getElementById('cameraModalVideo');
+  const takePhotoButton = document.getElementById('takePhotoButton');
+  const cancelCameraButton = document.getElementById('cancelCameraButton');
+  const scannerModal = document.getElementById('scannerModal');
+  const scannerVideo = document.getElementById('scannerVideo');
+  const scannerDetectedCode = document.getElementById('scannerDetectedCode');
+  const scannerSaveBtn = document.getElementById('scannerSaveBtn');
+  const scannerCancelBtn = document.getElementById('scannerCancelBtn');
+  const noteModal = document.getElementById('noteModal');
+  const noteModalTextarea = document.getElementById('noteModalTextarea');
+  const noteModalSaveBtn = document.getElementById('noteModalSaveBtn');
+
+  // Gombok
+  const openScannerBtn = document.getElementById('openScannerBtn');
+  const manualEntryBtn = document.getElementById('manualEntryBtn');
+  const clearCategoryBtn = document.getElementById('clearCategoryBtn');
+
+  // Állapot
+  let currentCategory = null;
+  let entries = [];
+  let modalStream = null;
+  let entryIdToUpdate = null;
+  let noteEntryIdToUpdate = null;
+  let scannerRafId = null;
+  let lastDetected = { code: null, image: null };
+
+  // Global state for image modal carousel
+  let currentModalImages = [];
+  let currentModalImageIndex = 0;
+
+
+  const detector = ('BarcodeDetector' in window) ? new BarcodeDetector({formats: ['qr_code','ean_13','ean_8','code_128','code_39','upc_a','upc_e']}) : null;
+
+  // Kategóriagombok létrehozása és inicializálása
+  for(let i=1; i<=16; i++){
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    btn.addEventListener('click', () => selectCategory(i, btn));
+    categoryGrid1.appendChild(btn);
+  }
+
+  for(let i=17; i<=28; i++){
+    const btn = document.createElement('button');
+    btn.textContent = i;
+    btn.addEventListener('click', () => selectCategory(i, btn));
+    categoryGrid2.appendChild(btn);
+  }
+
+  // Funkció a kategóriagombok színeinek frissítésére
+  async function updateCategoryButtonColors() {
+    const allCategoryButtons = document.querySelectorAll('.grid button'); // Select all buttons in any grid
+    for (const button of allCategoryButtons) {
+      const categoryNum = parseInt(button.textContent);
+      const count = await db.getEntryCountForCategory(categoryNum);
+      if (count === 0) {
+        button.classList.add('empty-category');
+      } else {
+        button.classList.remove('empty-category');
+      }
+    }
+  }
+
+  // Kategóriaváltás
+  async function selectCategory(num, btn){
+    if(currentCategory === num) return;
+    // Remove active class from ALL category buttons, regardless of grid
+    const prevActive = document.querySelector('.grid button.active');
+    if(prevActive) prevActive.classList.remove('active');
+    btn.classList.add('active');
+    currentCategory = num;
+
+    categoryLabel.textContent = `${num}`; // Only display the number
+    mainControls.style.display = 'block';
+    listSection.style.display = 'block';
+
+    try {
+        entries = await db.getEntriesForCategory(currentCategory);
+        renderTable();
+        await updateCategoryButtonColors();
+    }
+    catch (e) {
+        console.error("Fehler beim Lesen der Datenbank:", e);
+        showCustomAlert('Fehler beim Laden der Traverse.', 'Fehler');
+    }
+  }
+
+  // Custom alert function
+  function showCustomAlert(message, title = 'Info') {
+    const existingModal = document.getElementById('customAlertModal');
+    if (existingModal) existingModal.remove();
+
+    const alertModal = document.createElement('div');
+    alertModal.id = 'customAlertModal';
+    alertModal.classList.add('modal-overlay');
+    alertModal.innerHTML = `
+      <div class="note-modal-content">
+        <h2>${title}</h2>
+        <p>${message}</p>
+        <button id="customAlertCloseBtn" style="background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; align-self: flex-end;">OK</button>
+      </div>
+    `;
+    document.body.appendChild(alertModal);
+    alertModal.style.display = 'flex';
+    document.body.classList.add('modal-open');
+
+    document.getElementById('customAlertCloseBtn').addEventListener('click', () => {
+      alertModal.style.display = 'none';
+      document.body.classList.remove('modal-open');
+      alertModal.remove();
+    });
+    alertModal.addEventListener('click', (e) => {
+      if (e.target === alertModal) {
+        alertModal.style.display = 'none';
+        document.body.classList.remove('modal-open');
+        alertModal.remove();
+      }
+    });
+  }
+
+  // Custom confirmation function
+  function showCustomConfirm(message, title = 'Bestätigung') {
+    return new Promise(resolve => {
+      const existingModal = document.getElementById('customConfirmModal');
+      if (existingModal) existingModal.remove();
+
+      const confirmModal = document.createElement('div');
+      confirmModal.id = 'customConfirmModal';
+      confirmModal.classList.add('modal-overlay');
+      confirmModal.innerHTML = `
+        <div class="note-modal-content">
+          <h2>${title}</h2>
+          <p>${message}</p>
+          <div style="display: flex; justify-content: flex-end; gap: 10px;">
+            <button id="customConfirmCancelBtn" style="background: #ccc; color: var(--text); border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">Abbrechen</button>
+            <button id="customConfirmOkBtn" style="background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">Löschen</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(confirmModal);
+      confirmModal.style.display = 'flex';
+      document.body.classList.add('modal-open');
+
+      document.getElementById('customConfirmOkBtn').addEventListener('click', () => {
+        confirmModal.style.display = 'none';
+        document.body.classList.remove('modal-open');
+        confirmModal.remove();
+        resolve(true);
+      });
+      document.getElementById('customConfirmCancelBtn').addEventListener('click', () => {
+        confirmModal.style.display = 'none';
+        document.body.classList.remove('modal-open');
+        confirmModal.remove();
+        resolve(false);
+      });
+      confirmModal.addEventListener('click', (e) => {
+        if (e.target === confirmModal) {
+          confirmModal.style.display = 'none';
+          document.body.classList.remove('modal-open');
+          confirmModal.remove();
+        }
+      });
+    });
+  }
+
+  // Function to open the image modal with carousel capability
+  function openImageModal(images, startIndex) {
+      currentModalImages = images;
+      currentModalImageIndex = startIndex;
+
+      modalImage.src = currentModalImages[currentModalImageIndex];
+      imageModal.style.display = 'flex';
+      document.body.classList.add('modal-open');
+
+      updateImageModalNavigation();
+  }
+
+  // Function to update navigation button visibility
+  function updateImageModalNavigation() {
+      const prevBtn = document.getElementById('imageModalPrevBtn');
+      const nextBtn = document.getElementById('imageModalNextBtn');
+
+      if (currentModalImages.length <= 1) {
+          prevBtn.style.display = 'none';
+          nextBtn.style.display = 'none';
+      } else {
+          prevBtn.style.display = 'inline-flex'; // Use inline-flex for centering icon
+          nextBtn.style.display = 'inline-flex';
+
+          prevBtn.disabled = (currentModalImageIndex === 0);
+          nextBtn.disabled = (currentModalImageIndex === currentModalImages.length - 1);
+      }
+  }
+
+  // Navigation functions
+  function showNextImage() {
+      if (currentModalImageIndex < currentModalImages.length - 1) {
+          currentModalImageIndex++;
+          modalImage.src = currentModalImages[currentModalImageIndex];
+          updateImageModalNavigation();
+      }
+  }
+
+  function showPrevImage() {
+      if (currentModalImageIndex > 0) {
+          currentModalImageIndex--;
+          modalImage.src = currentModalImages[currentModalImageIndex];
+          updateImageModalNavigation();
+      }
+  }
+
+  // Táblázat renderelés
+  function renderTable(){
+    const sortedEntries = entries.slice().sort((a,b)=> new Date(b.date) - new Date(a.date));
+    logBody.innerHTML = sortedEntries.map((e,i) => {
+      const entryDate = new Date(e.date);
+      const formattedDate = entryDate.toLocaleDateString('de-DE'); // Only date part
+      const formattedTime = entryDate.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }); // Only time part
+
+      const allImageSources = [e.image, ...(e.kepek || [])].filter(Boolean);
+      let photosCellHtml = '';
+      // Loop through images, 2 per row
+      for (let j = 0; j < allImageSources.length; j += 2) {
+        photosCellHtml += `<div class="photoRow">${allImageSources.slice(j, j + 2).map(src => `<img src="${src}" alt="Bild">`).join('')}</div>`;
+      }
+
+      const noteIcon = e.note ? '📖' : '➕';
+      const noteTitle = e.note ? 'Notiz öffnen' : 'Notiz hinzufügen';
+
+      return `
+      <tr data-id="${e.id}">
+        <td>${i+1}</td>
+        <td>${e.code}</td>
+        <td>
+          ${formattedDate}<br>
+          <span style="font-size: 0.85em; color: var(--muted);">${formattedTime}</span>
+        </td>
+        <td><button class="noteToggleBtn ${e.note ? 'note-filled' : ''}" data-id="${e.id}" title="${noteTitle}" aria-label="${noteTitle}"><i class="fas ${e.note ? 'fa-book' : 'fa-plus'}"></i></button></td>
+        <td class="photo-cell">${photosCellHtml}</td>
+        <td><button class="addExtraPhotoBtn" data-id="${e.id}" title="Zusätzliches Bild"><i class="fas fa-camera"></i></button></td>
+        <td><button class="deleteBtn" data-id="${e.id}" data-code="${e.code}" title="Löschen"><i class="fas fa-trash-alt"></i></button></td>
+      </tr>`;
+    }).join('');
+    attachTableEventListeners();
+  }
+
+  function attachTableEventListeners() {
+      logBody.querySelectorAll('.deleteBtn').forEach(btn => btn.addEventListener('click', handleDelete));
+      logBody.querySelectorAll('.noteToggleBtn').forEach(btn => btn.addEventListener('click', openNoteModal));
+      logBody.querySelectorAll('.photo-cell img').forEach(img => img.addEventListener('click', (event) => {
+          const entryId = parseInt(event.target.closest('tr').dataset.id);
+          const entry = entries.find(e => e.id === entryId);
+          if (entry) {
+              const allImageSources = [entry.image, ...(entry.kepek || [])].filter(Boolean);
+              const clickedImageSrc = event.target.src;
+              const clickedImageIndex = allImageSources.indexOf(clickedImageSrc);
+
+              openImageModal(allImageSources, clickedImageIndex);
+          }
+      }));
+      logBody.querySelectorAll('.addExtraPhotoBtn').forEach(btn => btn.addEventListener('click', openCameraModal));
+  }
+
+  // Törlés
+  async function handleDelete(event) {
+      const id = parseInt(event.currentTarget.dataset.id);
+      const confirmed = await showCustomConfirm(`Sind Sie sicher, dass Sie den Eintrag mit der Traverse ${currentCategory} löschen möchten?`, 'Bestätigung');
+      if (confirmed) {
+          await db.deleteEntry(id);
+          entries = entries.filter(e => e.id !== id);
+          renderTable();
+          await updateCategoryButtonColors(); // Update colors after clearing category
+      }
+  }
+
+  // Jegyzet modal
+  function openNoteModal(event) {
+    noteEntryIdToUpdate = parseInt(event.currentTarget.dataset.id);
+    const entry = entries.find(e => e.id === noteEntryIdToUpdate);
+    if (entry) {
+      noteModalTextarea.value = entry.note || '';
+      noteModal.style.display = 'flex';
+      document.body.classList.add('modal-open');
+    }
+  }
+
+  async function saveNoteFromModal() {
+    const entry = entries.find(e => e.id === noteEntryIdToUpdate);
+    if (entry) {
+      entry.note = noteModalTextarea.value;
+      await db.updateEntry(entry);
+      renderTable();
+    }
+    noteModal.style.display = 'none';
+    document.body.classList.remove('modal-open');
+  }
+
+  // Extra fotó felvétele
+  async function openCameraModal(event) {
+      entryIdToUpdate = parseInt(event.currentTarget.dataset.id);
+      if(isNaN(entryIdToUpdate)) return;
+      await openModal(cameraModal, cameraModalVideo);
+  }
+
+  async function takePhotoAndSave() {
+      const imageDataUrl = captureFrame(cameraModalVideo);
+      const entry = entries.find(e => e.id === entryIdToUpdate);
+      if (entry) {
+          if (!entry.kepek) entry.kepek = [];
+          entry.kepek.push(imageDataUrl);
+          await db.updateEntry(entry);
+          renderTable();
+          navigator.vibrate?.(100);
+      }
+      closeModal(cameraModal);
+  }
+
+  // Barcode szkenner
+  async function openScannerModal() {
+      if(!detector) { showCustomAlert('Ihr Browser unterstützt das Scannen von Barcodes nicht.', 'Fehler'); return; }
+      lastDetected = { code: null, image: null };
+      scannerSaveBtn.disabled = true;
+      scannerDetectedCode.textContent = 'Suche...';
+      await openModal(scannerModal, scannerVideo);
+      scannerRafId = requestAnimationFrame(scannerLoop);
+  }
+  async function scannerLoop() {
+      if (!modalStream) return;
+      const canvas = document.createElement('canvas');
+      canvas.width = scannerVideo.videoWidth;
+      canvas.height = scannerVideo.videoHeight;
+      canvas.getContext('2d').drawImage(scannerVideo, 0, 0, canvas.width, canvas.height);
+      try {
+          const barcodes = await detector.detect(canvas);
+          if (barcodes.length > 0 && barcodes[0].rawValue !== lastDetected.code) {
+              lastDetected.code = barcodes[0].rawValue;
+              lastDetected.image = captureFrame(scannerVideo, 0.95); // Updated quality to 0.95
+              scannerDetectedCode.textContent = lastDetected.code;
+              scannerSaveBtn.disabled = false;
+              navigator.vibrate?.(100);
+          }
+      } catch (e) { console.error(e); }
+      scannerRafId = requestAnimationFrame(scannerLoop);
+  }
+
+  // Új bejegyzés mentés
+  async function addNewEntry(code, image) {
+      if (!code) return;
+      if (entries.find(e => e.code === code)) {
+          showCustomAlert('Diese ID ist bereits in der lokalen Liste vorhanden.', 'Hinweis');
+          return;
+      }
+      const newEntry = {
+          code: code,
+          date: new Date().toISOString(),
+          note: '',
+          image: image,
+          kepek: [],
+          category: currentCategory
+      };
+
+      try {
+          const newId = await db.addEntry(newEntry);
+          newEntry.id = newId;
+          entries.push(newEntry);
+          renderTable();
+          await updateCategoryButtonColors(); // Update colors after adding new entry
+
+          const webAppUrl = 'https://script.google.com/macros/s/AKfycbz7cN31qlQVBxpMmJIpyyV-bDHaI-i3vxG06vPv3pKurSpdxVHDKcN95oJtfAME2P_5/exec';
+          const dataForSheet = {
+              code: newEntry.code,
+              date: new Date(newEntry.date).toLocaleString('de-DE'),
+              category: newEntry.category
+          };
+          fetch(webAppUrl, {
+              method: 'POST',
+              mode: 'no-cors',
+              body: JSON.stringify(dataForSheet)
+          }).catch(error => console.error('Fehler beim Senden an Google Tabelle:', error));
+
+      } catch(e) {
+          showCustomAlert('Fehler beim lokalen Speichern! Die Daten wurden nem mentve.', 'Fehler');
+          console.error('Fehler beim lokalen Speichern:', e);
+      }
+  }
+
+  // Eseménykezelők
+  function saveScannedBarcode() {
+      addNewEntry(lastDetected.code, lastDetected.image);
+      closeModal(scannerModal);
+  }
+  function handleManualEntry() {
+      // Using custom prompt for manual entry
+      showCustomPrompt('Bitte geben Sie den Produktnamen oder die Kennung ein:', 'Manuelle Eingabe').then(manualCode => {
+          if (manualCode && manualCode.trim() !== '') {
+              addNewEntry(manualCode.trim(), null);
+          }
+      });
+  }
+
+  // Custom prompt function
+  function showCustomPrompt(message, title = 'Eingabe') {
+    return new Promise(resolve => {
+      const existingModal = document.getElementById('customPromptModal');
+      if (existingModal) existingModal.remove();
+
+      const promptModal = document.createElement('div');
+      promptModal.id = 'customPromptModal';
+      promptModal.classList.add('modal-overlay');
+      promptModal.innerHTML = `
+        <div class="note-modal-content">
+          <h2>${title}</h2>
+          <p>${message}</p>
+          <input type="text" id="customPromptInput" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+          <div style="display: flex; justify-content: flex-end; gap: 10px; margin-top: 15px;">
+            <button id="customPromptCancelBtn" style="background: #ccc; color: var(--text); border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">Abbrechen</button>
+            <button id="customPromptOkBtn" style="background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">OK</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(promptModal);
+      promptModal.style.display = 'flex';
+      document.body.classList.add('modal-open');
+
+      const input = document.getElementById('customPromptInput');
+      input.focus();
+
+      document.getElementById('customPromptOkBtn').addEventListener('click', () => {
+        promptModal.style.display = 'none';
+        document.body.classList.remove('modal-open');
+        promptModal.remove();
+        resolve(input.value);
+      });
+      document.getElementById('customPromptCancelBtn').addEventListener('click', () => {
+        promptModal.style.display = 'none';
+        document.body.classList.remove('modal-open');
+        promptModal.remove();
+        resolve(null); // Resolve with null if cancelled
+      });
+      promptModal.addEventListener('click', (e) => {
+        if (e.target === promptModal) {
+          promptModal.style.display = 'none';
+          document.body.classList.remove('modal-open');
+          promptModal.remove();
+        }
+      });
+    });
+  }
+
+  // Modal/Kamera helper
+  async function openModal(modal, videoElement) {
+      try {
+          modalStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
+          videoElement.srcObject = modalStream;
+          modal.style.display = 'flex';
+          document.body.classList.add('modal-open');
+      } catch (e) {
+          showCustomAlert('Kamerafehler: ' + e.message, 'Fehler');
+      }
+  }
+  function closeModal(modal) {
+      if (modalStream) {
+          modalStream.getTracks().forEach(track => track.stop());
+          modalStream = null;
+      }
+      if (scannerRafId) {
+          cancelAnimationFrame(scannerRafId);
+          scannerRafId = null;
+      }
+      modal.style.display = 'none';
+      document.body.classList.remove('modal-open');
+  }
+  function captureFrame(videoElement, quality = 0.95) { // Updated quality to 0.95
+      const canvas = document.createElement('canvas');
+      canvas.width = videoElement.videoWidth;
+      canvas.height = videoElement.videoHeight;
+      canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
+      return canvas.toDataURL('image/jpeg', quality);
+  }
+
+  // Listener-ek
+  openScannerBtn.addEventListener('click', openScannerModal);
+  scannerCancelBtn.addEventListener('click', () => closeModal(scannerModal));
+  scannerSaveBtn.addEventListener('click', saveScannedBarcode);
+  manualEntryBtn.addEventListener('click', handleManualEntry);
+  noteModalSaveBtn.addEventListener('click', saveNoteFromModal);
+
+  takePhotoButton.addEventListener('click', takePhotoAndSave);
+  cancelCameraButton.addEventListener('click', () => closeModal(cameraModal));
+
+  // Image modal navigation listeners
+  document.getElementById('imageModalPrevBtn').addEventListener('click', showPrevImage);
+  document.getElementById('imageModalNextBtn').addEventListener('click', showNextImage);
+
+  imageModal.addEventListener('click', (e) => {
+      if (e.target === imageModal) { // Only close if clicking on the overlay, not the image or buttons
+          imageModal.style.display = 'none';
+          document.body.classList.remove('modal-open');
+      }
+  });
+  noteModal.addEventListener('click', (e) => {
+      if (e.target === noteModal) {
+          noteModal.style.display = 'none'; document.body.classList.remove('modal-open');
+        }
+  });
+
+  clearCategoryBtn.addEventListener('click', async () => {
+    const confirmed = await showCustomConfirm(`Sind Sie sicher, dass Sie den Eintrag mit der Traverse ${currentCategory} löschen möchten?`, 'Bestätigung');
+    if(confirmed){
+      await db.clearCategory(currentCategory);
+      entries = [];
+      renderTable();
+      await updateCategoryButtonColors(); // Update colors after clearing category
+    }
+  });
+
+  window.addEventListener('beforeunload', function (e) {
+    e.preventDefault();
+    e.returnValue = '';
+  });
+
+  // Initial call to update button colors when the page loads
+  window.onload = updateCategoryButtonColors;
+
+})();
+</script>
+</body>
+</html>
