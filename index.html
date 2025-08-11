@@ -71,6 +71,7 @@
 
   .grid { /* This style applies to both category grids */
     display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); /* Responsive columns: auto-fit with minimum 70px width */
     gap: 15px; /* More gap */
     margin-bottom: 10px; /* Reduced margin between grids */
     background: var(--card-bg); /* Default white background for grids */
@@ -84,13 +85,15 @@
     background: var(--secondary-grid-bg); /* Lighter blue for the second grid */
   }
 
-  /* Fixed grid columns to ensure two rows */
-  #categoryGrid1 {
-    grid-template-columns: repeat(8, minmax(70px, 1fr)); /* 16 buttons / 8 columns = 2 rows */
-  }
-  #categoryGrid2 {
-    grid-template-columns: repeat(6, minmax(70px, 1fr)); /* 12 buttons / 6 columns = 2 rows */
-  }
+  /* Removed fixed grid columns for larger screens to ensure full responsiveness */
+  /* @media (min-width: 768px) {
+    #categoryGrid1 {
+      grid-template-columns: repeat(8, 1fr);
+    }
+    #categoryGrid2 {
+      grid-template-columns: repeat(6, 1fr);
+    }
+  } */
 
   .grid button {
     padding: 20px 10px;
