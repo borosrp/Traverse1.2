@@ -1127,7 +1127,7 @@ const db = (() => {
           await updateCategoryButtonColors(); // Update colors after clearing category
           // Update the categoryLabel colors after clearing the category
           categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey after clearing */
-          categoryLabelRight.style.color = 'var(--muted)'; /* Light grey after clearing */
+          // categoryLabelRight.style.color = 'var(--muted)'; /* Removed update for right label */
           // Update control buttons color after clearing
           updateControlButtonsColor(true);
         }
@@ -1229,7 +1229,7 @@ const db = (() => {
           // Update the categoryLabel colors if a new entry is added to an empty category
           if (entries.length === 1) { // If it was empty and now has one entry
               categoryLabelLeft.style.color = 'var(--primary)';
-              categoryLabelRight.style.color = 'var(--primary)';
+              // categoryLabelRight.style.color = 'var(--primary)'; // Removed update for right label
               // Update control buttons color
               updateControlButtonsColor(false);
           }
@@ -1384,7 +1384,7 @@ const db = (() => {
       await updateCategoryButtonColors(); // Update colors after clearing category
       // Update the categoryLabel colors after clearing the category
       categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey after clearing */
-      categoryLabelRight.style.color = 'var(--muted)'; /* Light grey after clearing */
+      // categoryLabelRight.style.color = 'var(--muted)'; /* Removed update for right label */
       // Update control buttons color after clearing
       updateControlButtonsColor(true);
     }
