@@ -362,13 +362,13 @@
     animation: none;
   }
 
-  /* New style for Auftrag numbers starting with FA or NA */
+  /* New style for Auftrag numbers starting with FA or NA or scanned */
   .auftrag-colored {
     color: var(--primary); /* Blue color */
     font-weight: bold; /* Make it bold for emphasis */
   }
 
-  /* New style for manually entered Auftrag numbers */
+  /* New style for manually entered Auftrag numbers (not FA/NA) */
   .auftrag-manual-bold {
     color: var(--text); /* Dark gray (effectively black) */
     font-weight: bold;
@@ -1186,10 +1186,10 @@ const db = (() => {
 
       // Determine if the code should be colored based on source or FA/NA prefix
       let codeClass = '';
-      if (e.code && (e.code.startsWith('FA') || e.code.startsWith('NA') || e.source === 'scanner')) {
-          codeClass = 'auftrag-colored';
-      } else if (e.source === 'manual') {
-          codeClass = 'auftrag-manual-bold';
+      if (e.code && (e.code.startsWith('FA') || e.code.startsWith('NA'))) {
+          codeClass = 'auftrag-colored'; // Blue and bold for FA/NA
+      } else if (e.source === 'scanner' || e.source === 'manual') { // If it's scanned OR manual (and not FA/NA)
+          codeClass = 'auftrag-manual-bold'; // Black and bold
       }
 
       return `
