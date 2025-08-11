@@ -111,7 +111,7 @@
     background: var(--primary);
     color: #ffffff;
     user-select: none;
-    transition: all 0.2s ease;
+    transition: all 0.1s ease; /* Faster transition */
     /* Applied even stronger 3D shadow to grid buttons */
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
     text-shadow: none;
@@ -137,16 +137,21 @@
     border-color: var(--muted); /* Darker border on hover */
     box-shadow: none;
   }
+  /* Modified active state to show content status */
   .grid button.active {
-    background: var(--success);
-    color: #fff;
-    border-color: var(--success);
-    box-shadow: var(--shadow-medium);
+    border: 4px solid var(--success); /* Thicker green border to indicate active */
+    box-shadow: var(--shadow-medium); /* Stronger shadow for active */
+    /* Background and text color will be determined by .empty-category class */
   }
   .grid button.active.empty-category {
-    background: var(--success);
-    color: #fff;
-    border-color: var(--success);
+    background: var(--card-bg); /* Keep white background for empty active */
+    color: var(--text); /* Keep dark text for visibility on white background */
+    border-color: var(--success); /* Ensure green border */
+  }
+  .grid button.active:not(.empty-category) {
+    background: var(--primary); /* Keep blue background for non-empty active */
+    color: #fff; /* Keep white text for visibility on blue background */
+    border-color: var(--success); /* Ensure green border */
   }
 
 
@@ -186,19 +191,26 @@
     align-items: center;
   }
 
+  /* Styles for control buttons based on category content */
   .controls button {
     font-size: 1.1em;
     padding: 14px 22px;
     border-radius: 6px;
     border: none;
-    background: var(--primary);
+    background: var(--primary); /* Default blue */
     color: #fff;
     cursor: pointer;
-    transition: all 0.2s ease;
-    /* Applied even stronger 3D shadow to control buttons */
+    transition: all 0.1s ease; /* Faster transition */
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
     text-shadow: none;
   }
+
+  .controls button.empty-category-control { /* New class for empty category control buttons */
+    background: var(--muted) !important; /* Light grey for empty category controls, !important to override specific IDs */
+    color: #fff; /* White icon/text on grey */
+    box-shadow: none !important; /* No shadow for empty state, !important to override specific IDs */
+  }
+
   .controls button:active {
     transform: scale(0.96); /* More pronounced press effect */
     box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); /* Deeper inset shadow on active */
@@ -208,6 +220,11 @@
     /* Even stronger shadow on hover */
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3);
   }
+  .controls button.empty-category-control:hover { /* Hover for empty state */
+    background: #888 !important; /* Slightly darker grey on hover, !important to override specific IDs */
+    box-shadow: none !important;
+  }
+
   /* Style for the QR code icon within the button */
   .controls button i {
     margin: 0 4px; /* Space between icons */
@@ -749,7 +766,7 @@ const db = (() => {
   const scannerCancelBtn = document.getElementById('scannerCancelBtn');
   const noteModal = document.getElementById('noteModal');
   const noteModalTextarea = document.getElementById('noteModalTextarea');
-  const noteModalSaveBtn = document.getElementById('noteModalSaveBtn');
+  const noteModalSaveBtn = document = document.getElementById('noteModalSaveBtn');
 
   // Gombok
   const openScannerBtn = document.getElementById('openScannerBtn');
@@ -801,6 +818,17 @@ const db = (() => {
     }
   }
 
+  // Funkció a vezérlőgombok (billentyűzet, vonalkód) színének frissítésére
+  function updateControlButtonsColor(isEmpty) {
+    if (isEmpty) {
+      manualEntryBtn.classList.add('empty-category-control');
+      openScannerBtn.classList.add('empty-category-control');
+    } else {
+      manualEntryBtn.classList.remove('empty-category-control');
+      openScannerBtn.classList.remove('empty-category-control');
+    }
+  }
+
   // Kategóriaváltás
   async function selectCategory(num, btn){
     if(currentCategory === num) return;
@@ -816,13 +844,18 @@ const db = (() => {
         categoryLabelLeft.textContent = `${num}`; // Update left label
         categoryLabelRight.textContent = `${num}`; // Update right label
 
-        if (entries.length === 0) {
+        const isEmpty = entries.length === 0;
+        if (isEmpty) {
             categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey if empty */
             categoryLabelRight.style.color = 'var(--muted)'; /* Light grey if empty */
         } else {
             categoryLabelLeft.style.color = 'var(--primary)'; /* Blue if not empty */
             categoryLabelRight.style.color = 'var(--primary)'; /* Blue if not empty */
         }
+        
+        // Update control buttons color
+        updateControlButtonsColor(isEmpty);
+
         mainControls.style.display = 'block';
         listSection.style.display = 'block';
 
@@ -1021,7 +1054,12 @@ const db = (() => {
           entries = entries.filter(e => e.id !== id);
           renderTable();
           await updateCategoryButtonColors(); // Update colors after clearing category
-      }
+          // Update the categoryLabel colors after clearing the category
+          categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey after clearing */
+          categoryLabelRight.style.color = 'var(--muted)'; /* Light grey after clearing */
+          // Update control buttons color after clearing
+          updateControlButtonsColor(true);
+        }
   }
 
   // Jegyzet modal
@@ -1121,6 +1159,8 @@ const db = (() => {
           if (entries.length === 1) { // If it was empty and now has one entry
               categoryLabelLeft.style.color = 'var(--primary)';
               categoryLabelRight.style.color = 'var(--primary)';
+              // Update control buttons color
+              updateControlButtonsColor(false);
           }
 
           const webAppUrl = 'https://script.google.com/macros/s/AKfycbz7cN31qlQVBxpMmJIpyyV-bDHaI-i3vxG06vPv3pKurSpdxVHDKcN95oJtfAME2P_5/exec';
@@ -1271,6 +1311,8 @@ const db = (() => {
       // Update the categoryLabel colors after clearing the category
       categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey after clearing */
       categoryLabelRight.style.color = 'var(--muted)'; /* Light grey after clearing */
+      // Update control buttons color after clearing
+      updateControlButtonsColor(true);
     }
   });
 
