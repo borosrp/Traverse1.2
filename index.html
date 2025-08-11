@@ -84,23 +84,23 @@
     background: var(--secondary-grid-bg); /* Lighter blue for the second grid */
   }
 
-  /* Default grid columns for mobile (or small screens) */
+  /* Universal grid columns for all screen sizes */
   #categoryGrid1 {
-    grid-template-columns: repeat(4, minmax(70px, 1fr)); /* 4 columns for mobile (4x4=16) */
+    grid-template-columns: repeat(8, minmax(70px, 1fr)); /* 8 columns for 16 buttons (2 rows) */
   }
   #categoryGrid2 {
-    grid-template-columns: repeat(4, minmax(70px, 1fr)); /* 4 columns for mobile (3 rows of 4 for 12 buttons) */
+    grid-template-columns: repeat(6, minmax(70px, 1fr)); /* 6 columns for 12 buttons (2 rows) */
   }
 
-  /* Media query for Laptop/Tablet (now 768px for better tablet coverage) */
-  @media (min-width: 768px) { /* Adjusted breakpoint to 768px */
+  /* Removed media query for Laptop/Tablet, applying universal rules */
+  /* @media (min-width: 768px) {
     #categoryGrid1 {
-      grid-template-columns: repeat(8, minmax(70px, 1fr)); /* 8 columns for laptop/tablet (2x8=16) */
+      grid-template-columns: repeat(8, minmax(70px, 1fr));
     }
     #categoryGrid2 {
-      grid-template-columns: repeat(6, minmax(70px, 1fr)); /* 6 columns for laptop/tablet (2x6=12) */
+      grid-template-columns: repeat(6, minmax(70px, 1fr));
     }
-  }
+  } */
 
   .grid button {
     padding: 20px 10px;
