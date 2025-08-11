@@ -1103,7 +1103,7 @@ const db = (() => {
           return;
       }
 
-      const entry = entries.find(e => e.id === currentImageEntryId);
+      let entry = entries.find(e => e.id === currentImageEntryId);
       if (entry) {
           const imageUrlToDelete = currentModalImages[currentModalImageIndex];
 
