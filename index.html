@@ -502,21 +502,19 @@
   }
 
 
-  /* --- JAVÍTÁS ITT KEZDŐDIK --- */
   .modal-overlay {
     position: fixed;
     top:0; left:0; right:0; bottom:0;
     background: rgba(0,0,0,0.6); /* Slightly lighter overlay */
     display:none;
-    align-items: flex-start; /* Ezt módosítottuk: felülre igazít */
+    align-items: flex-start; 
     justify-content: center;
     flex-direction: column;
     z-index: 9999;
     padding: 20px;
-    padding-top: 5vh; /* Ezt hozzáadtuk: egy kis távolság a képernyő tetejétől */
-    box-sizing: border-box; /* Biztosítja, hogy a padding ne növelje a méretet */
+    padding-top: 5vh; 
+    box-sizing: border-box; 
   }
-  /* --- JAVÍTÁS VÉGE --- */
 
   .modal-overlay video {
     width: 90vw; /* Slightly narrower video */
@@ -640,6 +638,7 @@
   }
 
   .note-modal-content {
+    position: relative; 
     background: var(--card-bg);
     padding: 25px;
     border-radius: 8px;
@@ -685,6 +684,18 @@
   }
   .note-modal-content button:hover { background: var(--primary-dark); box-shadow: var(--shadow-medium); }
   .note-modal-content button:active { transform: scale(0.98); }
+
+  /* --- JAVÍTÁS ITT KEZDŐDIK --- */
+  .modal-category-number {
+    position: absolute;
+    top: 15px;
+    right: 25px;
+    font-size: 2.5em;
+    font-weight: 800;
+    color: var(--muted); /* Default to muted grey */
+    z-index: 0;
+  }
+  /* --- JAVÍTÁS VÉGE --- */
 
   /* Custom Alert/Confirm/Prompt Modals */
   #customAlertModal .note-modal-content,
@@ -818,6 +829,7 @@
 
   <div id="customPromptModal" class="modal-overlay">
       <div class="note-modal-content">
+        <span id="promptCategoryNumber" class="modal-category-number"></span> <!-- ADDED THIS ELEMENT -->
         <h2 id="customPromptTitle">Manuelle Eingabe</h2>
         <p id="customPromptMessage">Bitte geben Sie den Produktnamen oder die Kennung ein:</p>
         <input type="text" id="customPromptInput" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
@@ -1433,9 +1445,22 @@ const db = (() => {
           const input = document.getElementById('customPromptInput');
           const okBtn = document.getElementById('customPromptOkBtn');
           const cancelBtn = document.getElementById('customPromptCancelBtn');
+          const categoryNumberSpan = document.getElementById('promptCategoryNumber');
 
           promptTitle.textContent = title;
           promptMessage.textContent = message;
+          
+          // --- JAVÍTÁS ITT KEZDŐDIK ---
+          categoryNumberSpan.textContent = currentCategory; // Csak a szám, '#' nélkül
+
+          // Ellenőrizzük, hogy az aktuális kategória üres-e, és beállítjuk a színt
+          if (entries.length === 0) {
+              categoryNumberSpan.style.color = 'var(--muted)'; // Szürke, ha üres
+          } else {
+              categoryNumberSpan.style.color = 'var(--primary)'; // Kék, ha nem üres
+          }
+          // --- JAVÍTÁS VÉGE ---
+
           input.value = '';
 
           promptModal.style.display = 'flex';
