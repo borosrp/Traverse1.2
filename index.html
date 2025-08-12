@@ -437,12 +437,11 @@
   }
 
 
-  .photoRow {
+  td.photo-cell {
     display: flex;
+    flex-direction: column;
+    align-items: center;
     gap: 10px;
-    margin-top: 10px;
-    flex-wrap: nowrap; /* Changed to nowrap to keep images side-by-side within a photoRow */
-    justify-content: center; /* Center images within photoRow */
   }
   .photoRow img, .photo-cell img {
     width: 60px;
@@ -515,6 +514,9 @@
     padding-top: 5vh;
     box-sizing: border-box;
     overflow-y: auto;
+  }
+  #customPromptModal {
+    padding-top: 20vh;
   }
   .modal-overlay video {
     width: 82vw; /* Increased size by 2% */
@@ -702,7 +704,7 @@
   }
   
   #customPromptModal .note-modal-content {
-    max-width: 320px;
+    max-width: 380px;
     align-items: center;
     gap: 20px;
   }
