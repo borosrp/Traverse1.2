@@ -346,13 +346,13 @@
 
   /* Column widths for better layout */
   th:nth-child(1), td:nth-child(1) { width: 5%; } /* # */
-  th:nth-child(2), td:nth-child(2) { width: 25%; } /* Auftrag */
+  th:nth-child(2), td:nth-child(2) { width: 20%; } /* Auftrag */
   th:nth-child(3), td:nth-child(3) { width: 15%; } /* Datum */
   th:nth-child(4), td:nth-child(4) { width: 10%; } /* Notiz */
   th:nth-child(5), td:nth-child(5) { width: 25%; } /* Bilder */
-  th:nth-child(6), td:nth-child(6) { width: 10%; } /* Camera Icon */
-  th:nth-child(7), td:nth-child(7) { width: 10%; } /* Trash Icon */
-  th:nth-child(8), td:nth-child(8) { width: 10%; } /* Product Info Icon */
+  th:nth-child(6), td:nth-child(6) { width: 10%; } /* Folder Icon */
+  th:nth-child(7), td:nth-child(7) { width: 5%; } /* Camera Icon */
+  th:nth-child(8), td:nth-child(8) { width: 10%; } /* Trash Icon */
 
 
   #logBody tr:nth-child(even) { background-color: var(--row-alt-bg); }
@@ -455,7 +455,7 @@
     box-shadow: var(--shadow-soft); /* Applied stronger soft shadow for images */
   }
 
-  .addExtraPhotoBtn { /* Specific style for the camera button */
+  .addExtraPhotoBtn, .uploadPhotoBtn { /* Combined style for camera and folder buttons */
     display: inline-flex; /* Use flex to align icon and text/plus if any */
     align-items: center;
     justify-content: center;
@@ -472,12 +472,12 @@
     box-shadow: none;
     border-radius: 6px; /* Match other buttons slightly */
   }
-  .addExtraPhotoBtn:hover {
+  .addExtraPhotoBtn:hover, .uploadPhotoBtn:hover {
     background: var(--primary-dark);
     border-color: var(--primary-dark);
     box-shadow: var(--shadow-medium);
   }
-  .addExtraPhotoBtn:active {
+  .addExtraPhotoBtn:active, .uploadPhotoBtn:active {
     transform: scale(0.95);
     box-shadow: var(--shadow-active);
   }
@@ -774,6 +774,7 @@
             <th>Datum</th>
             <th>Notiz</th>
             <th>Bilder</th>
+            <th><i class="fas fa-folder"></i></th>
             <th><i class="fas fa-camera"></i></th>
             <th><i class="fas fa-trash-alt"></i></th>
           </tr>
@@ -845,6 +846,8 @@
         </div>
       </div>
   </div>
+  
+  <input type="file" id="imageUploadInput" accept="image/*" style="display: none;">
 
 <script>
 /* --- IndexedDB (lokális DB) --- */
@@ -922,6 +925,7 @@ const db = (() => {
   const noteModalTextarea = document.getElementById('noteModalTextarea');
   const noteModalSaveBtn = document.getElementById('noteModalSaveBtn');
   const deleteImageBtn = document.getElementById('deleteImageBtn'); // Get delete image button
+  const imageUploadInput = document.getElementById('imageUploadInput');
 
   // Gombok
   const openScannerBtn = document.getElementById('openScannerBtn');
@@ -1237,6 +1241,7 @@ const db = (() => {
         </td>
         <td><button class="noteToggleBtn ${e.note ? 'note-filled' : ''}" data-id="${e.id}" title="${noteTitle}" aria-label="${noteTitle}"><i class="fas ${e.note ? 'fa-book' : 'fa-plus'}"></i></button></td>
         <td class="photo-cell">${photosCellHtml}</td>
+        <td><button class="uploadPhotoBtn" data-id="${e.id}" title="Bild hochladen"><i class="fas fa-folder"></i></button></td>
         <td><button class="addExtraPhotoBtn" data-id="${e.id}" title="Zusätzliches Bild"><i class="fas fa-camera"></i></button></td>
         <td><button class="deleteBtn" data-id="${e.id}" data-code="${e.code}" title="Löschen"><i class="fas fa-trash-alt"></i></button></td>
       </tr>`;
@@ -1259,6 +1264,7 @@ const db = (() => {
           }
       }));
       logBody.querySelectorAll('.addExtraPhotoBtn').forEach(btn => btn.addEventListener('click', openCameraModal));
+      logBody.querySelectorAll('.uploadPhotoBtn').forEach(btn => btn.addEventListener('click', handleUploadPhotoClick));
   }
 
   // Törlés
@@ -1318,6 +1324,32 @@ const db = (() => {
           navigator.vibrate?.(100);
       }
       closeModal(cameraModal);
+  }
+
+  function handleUploadPhotoClick(event) {
+    entryIdToUpdate = parseInt(event.currentTarget.dataset.id);
+    imageUploadInput.click();
+  }
+
+  async function handleFileSelected(event) {
+    const file = event.target.files[0];
+    if (!file || !entryIdToUpdate) return;
+
+    const reader = new FileReader();
+    reader.onload = async (e) => {
+        const imageDataUrl = e.target.result;
+        const entry = entries.find(e => e.id === entryIdToUpdate);
+        if (entry) {
+            if (!entry.kepek) entry.kepek = [];
+            entry.kepek.push(imageDataUrl);
+            await db.updateEntry(entry);
+            renderTable();
+            navigator.vibrate?.(100);
+        }
+    };
+    reader.readAsDataURL(file);
+
+    event.target.value = null;
   }
 
   // Barcode szkenner
@@ -1543,6 +1575,7 @@ const db = (() => {
 
   takePhotoButton.addEventListener('click', takePhotoAndSave);
   cancelCameraButton.addEventListener('click', () => closeModal(cameraModal));
+  imageUploadInput.addEventListener('change', handleFileSelected);
 
   // Image modal navigation listeners
   document.getElementById('imageModalPrevBtn').addEventListener('click', showPrevImage); // Corrected function call
@@ -1586,4 +1619,4 @@ const db = (() => {
 })();
 </script>
 </body>
-</ht
+</html>
