@@ -346,12 +346,13 @@
 
   /* Column widths for better layout */
   th:nth-child(1), td:nth-child(1) { width: 5%; } /* # */
-  th:nth-child(2), td:nth-child(2) { width: 25%; } /* Auftrag */
+  th:nth-child(2), td:nth-child(2) { width: 23%; } /* Auftrag */
   th:nth-child(3), td:nth-child(3) { width: 15%; } /* Datum */
-  th:nth-child(4), td:nth-child(4) { width: 10%; } /* Notiz */
-  th:nth-child(5), td:nth-child(5) { width: 25%; } /* Bilder */
-  th:nth-child(6), td:nth-child(6) { width: 10%; } /* Camera Icon */
-  th:nth-child(7), td:nth-child(7) { width: 10%; } /* Trash Icon */
+  th:nth-child(4), td:nth-child(4) { width: 8%; } /* Notiz */
+  th:nth-child(5), td:nth-child(5) { width: 28%; } /* Bilder */
+  th:nth-child(6), td:nth-child(6) { width: 8%; } /* Folder Icon */
+  th:nth-child(7), td:nth-child(7) { width: 5%; } /* Camera Icon */
+  th:nth-child(8), td:nth-child(8) { width: 8%; } /* Trash Icon */
 
 
   #logBody tr:nth-child(even) { background-color: var(--row-alt-bg); }
@@ -379,7 +380,7 @@
     color: var(--danger);
     border: 1px solid #f5c6cb;
     border-radius: 5px;
-    padding: 8px 12px;
+    padding: 8px 8px;
     font-size: 0.85em;
     font-weight: bold;
     transition: all 0.2s ease;
@@ -407,7 +408,7 @@
     margin: 0 auto;
     box-shadow: none;
     border-radius: 6px; /* Match other buttons slightly */
-    padding: 8px 12px; /* Set padding to match addExtraPhotoBtn */
+    padding: 8px 8px;
     font-size: 1.5em; /* Set font-size to match addExtraPhotoBtn */
   }
   .noteToggleBtn:hover { transform: scale(1.15); color: var(--primary); }
@@ -458,7 +459,7 @@
     display: inline-flex; /* Use flex to align icon and text/plus if any */
     align-items: center;
     justify-content: center;
-    padding: 8px 12px;
+    padding: 8px 8px;
     font-size: 1.5em; /* Larger icon size */
     border-radius: 5px;
     border: 1px solid var(--primary);
@@ -1618,4 +1619,4 @@ const db = (() => {
 })();
 </script>
 </body>
-</html>
+</ht
