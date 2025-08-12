@@ -515,8 +515,12 @@
     box-sizing: border-box;
     overflow-y: auto;
   }
-  #customPromptModal {
+  #customPromptModal, #noteModal {
     padding-top: 20vh;
+  }
+  #customConfirmModal {
+    justify-content: center;
+    padding-top: 0;
   }
   .modal-overlay video {
     width: 82vw; /* Increased size by 2% */
@@ -672,6 +676,7 @@
     color: var(--text);
     resize: vertical;
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); /* Stronger inset shadow */
+    font-weight: bold;
   }
   .note-modal-content button {
     font-size: 1.05em;
@@ -704,7 +709,7 @@
   }
   
   #customPromptModal .note-modal-content {
-    max-width: 380px;
+    max-width: 456px;
     align-items: center;
     gap: 20px;
   }
@@ -722,6 +727,7 @@
     color: var(--text);
     box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); /* Stronger inset inset shadow */
     font-size: 2em; /* Kétszeres betűméret */
+    font-weight: bold;
   }
   #customAlertCloseBtn, #customConfirmOkBtn, #customPromptOkBtn {
     background: var(--primary) !important;
