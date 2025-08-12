@@ -502,17 +502,22 @@
   }
 
 
+  /* --- JAVÍTÁS ITT KEZDŐDIK --- */
   .modal-overlay {
     position: fixed;
     top:0; left:0; right:0; bottom:0;
     background: rgba(0,0,0,0.6); /* Slightly lighter overlay */
     display:none;
-    align-items: center;
+    align-items: flex-start; /* Ezt módosítottuk: felülre igazít */
     justify-content: center;
     flex-direction: column;
     z-index: 9999;
     padding: 20px;
+    padding-top: 5vh; /* Ezt hozzáadtuk: egy kis távolság a képernyő tetejétől */
+    box-sizing: border-box; /* Biztosítja, hogy a padding ne növelje a méretet */
   }
+  /* --- JAVÍTÁS VÉGE --- */
+
   .modal-overlay video {
     width: 90vw; /* Slightly narrower video */
     max-width: 700px;
@@ -809,6 +814,18 @@
         <button id="noteModalSaveBtn">Speichern & Schließen</button>
       </div>
     </div>
+  </div>
+
+  <div id="customPromptModal" class="modal-overlay">
+      <div class="note-modal-content">
+        <h2 id="customPromptTitle">Manuelle Eingabe</h2>
+        <p id="customPromptMessage">Bitte geben Sie den Produktnamen oder die Kennung ein:</p>
+        <input type="text" id="customPromptInput" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
+        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+          <button id="customPromptCancelBtn" style="background: #ccc; color: var(--text); border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">Abbrechen</button>
+          <button id="customPromptOkBtn" style="background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">OK</button>
+        </div>
+      </div>
   </div>
 
 <script>
@@ -1409,51 +1426,47 @@ const db = (() => {
 
   // Custom prompt function
   function showCustomPrompt(message, title = 'Eingabe') {
-    return new Promise(resolve => {
-      const existingModal = document.getElementById('customPromptModal');
-      if (existingModal) existingModal.remove();
+      return new Promise(resolve => {
+          const promptModal = document.getElementById('customPromptModal');
+          const promptTitle = document.getElementById('customPromptTitle');
+          const promptMessage = document.getElementById('customPromptMessage');
+          const input = document.getElementById('customPromptInput');
+          const okBtn = document.getElementById('customPromptOkBtn');
+          const cancelBtn = document.getElementById('customPromptCancelBtn');
 
-      const promptModal = document.createElement('div');
-      promptModal.id = 'customPromptModal';
-      promptModal.classList.add('modal-overlay');
-      promptModal.innerHTML = `
-        <div class="note-modal-content">
-          <h2>${title}</h2>
-          <p>${message}</p>
-          <input type="text" id="customPromptInput" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
-          <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-            <button id="customPromptCancelBtn" style="background: #ccc; color: var(--text); border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">Abbrechen</button>
-            <button id="customPromptOkBtn" style="background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">OK</button>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(promptModal);
-      promptModal.style.display = 'flex';
-      document.body.classList.add('modal-open');
+          promptTitle.textContent = title;
+          promptMessage.textContent = message;
+          input.value = '';
 
-      const input = document.getElementById('customPromptInput');
-      input.focus();
+          promptModal.style.display = 'flex';
+          document.body.classList.add('modal-open');
+          input.focus();
 
-      document.getElementById('customPromptOkBtn').addEventListener('click', () => {
-        promptModal.style.display = 'none';
-        document.body.classList.remove('modal-open');
-        promptModal.remove();
-        resolve(input.value);
+          const okHandler = () => {
+              closeAndResolve(input.value);
+          };
+          const cancelHandler = () => {
+              closeAndResolve(null);
+          };
+          const overlayHandler = (e) => {
+              if (e.target === promptModal) {
+                  closeAndResolve(null);
+              }
+          };
+
+          const closeAndResolve = (value) => {
+              promptModal.style.display = 'none';
+              document.body.classList.remove('modal-open');
+              okBtn.removeEventListener('click', okHandler);
+              cancelBtn.removeEventListener('click', cancelHandler);
+              promptModal.removeEventListener('click', overlayHandler);
+              resolve(value);
+          };
+
+          okBtn.addEventListener('click', okHandler);
+          cancelBtn.addEventListener('click', cancelHandler);
+          promptModal.addEventListener('click', overlayHandler);
       });
-      document.getElementById('customPromptCancelBtn').addEventListener('click', () => {
-        promptModal.style.display = 'none';
-        document.body.classList.remove('modal-open');
-        promptModal.remove();
-        resolve(null); // Resolve with null if cancelled
-      });
-      promptModal.addEventListener('click', (e) => {
-        if (e.target === promptModal) {
-          promptModal.style.display = 'none';
-          document.body.classList.remove('modal-open');
-          promptModal.remove();
-        }
-      });
-    });
   }
 
   // Modal/Kamera helper
