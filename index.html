@@ -507,15 +507,14 @@
     top:0; left:0; right:0; bottom:0;
     background: rgba(0,0,0,0.6); /* Slightly lighter overlay */
     display:none;
-    align-items: flex-start; 
+    align-items: flex-start;
     justify-content: center;
     flex-direction: column;
     z-index: 9999;
     padding: 20px;
-    padding-top: 5vh; 
-    box-sizing: border-box; 
+    padding-top: 5vh;
+    box-sizing: border-box;
   }
-
   .modal-overlay video {
     width: 90vw; /* Slightly narrower video */
     max-width: 700px;
@@ -638,7 +637,7 @@
   }
 
   .note-modal-content {
-    position: relative; 
+    position: relative;
     background: var(--card-bg);
     padding: 25px;
     border-radius: 8px;
@@ -685,7 +684,6 @@
   .note-modal-content button:hover { background: var(--primary-dark); box-shadow: var(--shadow-medium); }
   .note-modal-content button:active { transform: scale(0.98); }
 
-  /* --- JAVÍTÁS ITT KEZDŐDIK --- */
   .modal-category-number {
     position: absolute;
     top: 15px;
@@ -695,7 +693,6 @@
     color: var(--muted); /* Default to muted grey */
     z-index: 0;
   }
-  /* --- JAVÍTÁS VÉGE --- */
 
   /* Custom Alert/Confirm/Prompt Modals */
   #customAlertModal .note-modal-content,
@@ -1438,7 +1435,7 @@ const db = (() => {
 
   // Custom prompt function
   function showCustomPrompt(message, title = 'Eingabe') {
-      return new Promise(resolve => {
+      return new Promise(async resolve => { // --- JAVÍTÁS ITT KEZDŐDIK ---
           const promptModal = document.getElementById('customPromptModal');
           const promptTitle = document.getElementById('customPromptTitle');
           const promptMessage = document.getElementById('customPromptMessage');
@@ -1450,11 +1447,11 @@ const db = (() => {
           promptTitle.textContent = title;
           promptMessage.textContent = message;
           
-          // --- JAVÍTÁS ITT KEZDŐDIK ---
-          categoryNumberSpan.textContent = currentCategory; // Csak a szám, '#' nélkül
+          categoryNumberSpan.textContent = currentCategory;
 
           // Ellenőrizzük, hogy az aktuális kategória üres-e, és beállítjuk a színt
-          if (entries.length === 0) {
+          const count = await db.getEntryCountForCategory(currentCategory);
+          if (count === 0) {
               categoryNumberSpan.style.color = 'var(--muted)'; // Szürke, ha üres
           } else {
               categoryNumberSpan.style.color = 'var(--primary)'; // Kék, ha nem üres
@@ -1587,4 +1584,4 @@ const db = (() => {
 })();
 </script>
 </body>
-</html>
+</ht
