@@ -21,7 +21,7 @@
     --card-bg: #ffffff; /* White card backgrounds */
     --row-alt-bg: #f8f8f8; /* Very light gray for alternating table rows */
     --note1: #fff3cd; /* Light yellow for notes */
-    --note2: #ffeeba; /* Slightly darker yellow  fornotes */
+    --note2: #ffeeba; /* Slightly darker yellow for notes */
     --secondary-grid-bg: #e0f2f7; /* Lighter blue for the second grid */
 
     /* Even more pronounced, layered shadows for maximum 3D effect */
@@ -196,7 +196,7 @@
     border-radius: 8px; /* Border-radius for the inner frame */
     box-shadow: var(--shadow-soft); /* Shadow for the inner frame */
     border: 1px solid var(--border-color); /* Border for the inner frame */
-    box-sizing: border-box; /* Include padding/border in element's total width/height */
+    box-sizing: border-box; /* Include padding/border in element's total width and height */
     max-width: fit-content; /* Make the inner frame fit its content */
     margin: 10px auto; /* Center the inner frame and add some vertical margin */
     flex-wrap: nowrap; /* Ensure elements stay in one line */
@@ -786,7 +786,7 @@
     <video id="cameraModalVideo" autoplay muted playsinline></video>
     <div class="modal-controls">
         <button id="cancelCameraButton"><i class="fas fa-times"></i></button> <!-- Icon for Abbrechen -->
-        <button id="takePhotoButton" style="padding: 14px 44px;"><i class="fas fa-camera"></i></button> <!-- Icon for Foto, increased padding -->
+        <button id="takePhotoButton" style="padding: 12px 18px; font-size: 2.25em;"><i class="fas fa-camera"></i></button> <!-- Icon for Foto, increased padding and font-size -->
     </div>
   </div>
 
@@ -1299,7 +1299,7 @@ const db = (() => {
       const canvas = document.createElement('canvas');
       canvas.width = scannerVideo.videoWidth;
       canvas.height = scannerVideo.videoHeight;
-      canvas.getContext('2d').drawImage(scannerVideo, 0, 0, canvas.width, canvas.height);
+      canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
       try {
           const barcodes = await detector.detect(canvas);
           const currentScanCode = barcodes.length > 0 ? barcodes[0].rawValue : null;
