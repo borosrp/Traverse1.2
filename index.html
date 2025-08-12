@@ -502,19 +502,23 @@
   }
 
 
+  /* --- JAVÍTÁS ITT KEZDŐDIK --- */
   .modal-overlay {
     position: fixed;
     top:0; left:0; right:0; bottom:0;
-    background: rgba(0,0,0,0.6); /* Slightly lighter overlay */
-    display:none;
-    align-items: flex-start;
-    justify-content: center;
+    background: rgba(0,0,0,0.6);
+    display: none;
     flex-direction: column;
+    justify-content: flex-start; /* VERTICAL-TOP */
+    align-items: center; /* HORIZONTAL-CENTER */
     z-index: 9999;
     padding: 20px;
     padding-top: 5vh;
     box-sizing: border-box;
+    overflow-y: auto;
   }
+  /* --- JAVÍTÁS VÉGE --- */
+
   .modal-overlay video {
     width: 90vw; /* Slightly narrower video */
     max-width: 700px;
@@ -685,26 +689,34 @@
   .note-modal-content button:active { transform: scale(0.98); }
 
   .modal-category-number {
-    position: absolute;
-    top: 15px;
-    right: 25px;
-    font-size: 2.5em;
-    font-weight: 800;
-    color: var(--muted); /* Default to muted grey */
-    z-index: 0;
+    position: static;
+    font-size: 6em;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--muted);
   }
 
   /* Custom Alert/Confirm/Prompt Modals */
   #customAlertModal .note-modal-content,
-  #customConfirmModal .note-modal-content,
-  #customPromptModal .note-modal-content {
+  #customConfirmModal .note-modal-content {
     background: var(--card-bg);
     border: 1px solid var(--border-color);
     box-shadow: var(--shadow-medium); /* Applied stronger shadow */
   }
-  #customAlertModal h2, #customConfirmModal h2, #customPromptModal h2 {
-    color: var(--primary);
+  
+  #customPromptModal .note-modal-content {
+    max-width: 320px;
+    align-items: center;
+    gap: 20px;
   }
+
+  #customAlertModal h2, #customConfirmModal h2, #customPromptModal h2 {
+    display: none;
+  }
+  #customPromptMessage {
+    display: none;
+  }
+
   #customPromptInput {
     background: var(--bg);
     border: 1px solid var(--border-color);
@@ -826,11 +838,11 @@
 
   <div id="customPromptModal" class="modal-overlay">
       <div class="note-modal-content">
-        <span id="promptCategoryNumber" class="modal-category-number"></span> <!-- ADDED THIS ELEMENT -->
+        <span id="promptCategoryNumber" class="modal-category-number"></span>
         <h2 id="customPromptTitle">Manuelle Eingabe</h2>
         <p id="customPromptMessage">Bitte geben Sie den Produktnamen oder die Kennung ein:</p>
         <input type="text" id="customPromptInput" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
-        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
+        <div style="display: flex; justify-content: center; gap: 10px; width: 100%;">
           <button id="customPromptCancelBtn" style="background: #ccc; color: var(--text); border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">Abbrechen</button>
           <button id="customPromptOkBtn" style="background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">OK</button>
         </div>
@@ -1435,28 +1447,21 @@ const db = (() => {
 
   // Custom prompt function
   function showCustomPrompt(message, title = 'Eingabe') {
-      return new Promise(async resolve => { // --- JAVÍTÁS ITT KEZDŐDIK ---
+      return new Promise(async resolve => {
           const promptModal = document.getElementById('customPromptModal');
-          const promptTitle = document.getElementById('customPromptTitle');
-          const promptMessage = document.getElementById('customPromptMessage');
           const input = document.getElementById('customPromptInput');
           const okBtn = document.getElementById('customPromptOkBtn');
           const cancelBtn = document.getElementById('customPromptCancelBtn');
           const categoryNumberSpan = document.getElementById('promptCategoryNumber');
 
-          promptTitle.textContent = title;
-          promptMessage.textContent = message;
-          
           categoryNumberSpan.textContent = currentCategory;
 
-          // Ellenőrizzük, hogy az aktuális kategória üres-e, és beállítjuk a színt
           const count = await db.getEntryCountForCategory(currentCategory);
           if (count === 0) {
-              categoryNumberSpan.style.color = 'var(--muted)'; // Szürke, ha üres
+              categoryNumberSpan.style.color = 'var(--muted)';
           } else {
-              categoryNumberSpan.style.color = 'var(--primary)'; // Kék, ha nem üres
+              categoryNumberSpan.style.color = 'var(--primary)';
           }
-          // --- JAVÍTÁS VÉGE ---
 
           input.value = '';
 
@@ -1584,4 +1589,4 @@ const db = (() => {
 })();
 </script>
 </body>
-</ht
+</html>
