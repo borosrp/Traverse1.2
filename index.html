@@ -350,8 +350,8 @@
   th:nth-child(3), td:nth-child(3) { width: 15%; } /* Datum */
   th:nth-child(4), td:nth-child(4) { width: 8%; } /* Notiz */
   th:nth-child(5), td:nth-child(5) { width: 28%; } /* Bilder */
-  th:nth-child(6), td:nth-child(6) { width: 8%; } /* Folder Icon */
-  th:nth-child(7), td:nth-child(7) { width: 5%; } /* Camera Icon */
+  th:nth-child(6), td:nth-child(6) { width: 5%; } /* Camera Icon */
+  th:nth-child(7), td:nth-child(7) { width: 8%; } /* Folder Icon */
   th:nth-child(8), td:nth-child(8) { width: 8%; } /* Trash Icon */
 
 
@@ -1250,7 +1250,6 @@ const db = (() => {
         </td>
         <td><button class="noteToggleBtn ${e.note ? 'note-filled' : ''}" data-id="${e.id}" title="${noteTitle}" aria-label="${noteTitle}"><i class="fas ${e.note ? 'fa-book' : 'fa-plus'}"></i></button></td>
         <td class="photo-cell">${photosCellHtml}</td>
-        <td><button class="uploadPhotoBtn" data-id="${e.id}" title="Bild hochladen"><i class="fas fa-folder"></i></button></td>
         <td><button class="addExtraPhotoBtn" data-id="${e.id}" title="Zusätzliches Bild"><i class="fas fa-camera"></i></button></td>
         <td><button class="deleteBtn" data-id="${e.id}" data-code="${e.code}" title="Löschen"><i class="fas fa-trash-alt"></i></button></td>
       </tr>`;
