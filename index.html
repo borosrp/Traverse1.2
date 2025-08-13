@@ -523,7 +523,7 @@
     padding: 20px;
     padding-top: 5vh;
     box-sizing: border-box;
-    overflow-y: auto;
+    overflow-y: auto; /* Allow scrolling for zoomed images */
   }
   #customPromptModal, #noteModal {
     padding-top: 20vh;
@@ -651,6 +651,15 @@
     box-shadow: var(--shadow-medium); /* Applied stronger shadow */
     background: #000;
     border: 1px solid var(--border-color);
+    cursor: zoom-in; /* Add zoom-in cursor */
+    transition: max-width 0.3s ease, max-height 0.3s ease; /* Smooth transition for zoom */
+  }
+
+  /* NEW: Style for zoomed-in image */
+  #imageModal img.zoomed {
+    max-width: none;
+    max-height: none;
+    cursor: zoom-out;
   }
 
   .note-modal-content {
@@ -923,7 +932,6 @@ const db = (() => {
   const categoryGrid1 = document.getElementById('categoryGrid1');
   const categoryGrid2 = document.getElementById('categoryGrid2');
   const categoryLabelLeft = document.getElementById('categoryLabelLeft'); // Changed ID
-  // const categoryLabelRight = document.getElementById('categoryLabelRight'); // Removed right label
   const mainControls = document.getElementById('mainControls');
   const listSection = document.getElementById('listSection');
   const logBody = document.getElementById('logBody');
@@ -943,7 +951,7 @@ const db = (() => {
   const noteModal = document.getElementById('noteModal');
   const noteModalTextarea = document.getElementById('noteModalTextarea');
   const noteModalSaveBtn = document.getElementById('noteModalSaveBtn');
-  const deleteImageBtn = document.getElementById('deleteImageBtn'); // Get delete image button
+  const deleteImageBtn = document.getElementById('deleteImageBtn');
   const imageUploadInput = document.getElementById('imageUploadInput');
 
   // Gombok
@@ -959,46 +967,34 @@ const db = (() => {
   let noteEntryIdToUpdate = null;
   let scannerRafId = null;
   let lastDetected = { code: null, image: null };
-  let lastDetectedCodeToDisplay = null; // Stores the code that should be displayed
-  let displayTimeoutId = null; // To manage the debounce timeout
+  let lastDetectedCodeToDisplay = null;
+  let displayTimeoutId = null;
 
   // Global state for image modal carousel
   let currentModalImages = [];
   let currentModalImageIndex = 0;
-  let currentImageEntryId = null; // Store the ID of the entry whose image is currently displayed
+  let currentImageEntryId = null;
 
   // Lézer szkenner kezelése
   let laserScannerBuffer = [];
   let laserScannerTimer = null;
 
   window.addEventListener('keydown', (e) => {
-    // Ne fusson, ha egy modális ablak nyitva van, vagy nincs kategória kiválasztva
     if (document.querySelector('.modal-overlay[style*="display: flex"]') || !currentCategory) {
       return;
     }
-
-    // Ha az "Enter" billentyűt nyomják le, és van valami a pufferben
     if (e.key === 'Enter' && laserScannerBuffer.length > 0) {
-      e.preventDefault(); // Megakadályozza az alapértelmezett műveletet
+      e.preventDefault();
       const scannedCode = laserScannerBuffer.join('');
-      
-      // Új bejegyzés hozzáadása kép nélkül, 'laser' forrással
       addNewEntry(scannedCode, null, 'laser');
-
-      // Puffer ürítése
       laserScannerBuffer = [];
       clearTimeout(laserScannerTimer);
       return;
     }
-
-    // Csak a nyomtatható karaktereket vegye figyelembe
     if (e.key.length === 1) {
       laserScannerBuffer.push(e.key);
-
-      // Időzítő újraindítása minden billentyűlenyomáskor
       clearTimeout(laserScannerTimer);
       laserScannerTimer = setTimeout(() => {
-        // Ha a felhasználó lassan gépel, a puffer 100 ms után törlődik
         laserScannerBuffer = [];
       }, 100);
     }
@@ -1013,7 +1009,6 @@ const db = (() => {
     btn.addEventListener('click', () => selectCategory(i, btn));
     categoryGrid1.appendChild(btn);
   }
-
   for(let i=17; i<=28; i++){
     const btn = document.createElement('button');
     btn.textContent = i;
@@ -1023,12 +1018,11 @@ const db = (() => {
 
   // Funkció a kategóriagombok színeinek frissítésére
   async function updateCategoryButtonColors() {
-    const allCategoryButtons = document.querySelectorAll('.grid button'); // Select all buttons in any grid
+    const allCategoryButtons = document.querySelectorAll('.grid button');
     for (const button of allCategoryButtons) {
         const categoryNum = parseInt(button.textContent);
         const entriesForCategory = await db.getEntriesForCategory(categoryNum);
         
-        // Clear existing icon
         const existingIcon = button.querySelector('.time-icon');
         if (existingIcon) {
             existingIcon.remove();
@@ -1037,7 +1031,6 @@ const db = (() => {
         if (entriesForCategory.length > 0) {
             button.classList.remove('empty-category');
             
-            // Get the latest entry
             const latestEntry = entriesForCategory.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
             const entryHour = new Date(latestEntry.date).getHours();
 
@@ -1058,7 +1051,7 @@ const db = (() => {
     }
   }
 
-  // Funkció a vezérlőgombok (billentyűzet, vonalkód) színének frissítésére
+  // Funkció a vezérlőgombok színének frissítésére
   function updateControlButtonsColor(isEmpty) {
     if (isEmpty) {
       manualEntryBtn.classList.add('empty-category-control');
@@ -1072,32 +1065,24 @@ const db = (() => {
   // Kategóriaváltás
   async function selectCategory(num, btn){
     if(currentCategory === num) return;
-    // Remove active class from ALL category buttons, regardless of grid
     const prevActive = document.querySelector('.grid button.active');
     if(prevActive) prevActive.classList.remove('active');
     btn.classList.add('active');
     currentCategory = num;
 
-    // Dynamically set categoryLabel colors based on content
     try {
         entries = await db.getEntriesForCategory(currentCategory);
-        categoryLabelLeft.textContent = `${num}`; // Update left label
-        // categoryLabelRight.textContent = `${num}`; // Removed update for right label
+        categoryLabelLeft.textContent = `${num}`;
         const isEmpty = entries.length === 0;
         if (isEmpty) {
-            categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey if empty */
-            // categoryLabelRight.style.color = 'var(--muted)'; /* Removed update for right label */
+            categoryLabelLeft.style.color = 'var(--muted)';
         } else {
-            categoryLabelLeft.style.color = 'var(--primary)'; /* Blue if not empty */
-            // categoryLabelRight.style.color = 'var(--primary)'; /* Removed update for right label */
+            categoryLabelLeft.style.color = 'var(--primary)';
         }
         
-        // Update control buttons color
         updateControlButtonsColor(isEmpty);
-
         mainControls.style.display = 'block';
         listSection.style.display = 'block';
-
         renderTable();
         await updateCategoryButtonColors();
     }
@@ -1197,12 +1182,13 @@ const db = (() => {
   }
 
   // Function to open the image modal with carousel capability
-  function openImageModal(images, startIndex, entryId) { // Added entryId parameter
+  function openImageModal(images, startIndex, entryId) {
       currentModalImages = images;
       currentModalImageIndex = startIndex;
-      currentImageEntryId = entryId; // Store the entry ID
+      currentImageEntryId = entryId;
 
       modalImage.src = currentModalImages[currentModalImageIndex];
+      modalImage.classList.remove('zoomed'); // Reset zoom on open
       imageModal.style.display = 'flex';
       document.body.classList.add('modal-open');
 
@@ -1218,9 +1204,8 @@ const db = (() => {
           prevBtn.style.display = 'none';
           nextBtn.style.display = 'none';
       } else {
-          prevBtn.style.display = 'inline-flex'; // Use inline-flex for centering icon
+          prevBtn.style.display = 'inline-flex';
           nextBtn.style.display = 'inline-flex';
-
           prevBtn.disabled = (currentModalImageIndex === 0);
           nextBtn.disabled = (currentModalImageIndex === currentModalImages.length - 1);
       }
@@ -1231,6 +1216,7 @@ const db = (() => {
       if (currentModalImageIndex < currentModalImages.length - 1) {
           currentModalImageIndex++;
           modalImage.src = currentModalImages[currentModalImageIndex];
+          modalImage.classList.remove('zoomed'); // Reset zoom
           updateImageModalNavigation();
       }
   }
@@ -1239,6 +1225,7 @@ const db = (() => {
       if (currentModalImageIndex > 0) {
           currentModalImageIndex--;
           modalImage.src = currentModalImages[currentModalImageIndex];
+          modalImage.classList.remove('zoomed'); // Reset zoom
           updateImageModalNavigation();
       }
   }
@@ -1246,11 +1233,11 @@ const db = (() => {
   // Function to delete the currently displayed image
   async function deleteCurrentImage() {
       if (!currentImageEntryId || currentModalImages.length === 0) {
-          showCustomAlert('Kein Bild zum Löschen vorhanden.', 'Fehler'); // Changed to German
+          showCustomAlert('Kein Bild zum Löschen vorhanden.', 'Fehler');
           return;
       }
 
-      const confirmed = await showCustomConfirm('Möchten Sie dieses Bild wirklich löschen?', 'Bild löschen'); // Changed to German
+      const { confirmed } = await showCustomConfirm('Möchten Sie dieses Bild wirklich löschen?', 'Bild löschen');
       if (!confirmed) {
           return;
       }
@@ -1260,14 +1247,12 @@ const db = (() => {
           const imageUrlToDelete = currentModalImages[currentModalImageIndex];
 
           if (entry.image === imageUrlToDelete) {
-              // If the main image is deleted
               if (entry.kepek && entry.kepek.length > 0) {
-                  entry.image = entry.kepek.shift(); // Set first extra image as main
+                  entry.image = entry.kepek.shift();
               } else {
-                  entry.image = null; // No more images
+                  entry.image = null;
               }
           } else if (entry.kepek) {
-              // If an extra image is deleted
               const indexToDelete = entry.kepek.indexOf(imageUrlToDelete);
               if (indexToDelete > -1) {
                   entry.kepek.splice(indexToDelete, 1);
@@ -1275,21 +1260,17 @@ const db = (() => {
           }
 
           await db.updateEntry(entry);
-          entries = entries.map(e => e.id === entry.id ? entry : e); // Update local entries array
-
-          // Re-render table and update modal if still open
+          entries = entries.map(e => e.id === entry.id ? entry : e);
           renderTable();
 
-          // After deletion, re-evaluate currentModalImages and currentModalImageIndex
           const allRemainingImages = [entry.image, ...(entry.kepek || [])].filter(Boolean);
           if (allRemainingImages.length > 0) {
-              // Adjust index if the deleted image was the last one
               if (currentModalImageIndex >= allRemainingImages.length) {
                   currentModalImageIndex = allRemainingImages.length - 1;
               }
               openImageModal(allRemainingImages, currentModalImageIndex, currentImageEntryId);
           } else {
-              closeModal(imageModal); // Close modal if no images left
+              closeModal(imageModal);
           }
       }
   }
@@ -1300,25 +1281,22 @@ const db = (() => {
     const sortedEntries = entries.slice().sort((a,b)=> new Date(b.date) - new Date(a.date));
     logBody.innerHTML = sortedEntries.map((e,i) => {
       const entryDate = new Date(e.date);
-      const formattedDate = entryDate.toLocaleDateString('de-DE'); // Only date part
-      const formattedTime = entryDate.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }); // Only time part
+      const formattedDate = entryDate.toLocaleDateString('de-DE');
+      const formattedTime = entryDate.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
 
       const allImageSources = [e.image, ...(e.kepek || [])].filter(Boolean);
       let photosCellHtml = '';
-      // Loop through images, 2 per row
       for (let j = 0; j < allImageSources.length; j += 2) {
         photosCellHtml += `<div class="photoRow">${allImageSources.slice(j, j + 2).map(src => `<img src="${src}" alt="Bild">`).join('')}</div>`;
       }
 
-      const noteIcon = e.note ? '📖' : '➕';
       const noteTitle = e.note ? 'Notiz öffnen' : 'Notiz hinzufügen';
 
-      // Determine if the code should be colored based on source or FA/NA prefix
       let codeClass = '';
       if (e.code && (e.code.startsWith('FA') || e.code.startsWith('NA'))) {
-          codeClass = 'auftrag-colored'; // Blue and bold for FA/NA
-      } else if (e.source === 'scanner' || e.source === 'manual' || e.source === 'laser') { // If it's scanned, manual, or laser (and not FA/NA)
-          codeClass = 'auftrag-manual-bold'; // Black and bold
+          codeClass = 'auftrag-colored';
+      } else if (e.source === 'scanner' || e.source === 'manual' || e.source === 'laser') {
+          codeClass = 'auftrag-manual-bold';
       }
 
       return `
@@ -1349,8 +1327,7 @@ const db = (() => {
               const allImageSources = [entry.image, ...(entry.kepek || [])].filter(Boolean);
               const clickedImageSrc = event.target.src;
               const clickedImageIndex = allImageSources.indexOf(clickedImageSrc);
-
-              openImageModal(allImageSources, clickedImageIndex, entryId); // Pass entryId
+              openImageModal(allImageSources, clickedImageIndex, entryId);
           }
       }));
       logBody.querySelectorAll('.addExtraPhotoBtn').forEach(btn => btn.addEventListener('click', openCameraModal));
@@ -1361,13 +1338,14 @@ const db = (() => {
   function loadImage(src) {
       return new Promise((resolve, reject) => {
           const img = new Image();
+          img.crossOrigin = 'Anonymous'; 
           img.onload = () => resolve(img);
-          img.onerror = (err) => reject(err);
+          img.onerror = (err) => reject(new Error(`Failed to load image with src: ${src.substring(0, 50)}...`));
           img.src = src;
       });
   }
 
-  // PDF generálása és mentése
+  // --- PDF GENERATION (REVISED) ---
   async function generatePdfForEntry(entry) {
     if (typeof window.jspdf === 'undefined') {
         console.error('jsPDF is not loaded!');
@@ -1392,11 +1370,23 @@ const db = (() => {
     }
 
     const allImageSources = [entry.image, ...(entry.kepek || [])].filter(Boolean);
-    const loadedImages = await Promise.all(allImageSources.map(loadImage)).catch(err => {
-        console.error("Error loading images for PDF:", err);
-        showCustomAlert('Einige Bilder konnten nicht geladen werden.', 'Fehler');
-        return []; // Return empty array on error
+    
+    const imageLoadResults = await Promise.allSettled(allImageSources.map(loadImage));
+    
+    const loadedImages = [];
+    let failedImageCount = 0;
+    imageLoadResults.forEach(result => {
+        if (result.status === 'fulfilled') {
+            loadedImages.push(result.value);
+        } else {
+            console.error("Ein Bild konnte nicht geladen werden:", result.reason);
+            failedImageCount++;
+        }
     });
+
+    if (failedImageCount > 0) {
+        showCustomAlert(`${failedImageCount} Bild(er) konnten nicht für den PDF-Export geladen werden und wurden übersprungen.`, 'Warnung');
+    }
 
     for (let i = 0; i < loadedImages.length; i++) {
         const imageData = loadedImages[i];
@@ -1407,32 +1397,39 @@ const db = (() => {
         doc.text(`Bild ${i + 1}`, 10, yPos);
         yPos += 5;
 
-        const imgProps = doc.getImageProperties(imageData);
-        const pdfWidth = doc.internal.pageSize.getWidth();
-        const pdfHeight = doc.internal.pageSize.getHeight();
-        const maxWidth = pdfWidth - 20;
-        const maxHeight = pdfHeight - yPos - 10;
+        try {
+            const imgProps = doc.getImageProperties(imageData);
+            const pdfWidth = doc.internal.pageSize.getWidth();
+            const pdfHeight = doc.internal.pageSize.getHeight();
+            const maxWidth = pdfWidth - 20;
+            const maxHeight = pdfHeight - yPos - 10;
 
-        let imgWidth = imgProps.width;
-        let imgHeight = imgProps.height;
-        const ratio = imgWidth / imgHeight;
+            let imgWidth = imgProps.width;
+            let imgHeight = imgProps.height;
+            const ratio = imgWidth / imgHeight;
 
-        if (imgWidth > maxWidth) {
-            imgWidth = maxWidth;
-            imgHeight = imgWidth / ratio;
+            if (imgWidth > maxWidth) {
+                imgWidth = maxWidth;
+                imgHeight = imgWidth / ratio;
+            }
+            if (imgHeight > maxHeight) {
+                imgHeight = maxHeight;
+                imgWidth = imgHeight * ratio;
+            }
+
+            if (yPos + imgHeight > pdfHeight - 10) {
+                doc.addPage();
+                yPos = 10;
+            }
+
+            doc.addImage(imageData, undefined, 10, yPos, imgWidth, imgHeight);
+            yPos += imgHeight + 10;
+        } catch (e) {
+            console.error("Fehler beim Hinzufügen eines Bildes zum PDF:", e);
+            if (yPos > 280) { doc.addPage(); yPos = 10; }
+            doc.text(`[Bild ${i + 1} konnte nicht verarbeitet werden]`, 10, yPos);
+            yPos += 10;
         }
-        if (imgHeight > maxHeight) {
-            imgHeight = maxHeight;
-            imgWidth = imgHeight * ratio;
-        }
-
-        if (yPos + imgHeight > pdfHeight - 10) {
-            doc.addPage();
-            yPos = 10;
-        }
-
-        doc.addImage(imageData, 'JPEG', 10, yPos, imgWidth, imgHeight);
-        yPos += imgHeight + 10;
     }
     
     doc.save(`${entry.code}.pdf`);
@@ -1449,7 +1446,7 @@ const db = (() => {
       if (result.confirmed) {
           try {
               if (result.exportPdf) {
-                  await generatePdfForEntry(entryToDelete); // Generate PDF only if checked
+                  await generatePdfForEntry(entryToDelete);
               }
               
               await db.deleteEntry(id);
@@ -1515,21 +1512,46 @@ const db = (() => {
     entryIdToUpdate = parseInt(event.currentTarget.dataset.id);
     imageUploadInput.click();
   }
+  
+  // NEW: Function to sanitize uploaded images
+  function sanitizeImage(imageDataUrl, quality = 0.95) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => {
+            const canvas = document.createElement('canvas');
+            canvas.width = img.naturalWidth;
+            canvas.height = img.naturalHeight;
+            const ctx = canvas.getContext('2d');
+            ctx.drawImage(img, 0, 0);
+            resolve(canvas.toDataURL('image/jpeg', quality));
+        };
+        img.onerror = () => {
+            reject(new Error('Failed to load image for sanitization.'));
+        };
+        img.src = imageDataUrl;
+    });
+  }
 
+  // UPDATED: Use sanitizeImage for uploaded files
   async function handleFileSelected(event) {
     const file = event.target.files[0];
     if (!file || !entryIdToUpdate) return;
 
     const reader = new FileReader();
     reader.onload = async (e) => {
-        const imageDataUrl = e.target.result;
-        const entry = entries.find(e => e.id === entryIdToUpdate);
-        if (entry) {
-            if (!entry.kepek) entry.kepek = [];
-            entry.kepek.push(imageDataUrl);
-            await db.updateEntry(entry);
-            renderTable();
-            navigator.vibrate?.(100);
+        try {
+            const sanitizedImageDataUrl = await sanitizeImage(e.target.result);
+            const entry = entries.find(entry => entry.id === entryIdToUpdate);
+            if (entry) {
+                if (!entry.kepek) entry.kepek = [];
+                entry.kepek.push(sanitizedImageDataUrl);
+                await db.updateEntry(entry);
+                renderTable();
+                navigator.vibrate?.(100);
+            }
+        } catch (error) {
+            console.error("Image sanitization failed:", error);
+            showCustomAlert('Das Bild konnte nicht verarbeitet werden. Es ist möglicherweise beschädigt.', 'Fehler');
         }
     };
     reader.readAsDataURL(file);
@@ -1542,7 +1564,7 @@ const db = (() => {
       if(!detector) { showCustomAlert('Ihr Browser unterstützt das Scannen von Barcodes nicht.', 'Fehler'); return; }
       lastDetected = { code: null, image: null };
       scannerSaveBtn.disabled = true;
-      scannerDetectedCode.innerHTML = '<i class="fas fa-search"></i>'; // Set icon directly
+      scannerDetectedCode.innerHTML = '<i class="fas fa-search"></i>';
       await openModal(scannerModal, scannerVideo);
       scannerRafId = requestAnimationFrame(scannerLoop);
   }
@@ -1557,46 +1579,38 @@ const db = (() => {
           const currentScanCode = barcodes.length > 0 ? barcodes[0].rawValue : null;
 
           if (currentScanCode && currentScanCode !== lastDetectedCodeToDisplay) {
-              // New unique barcode detected
               if (displayTimeoutId) {
                   clearTimeout(displayTimeoutId);
                   displayTimeoutId = null;
               }
               lastDetectedCodeToDisplay = currentScanCode;
-              lastDetected.code = currentScanCode; // Update lastDetected for saving
-              lastDetected.image = captureFrame(scannerVideo, 0.95); // Capture image
+              lastDetected.code = currentScanCode;
+              lastDetected.image = captureFrame(scannerVideo, 0.95);
               scannerDetectedCode.textContent = lastDetectedCodeToDisplay;
               scannerSaveBtn.disabled = false;
               navigator.vibrate?.(100);
           } else if (!currentScanCode && lastDetectedCodeToDisplay) {
-              // No barcode detected in current frame, but one was previously displayed
-              // Start a timeout to clear the display if no barcode reappears
-              if (!displayTimeoutId) { // Only set timeout if one isn't already running
+              if (!displayTimeoutId) {
                   displayTimeoutId = setTimeout(() => {
                       scannerDetectedCode.innerHTML = '<i class="fas fa-search"></i>';
                       scannerSaveBtn.disabled = true;
-                      lastDetectedCodeToDisplay = null; // Clear displayed code
-                      lastDetected.code = null; // Clear saved code
+                      lastDetectedCodeToDisplay = null;
+                      lastDetected.code = null;
                       displayTimeoutId = null;
-                  }, 1500); // Debounce time: 1500ms
+                  }, 1500);
               }
           } else if (!currentScanCode && !lastDetectedCodeToDisplay && !displayTimeoutId) {
-              // No barcode detected and nothing was previously detected (initial state or after debounce)
               scannerDetectedCode.innerHTML = '<i class="fas fa-search"></i>';
               scannerSaveBtn.disabled = true;
           }
-          // If currentScanCode is the same as lastDetectedCodeToDisplay, do nothing, keep current display.
-
       } catch (e) {
           console.error(e);
-          // Optionally, display a temporary error icon/message
-          // scannerDetectedCode.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: orange;"></i>';
       }
       scannerRafId = requestAnimationFrame(scannerLoop);
   }
 
   // Új bejegyzés mentés
-  async function addNewEntry(code, image, source) { // Added source parameter
+  async function addNewEntry(code, image, source) {
       if (!code) return;
       if (entries.find(e => e.code === code)) {
           showCustomAlert('Diese ID ist bereits in der lokalen Liste vorhanden.', 'Hinweis');
@@ -1609,7 +1623,7 @@ const db = (() => {
           image: image,
           kepek: [],
           category: currentCategory,
-          source: source // Store the source
+          source: source
       };
 
       try {
@@ -1617,13 +1631,10 @@ const db = (() => {
           newEntry.id = newId;
           entries.push(newEntry);
           renderTable();
-          await updateCategoryButtonColors(); // Update colors after adding new entry
+          await updateCategoryButtonColors();
 
-          // Update the categoryLabel colors if a new entry is added to an empty category
-          if (entries.length === 1) { // If it was empty and now has one entry
-              categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey after clearing */
-              // categoryLabelRight.style.color = 'var(--muted)'; /* Removed update for right label */
-              // Update control buttons color
+          if (entries.length === 1) {
+              categoryLabelLeft.style.color = 'var(--primary)'; 
               updateControlButtonsColor(false);
           }
 
@@ -1647,14 +1658,13 @@ const db = (() => {
 
   // Eseménykezelők
   function saveScannedBarcode() {
-      addNewEntry(lastDetected.code, lastDetected.image, 'scanner'); // Pass 'scanner' source
-      closeModal(scannerModal); // Close scanner modal after saving
+      addNewEntry(lastDetected.code, lastDetected.image, 'scanner');
+      closeModal(scannerModal);
   }
   function handleManualEntry() {
-      // Using custom prompt for manual entry
-      showCustomPrompt('Bitte geben Sie den Produktnamen oder die Kennung ein:', 'Manuelle Eingabe').then(manualCode => { // Changed to German
+      showCustomPrompt('Bitte geben Sie den Produktnamen oder die Kennung ein:', 'Manuelle Eingabe').then(manualCode => {
           if (manualCode && manualCode.trim() !== '') {
-              addNewEntry(manualCode.trim(), null, 'manual'); // Pass 'manual' source
+              addNewEntry(manualCode.trim(), null, 'manual');
           }
       });
   }
@@ -1678,21 +1688,14 @@ const db = (() => {
           }
 
           input.value = '';
-
           promptModal.style.display = 'flex';
           document.body.classList.add('modal-open');
           input.focus();
 
-          const okHandler = () => {
-              closeAndResolve(input.value);
-          };
-          const cancelHandler = () => {
-              closeAndResolve(null);
-          };
+          const okHandler = () => closeAndResolve(input.value);
+          const cancelHandler = () => closeAndResolve(null);
           const overlayHandler = (e) => {
-              if (e.target === promptModal) {
-                  closeAndResolve(null);
-              }
+              if (e.target === promptModal) closeAndResolve(null);
           };
 
           const closeAndResolve = (value) => {
@@ -1730,20 +1733,19 @@ const db = (() => {
           cancelAnimationFrame(scannerRafId);
           scannerRafId = null;
       }
-      // Clear debounce timeout on modal close
       if (displayTimeoutId) {
           clearTimeout(displayTimeoutId);
           displayTimeoutId = null;
       }
-      lastDetectedCodeToDisplay = null; // Reset on close
-      lastDetected.code = null; // Reset on close
+      lastDetectedCodeToDisplay = null;
+      lastDetected.code = null;
       modal.style.display = 'none';
       document.body.classList.remove('modal-open');
   }
-  function captureFrame(videoElement, quality = 0.95) { // Updated quality to 0.95
+  function captureFrame(videoElement, quality = 0.95) {
       const canvas = document.createElement('canvas');
-      canvas.width = 2448; // Set fixed width to 2448px
-      canvas.height = 3264; // Set fixed height to 3264px
+      canvas.width = 2448;
+      canvas.height = 3264;
       canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
       return canvas.toDataURL('image/jpeg', quality);
   }
@@ -1754,18 +1756,23 @@ const db = (() => {
   scannerSaveBtn.addEventListener('click', saveScannedBarcode);
   manualEntryBtn.addEventListener('click', handleManualEntry);
   noteModalSaveBtn.addEventListener('click', saveNoteFromModal);
-  deleteImageBtn.addEventListener('click', deleteCurrentImage); // Attach listener for delete image button
+  deleteImageBtn.addEventListener('click', deleteCurrentImage);
 
   takePhotoButton.addEventListener('click', takePhotoAndSave);
   cancelCameraButton.addEventListener('click', () => closeModal(cameraModal));
   imageUploadInput.addEventListener('change', handleFileSelected);
 
   // Image modal navigation listeners
-  document.getElementById('imageModalPrevBtn').addEventListener('click', showPrevImage); // Corrected function call
+  document.getElementById('imageModalPrevBtn').addEventListener('click', showPrevImage);
   document.getElementById('imageModalNextBtn').addEventListener('click', showNextImage);
+  
+  // NEW: Listener for image zoom
+  modalImage.addEventListener('click', () => {
+    modalImage.classList.toggle('zoomed');
+  });
 
   imageModal.addEventListener('click', (e) => {
-      if (e.target === imageModal) { // Only close if clicking on the overlay, not the image or buttons
+      if (e.target === imageModal) {
           imageModal.style.display = 'none';
           document.body.classList.remove('modal-open');
       }
