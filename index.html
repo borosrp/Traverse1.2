@@ -3,7 +3,8 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-<title>Traverse Protokoll</title>
+<title>Traversendaten</title>
+<link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16"><path d="M0 .5A.5.5 0 0 1 .5 0h3a.5.5 0 0 1 0 1H1v2.5a.5.5 0 0 1-1 0v-3Zm12 0a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-1 0V1h-2.5a.5.5 0 0 1-.5-.5ZM.5 12a.5.5 0 0 1 .5.5V15h2.5a.5.5 0 0 1 0 1h-3a.5.5 0 0 1-.5-.5v-3a.5.5 0 0 1 .5-.5Zm15 0a.5.5 0 0 1 .5.5v3a.5.5 0 0 1-.5.5h-3a.5.5 0 0 1 0-1H15v-2.5a.5.5 0 0 1 .5-.5Z"/><path d="M4 4h1v1H4V4Z"/><path d="M7 4h1v1H7V4Z"/><path d="M4 7h1v1H4V7Z"/><path d="M7 7h1v1H7V7Z"/><path d="M11 4h1v1h-1V4Z"/><path d="M11 7h1v1h-1V7Z"/></svg>'>
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
@@ -155,17 +156,10 @@
   .grid button.active {
     border: 4px solid var(--success); /* Thicker green border to indicate active */
     box-shadow: var(--shadow-medium); /* Stronger shadow for active */
-    /* Background and text color will be determined by .empty-category class */
-  }
-  .grid button.active.empty-category {
-    background: var(--card-bg); /* Keep white background for empty active */
-    color: var(--text); /* Keep dark text for visibility on white background */
-    border-color: var(--success); /* Ensure green border */
-  }
-  .grid button.active:not(.empty-category) {
-    background: var(--primary); /* Keep blue background for non-empty active */
-    color: #fff; /* Keep white text for visibility on blue background */
-    border-color: var(--success); /* Ensure green border */
+    background: var(--card-bg); /* White background for ALL active buttons */
+    color: var(--success); /* Green text for ALL active buttons */
+    font-size: 1.5em; /* Larger font size */
+    font-weight: 700; /* Bolder text */
   }
 
 
@@ -1612,7 +1606,7 @@ const db = (() => {
       entries = [];
       renderTable();
       await updateCategoryButtonColors(); // Update colors after clearing category
-      // Update the categoryLabel colors after clearing the category
+      // Update the categoryLabel colors after clearing category
       categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey after clearing */
       // categoryLabelRight.style.color = 'var(--muted)'; /* Removed update for right label */
       // Update control buttons color after clearing
