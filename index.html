@@ -7,766 +7,767 @@
 <!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
-/* Otto Lehmann inspired design - Maximum 3D Effect */
-:root {
-  --bg: #f5f5f5; /* Light gray background */
-  --text: #333333; /* Dark gray text */
-  --muted: #666666; /* Medium gray for muted elements */
-  --primary: #0056b3; /* Otto Lehmann's blue */
-  --primary-dark: #004085; /* Darker blue for hover */
-  --accent: #28a745; /* A professional green for accent/success */
-  --success: #28a745; /* Green for success messages */
-  --danger: #dc3545; /* Red for danger/delete */
-  --border-color: #e0e0e0; /* Light gray border - This is for general borders, not grid specific now */
-  --card-bg: #ffffff; /* White card backgrounds */
-  --row-alt-bg: #f8f8f8; /* Very light gray for alternating table rows */
-  --note1: #fff3cd; /* Light yellow for notes */
-  --note2: #ffeeba; /* Slightly darker yellow for notes */
-  --secondary-grid-bg: #e0f2f7; /* Lighter blue for the second grid */
+  /* Otto Lehmann inspired design - Maximum 3D Effect */
+  :root {
+    --bg: #f5f5f5; /* Light gray background */
+    --text: #333333; /* Dark gray text */
+    --muted: #666666; /* Medium gray for muted elements */
+    --primary: #0056b3; /* Otto Lehmann's blue */
+    --primary-dark: #004085; /* Darker blue for hover */
+    --accent: #28a745; /* A professional green for accent/success */
+    --success: #28a745; /* Green for success messages */
+    --danger: #dc3545; /* Red for danger/delete */
+    --border-color: #e0e0e0; /* Light gray border - This is for general borders, not grid specific now */
+    --card-bg: #ffffff; /* White card backgrounds */
+    --row-alt-bg: #f8f8f8; /* Very light gray for alternating table rows */
+    --note1: #fff3cd; /* Light yellow for notes */
+    --note2: #ffeeba; /* Slightly darker yellow for notes */
+    --secondary-grid-bg: #e0f2f7; /* Lighter blue for the second grid */
 
-  /* Even more pronounced, layered shadows for maximum 3D effect */
-  --shadow-soft: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15); /* Very strong base shadow */
-  --shadow-medium: 0 15px 30px rgba(0, 0, 0, 0.35), 0 25px 50px rgba(0, 0, 0, 0.25); /* Extremely deep shadow for modals/hover */
-  --shadow-active: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); /* Very strong pressed state shadow */
-}
+    /* Even more pronounced, layered shadows for maximum 3D effect */
+    --shadow-soft: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15); /* Very strong base shadow */
+    --shadow-medium: 0 15px 30px rgba(0, 0, 0, 0.35), 0 25px 50px rgba(0, 0, 0, 0.25); /* Extremely deep shadow for modals/hover */
+    --shadow-active: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); /* Very strong pressed state shadow */
+  }
 
-html, body {
-  height: 100%; /* Ensure html and body take full height */
-  margin: 0;
-  padding: 0;
-}
+  html, body {
+    height: 100%; /* Ensure html and body take full height */
+    margin: 0;
+    padding: 0;
+  }
 
-body {
-  font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; /* Professional sans-serif font */
-  color: var(--text);
-  background: var(--bg);
-  line-height: 1.6; /* Improved line height */
-  max-width: 960px; /* Slightly wider layout */
-  margin: 5px auto; /* Further reduced top margin for the body */
-  display: flex; /* Use flexbox for overall layout */
-  flex-direction: column; /* Arrange children vertically */
-  padding-bottom: 0; /* Remove padding from body, handled by main-scrollable-area */
-}
-body.modal-open {
-    overflow: hidden;
-}
+  body {
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; /* Professional sans-serif font */
+    color: var(--text);
+    background: var(--bg);
+    line-height: 1.6; /* Improved line height */
+    max-width: 960px; /* Slightly wider layout */
+    margin: 5px auto; /* Further reduced top margin for the body */
+    display: flex; /* Use flexbox for overall layout */
+    flex-direction: column; /* Arrange children vertically */
+    padding-bottom: 0; /* Remove padding from body, handled by main-scrollable-area */
+  }
+  body.modal-open {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+  }
 
-.app-header {
-  position: relative;
-  text-align: center;
-  margin-bottom: 5px; /* Further reduced space below header */
-  padding-bottom: 10px; /* Reduced padding for visual separation */
-  border-bottom: 1px solid var(--border-color); /* Subtle line below header */
-  flex-shrink: 0; /* Prevent header from shrinking */
-}
+  .app-header {
+    position: relative;
+    text-align: center;
+    margin-bottom: 5px; /* Further reduced space below header */
+    padding-bottom: 10px; /* Reduced padding for visual separation */
+    border-bottom: 1px solid var(--border-color); /* Subtle line below header */
+    flex-shrink: 0; /* Prevent header from shrinking */
+  }
 
-.app-title {
-  margin: 0;
-  font-size: 1.32em; /* Increased font size by 10% (1.2em * 1.10 = 1.32em) */
-  font-weight: 700; /* Bold title */
-  letter-spacing: -0.5px; /* Tighter letter spacing */
-  color: var(--primary); /* Otto Lehmann's primary blue */
-  text-shadow: none; /* No text shadow */
-}
+  .app-title {
+    margin: 0;
+    font-size: 1.32em; /* Increased font size by 10% (1.2em * 1.10 = 1.32em) */
+    font-weight: 700; /* Bold title */
+    letter-spacing: -0.5px; /* Tighter letter spacing */
+    color: var(--primary); /* Otto Lehmann's primary blue */
+    text-shadow: none; /* No text shadow */
+  }
 
-/* .app-logo was here, removed */
+  /* .app-logo was here, removed */
 
-.category-label-container { /* This container is no longer needed as label is moved into .controls */
-  display: none; /* Hide if not used */
-}
+  .category-label-container { /* This container is no longer needed as label is moved into .controls */
+    display: none; /* Hide if not used */
+  }
 
-/* New flex container for the main scrollable content area */
-#main-scrollable-area {
-  flex: 1; /* Allow this area to grow and shrink */
-  overflow-y: auto; /* Enable vertical scrolling within this area */
-  padding: 0 20px 130px; /* Apply main content padding here, increased for safety */
-  box-sizing: border-box; /* Include padding in element's total width and height */
-}
+  /* New flex container for the main scrollable content area */
+  #main-scrollable-area {
+    flex: 1; /* Allow this area to grow and shrink */
+    overflow-y: auto; /* Enable vertical scrolling within this area */
+    padding: 0 20px 130px; /* Apply main content padding here, increased for safety */
+    box-sizing: border-box; /* Include padding in element's total width and height */
+  }
 
-.grid { /* This style applies to both category grids */
-  display: grid;
-  gap: 15px; /* More gap */
-  margin-bottom: 10px; /* Reduced margin between grids */
-  background: var(--card-bg); /* Default white background for grids */
-  padding: 20px;
-  border-radius: 8px; /* Softly rounded corners */
-  box-shadow: var(--shadow-soft); /* Applied stronger soft shadow */
-  border: 1px solid var(--text); /* Stronger black border for the grid containers */
-}
-/* Specific style for the second grid to have a light blue background */
-#categoryGrid2 {
-  background: #70A4D5; /* Changed to the intermediate blue color */
-}
+  .grid { /* This style applies to both category grids */
+    display: grid;
+    gap: 15px; /* More gap */
+    margin-bottom: 10px; /* Reduced margin between grids */
+    background: var(--card-bg); /* Default white background for grids */
+    padding: 20px;
+    border-radius: 8px; /* Softly rounded corners */
+    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow */
+    border: 1px solid var(--text); /* Stronger black border for the grid containers */
+  }
+  /* Specific style for the second grid to have a light blue background */
+  #categoryGrid2 {
+    background: #70A4D5; /* Changed to the intermediate blue color */
+  }
 
-/* Default grid columns for small screens (under 768px) */
-#categoryGrid1 {
-  grid-template-columns: repeat(4, minmax(70px, 1fr)); /* 4 columns for 16 buttons (4 rows) */
-}
-#categoryGrid2 {
-  grid-template-columns: repeat(4, minmax(70px, 1fr)); /* 4 columns for 12 buttons (3 rows) */
-}
-
-/* Media query for larger screens (768px and above) */
-@media (min-width: 768px) { /* Adjusted breakpoint to 768px */
+  /* Default grid columns for small screens (under 768px) */
   #categoryGrid1 {
-    grid-template-columns: repeat(8, minmax(70px, 1fr)); /* 8 columns for 16 buttons (2 rows) */
+    grid-template-columns: repeat(4, minmax(70px, 1fr)); /* 4 columns for 16 buttons (4 rows) */
   }
   #categoryGrid2 {
-    grid-template-columns: repeat(6, minmax(70px, 1fr)); /* 6 columns for 12 buttons (2 rows) */
+    grid-template-columns: repeat(4, minmax(70px, 1fr)); /* 4 columns for 12 buttons (3 rows) */
   }
-}
 
-.grid button {
-  padding: 20px 10px;
-  font-size: 1.2em;
-  border-radius: 6px; /* Slightly sharper button corners */
-  border: 1px solid var(--text); /* Changed to strong black border */
-  cursor: pointer;
-  background: var(--primary);
-  color: #ffffff;
-  user-select: none;
-  transition: all 0.1s ease; /* Faster transition */
-  /* Applied even stronger 3D shadow to grid buttons */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
-  text-shadow: none;
-}
-.grid button.empty-category {
-  background: var(--card-bg); /* White background for empty */
-  color: var(--text);
-  border-color: var(--text); /* Strong black border for empty category button */
-  box-shadow: none;
-}
-.grid button:active {
-  transform: scale(0.96); /* More pronounced press effect */
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); /* Deeper inset shadow on active */
-}
-.grid button:hover {
-  background: var(--primary-dark);
-  border-color: var(--primary-dark);
-  /* Even stronger shadow on hover */
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3);
-}
-.grid button.empty-category:hover {
-  background: var(--row-alt-bg); /* Light hover for empty */
-  border-color: var(--muted); /* Darker border on hover */
-  box-shadow: none;
-}
-/* Modified active state to show content status */
-.grid button.active {
-  border: 4px solid var(--success); /* Thicker green border to indicate active */
-  box-shadow: var(--shadow-medium); /* Stronger shadow for active */
-  /* Background and text color will be determined by .empty-category class */
-}
-.grid button.active.empty-category {
-  background: var(--card-bg); /* Keep white background for empty active */
-  color: var(--text); /* Keep dark text for visibility on white background */
-  border-color: var(--success); /* Ensure green border */
-}
-.grid button.active:not(.empty-category) {
-  background: var(--primary); /* Keep blue background for non-empty active */
-  color: #fff; /* Keep white text for visibility on blue background */
-  border-color: var(--success); /* Ensure green border */
-}
-
-
-#mainControls {
-  position: fixed; /* Fixed position */
-  bottom: 0; /* Align to the bottom */
-  left: 0;
-  width: 100%; /* Full width */
-  z-index: 1000; /* Ensure it's above other content */
-  display: none; /* Keep hidden initially */
-  box-sizing: border-box; /* Include padding in width */
-  padding: 0; /* Removed padding from here */
-  background: none; /* Make background transparent */
-  border-top: none; /* Removed border from here */
-  box-shadow: none; /* Removed shadow from here */
-  flex-shrink: 0; /* Prevent footer from shrinking */
-}
-
-.controls {
-  display: flex;
-  justify-content: center; /* Center the entire group of labels and buttons */
-  align-items: center;
-  padding: 10px; /* Reduced padding for a smaller frame */
-  background: var(--card-bg); /* Background for the inner frame */
-  border-radius: 8px; /* Border-radius for the inner frame */
-  box-shadow: var(--shadow-soft); /* Shadow for the inner frame */
-  border: 1px solid var(--border-color); /* Border for the inner frame */
-  box-sizing: border-box; /* Include padding/border in element's total width/height */
-  max-width: fit-content; /* Make the inner frame fit its content */
-  margin: 10px auto; /* Center the inner frame and add some vertical margin */
-  flex-wrap: nowrap; /* Ensure elements stay in one line */
-}
-/* Specific style for the category label within controls */
-.controls .category-display-label { /* New common class for labels */
-  font-weight: bold;
-  font-size: 2.2em; /* Doubled font size for category label */
-  text-align: center;
-  background: none;
-  padding: 0;
-  border-radius: 0;
-  box-shadow: none;
-  border: none;
-  height: auto; /* Allow height to adjust to content */
-  flex-shrink: 1; /* Allow label to shrink */
-  flex-basis: auto; /* Allow label to determine its own base size */
-  margin: 0 10px; /* Space between label and button group */
-}
-
-/* Hide right label on all screens */
-#categoryLabelRight {
-  display: none;
-}
-
-.controls .control-buttons { /* New container for the buttons */
-  display: flex;
-  gap: 15px; /* Gap between buttons */
-  flex-wrap: nowrap; /* Ensure buttons stay in one row */
-  justify-content: center;
-  align-items: center;
-}
-
-/* Styles for control buttons based on category content */
-.controls button {
-  font-size: 1.1em;
-  padding: 14px 22px;
-  border-radius: 6px;
-  border: none;
-  background: var(--primary); /* Default blue */
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.1s ease; /* Faster transition */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
-  text-shadow: none;
-}
-
-.controls button.empty-category-control { /* New class for empty category control buttons */
-  background: var(--muted) !important; /* Light grey for empty category controls, !important to override specific IDs */
-  color: #fff; /* White icon/text on grey */
-  box-shadow: none !important; /* No shadow for empty state, !important to override specific IDs */
-}
-
-.controls button:active {
-  transform: scale(0.96); /* More pronounced press effect */
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); /* Deeper inset shadow on active */
-}
-.controls button:hover {
-  background: var(--primary-dark);
-  /* Even stronger shadow on hover */
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3);
-}
-.controls button.empty-category-control:hover { /* Hover for empty state */
-  background: #888 !important; /* Slightly darker grey on hover, !important to override specific IDs */
-  box-shadow: none !important;
-}
-
-/* Style for the QR code icon within the button */
-.controls button i {
-  margin: 0 4px; /* Space between icons */
-}
-
-/* Specific styles for the prominent Scannen button */
-/* Moved these styles to .controls button directly for consistency */
-#openScannerBtn {
-    padding: 18px 25px; /* Larger padding */
-    font-size: 1.25em; /* Larger font size */
-    box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3), 0 20px 40px rgba(0, 0, 0, 0.25); /* Even stronger shadow */
-}
-#openScannerBtn:hover {
-    background-color: var(--primary-dark);
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3); /* Stronger hover shadow */
-}
-#openScannerBtn:active {
-    transform: scale(0.94); /* More pronounced active effect */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.25); /* Deeper active shadow */
-}
-
-#clearCategoryBtn {
-  background: var(--danger);
-  /* Specific styles for the trash icon button */
-  padding: 14px 22px; /* Match other control buttons' padding */
-  font-size: 1.1em; /* Match other control buttons' font size */
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15); /* Match other control buttons' shadow */
-  color: #fff; /* White icon color */
-}
-#clearCategoryBtn:hover {
-  background: #c82333; /* Darker red on hover */
-  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3); /* Stronger hover hover shadow */
-}
-#clearCategoryBtn:active {
-  transform: scale(0.96);
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2);
-}
-
-
-#listSection {
-  margin-top: 30px;
-  display: block; /* Ensure it's block to take width */
-}
-
-table {
-  width: 100%;
-  border-collapse: separate;
-  border-spacing: 0;
-  margin-top: 20px;
-  background: var(--card-bg);
-  border-radius: 8px;
-  overflow: hidden;
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-soft); /* Applied stronger soft shadow for table */
-  table-layout: fixed; /* Ensures columns take up available space evenly */
-}
-th, td {
-  border-bottom: 1px solid var(--border-color);
-  padding: 15px 12px;
-  text-align: center; /* Centered text for all table cells */
-  vertical-align: middle;
-  color: var(--text);
-  /* overflow: hidden; /* Removed to allow text to wrap */
-  text-overflow: ellipsis; /* Add ellipsis for overflowing text */
-  white-space: normal; /* Allow text to wrap within the cell */
-  word-wrap: break-word; /* Ensure long words break */
-}
-th {
-  background: #f0f0f0; /* Lighter gray header */
-  font-weight: bold; /* Bold as requested */
-  color: var(--muted); /* Muted text for headers */
-  font-size: 0.9em;
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
-  text-shadow: none;
-}
-th:first-child { border-top-left-radius: 8px; }
-th:last-child { border-top-right-radius: 8px; }
-tr:last-child td { border-bottom: none; }
-
-/* Column widths for better layout */
-th:nth-child(1), td:nth-child(1) { width: 5%; } /* # */
-th:nth-child(2), td:nth-child(2) { width: 23%; font-weight: bold; } /* Auftrag - Bold as requested */
-th:nth-child(3), td:nth-child(3) { width: 15%; } /* Datum */
-th:nth-child(4), td:nth-child(4) { width: 8%; } /* Notiz */
-th:nth-child(5), td:nth-child(5) { width: 28%; } /* Bilder */
-td.actions-cell {
-  width: 21%;
-  white-space: nowrap;
-}
-
-
-#logBody tr:nth-child(even) { background-color: var(--row-alt-bg); }
-
-/* Removed subtle-blink animation from td.has-text-cell */
-td.has-text-cell {
-  animation: none;
-}
-
-/* New style for Auftrag numbers starting with FA or NA */
-.auftrag-colored {
-  color: var(--primary); /* Blue color */
-  font-weight: bold; /* Make it bold for emphasis */
-}
-
-/* New style for manually entered Auftrag numbers */
-.auftrag-manual-bold {
-  color: var(--text); /* Dark gray (effectively black) */
-  font-weight: bold;
-}
-
-button:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
-.deleteBtn {
-  background: #f8d7da; /* Light red background */
-  color: var(--danger);
-  border: 1px solid #f5c6cb;
-  border-radius: 5px;
-  padding: 8px 8px;
-  font-size: 0.85em;
-  font-weight: bold;
-  transition: all 0.2s ease;
-  box-shadow: none;
-  display: inline-block; /* Ensure it's inline-block for centering with text-align */
-  margin: 0 auto;
-  box-shadow: none;
-  border-radius: 6px; /* Match other buttons slightly */
-}
-.deleteBtn:hover {
-  background: var(--danger);
-  color: #fff;
-  box-shadow: var(--shadow-soft);
-}
-.deleteBtn:active { transform: scale(0.95); }
-
-.noteToggleBtn {
-  background: none;
-  border: 1px solid transparent; /* Default transparent border */
-  cursor: pointer;
-  color: var(--muted); /* Muted color by default */
-  line-height: 1;
-  transition: transform 0.15s ease, color 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  display: inline-block; /* Ensure it's inline-block for centering with text-align */
-  margin: 0 auto;
-  box-shadow: none;
-  border-radius: 6px; /* Match other buttons slightly */
-  padding: 8px 8px;
-  font-size: 1.5em; /* Set font-size to match addExtraPhotoBtn */
-}
-.noteToggleBtn:hover { transform: scale(1.15); color: var(--primary); }
-
-/* New style for noteToggleBtn when it has a note */
-.noteToggleBtn.note-filled {
-  box-shadow: var(--shadow-soft); /* Soft shadow for filled notes */
-  animation: blink-white-red 1s infinite alternate; /* Apply blinking animation */
-  border: 1px solid var(--danger);
-}
-.noteToggleBtn.note-filled:hover {
-  background: var(--danger);
-  color: #fff;
-  border-color: var(--danger);
-  box-shadow: var(--shadow-medium);
-  transform: scale(1.15); /* Keep hover effect */
-  animation: none; /* Stop blinking on hover */
-}
-
-/* Keyframes for blinking animation */
-@keyframes blink-white-red {
-  from { 
-      background-color: var(--danger); 
-      color: #fff; 
+  /* Media query for larger screens (768px and above) */
+  @media (min-width: 768px) { /* Adjusted breakpoint to 768px */
+    #categoryGrid1 {
+      grid-template-columns: repeat(8, minmax(70px, 1fr)); /* 8 columns for 16 buttons (2 rows) */
+    }
+    #categoryGrid2 {
+      grid-template-columns: repeat(6, minmax(70px, 1fr)); /* 6 columns for 12 buttons (2 rows) */
+    }
   }
-  to { 
-      background-color: var(--card-bg); 
-      color: var(--danger);
-  }
-}
 
-
-td.photo-cell {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-.photoRow img, .photo-cell img {
-  width: 60px;
-  height: 60px;
-  border-radius: 5px;
-  border: 1px solid var(--border-color);
-  cursor: pointer;
-  object-fit: cover;
-  background: var(--card-bg);
-  box-shadow: var(--shadow-soft); /* Applied stronger soft shadow for images */
-}
-
-.addExtraPhotoBtn, .uploadPhotoBtn { /* Combined style for camera and folder buttons */
-  display: inline-flex; /* Use flex to align icon and text/plus if any */
-  align-items: center;
-  justify-content: center;
-  padding: 8px 8px;
-  font-size: 1.5em; /* Larger icon size */
-  border-radius: 5px;
-  border: 1px solid var(--primary);
-  background: var(--primary);
-  color: #fff;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  box-shadow: var(--shadow-soft);
-  margin: 0 auto;
-  box-shadow: none;
-  border-radius: 6px; /* Match other buttons slightly */
-}
-.addExtraPhotoBtn:hover, .uploadPhotoBtn:hover {
-  background: var(--primary-dark);
-  border-color: var(--primary-dark);
-  box-shadow: var(--shadow-medium);
-}
-.addExtraPhotoBtn:active, .uploadPhotoBtn:active {
-  transform: scale(0.95);
-  box-shadow: var(--shadow-active);
-}
-
-.getProductInfoBtn { /* Style for the new product info button */
-  background: none;
-  border: 1px solid transparent;
-  cursor: pointer;
-  color: var(--primary); /* Blue icon by default */
-  font-size: 1.5em;
-  padding: 6px 10px;
-  line-height: 1;
-  transition: transform 0.15s ease, color 0.15s ease;
-  display: inline-block;
-  margin: 0 auto;
-  box-shadow: none;
-  border-radius: 6px;
-}
-.getProductInfoBtn:hover {
-  transform: scale(1.15);
-  color: var(--primary-dark);
-}
-
-
-.modal-overlay {
-  position: fixed;
-  top:0; left:0; right:0; bottom:0;
-  background: rgba(0,0,0,0.6);
-  display: none;
-  flex-direction: column;
-  justify-content: flex-start; /* VERTICAL-TOP */
-  align-items: center; /* HORIZONTAL-CENTER */
-  z-index: 9999;
-  padding: 20px;
-  padding-top: 5vh;
-  box-sizing: border-box;
-  overflow-y: auto;
-}
-#cameraModal {
-  padding-top: 15vh;
-}
-#customPromptModal, #noteModal {
-  padding-top: 20vh;
-}
-#customConfirmModal {
-  justify-content: center;
-  padding-top: 0;
-}
-.modal-overlay video {
-  width: 82vw; /* Increased size by 2% */
-  max-width: 700px;
-  height: auto;
-  border-radius: 8px;
-  box-shadow: var(--shadow-medium); /* Applied stronger shadow for video modal */
-  border: 1px solid var(--border-color);
-}
-.modal-controls {
-  margin-top: 20px;
-  display: flex;
-  gap: 15px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.modal-controls button {
-  font-size: 1.05em;
-  padding: 12px 20px;
-  border-radius: 5px;
-  border: none;
-  background: var(--primary);
-  color: #fff;
-  backdrop-filter: none; /* No blur */
-  box-shadow: var(--shadow-soft);
-}
-.modal-controls button:hover { background: var(--primary-dark); box-shadow: var(--shadow-medium); }
-.modal-controls button:active { transform: scale(0.98); }
-
-/* Image Modal Navigation Buttons */
-#imageModal .modal-controls {
-    position: absolute; /* Position relative to .modal-overlay */
-    width: 100%;
-    top: 50%;
-    transform: translateY(-50%);
-    display: flex;
-    justify-content: space-between;
-    padding: 0 20px; /* Padding from edges */
-    pointer-events: none; /* Allow clicks to pass through to underlying image if no button */
-}
-
-#imageModal .modal-controls button {
-    font-size: 2em; /* Larger arrows */
-    padding: 10px 15px;
-    border-radius: 50%; /* Round buttons */
-    background: rgba(0,0,0,0.3); /* Darker translucent background for arrows */
-    color: #fff;
-    border: 2px solid rgba(255,255,255,0.5); /* Semi-transparent white border */
-    backdrop-filter: blur(5px);
+  .grid button {
+    padding: 20px 10px;
+    font-size: 1.2em;
+    border-radius: 6px; /* Slightly sharper button corners */
+    border: 1px solid var(--text); /* Changed to strong black border */
     cursor: pointer;
-    pointer-events: all; /* Make buttons clickable */
-    transition: background-color 0.2s ease, transform 0.2s ease;
-    box-shadow: var(--shadow-soft); /* Soft shadow for arrows */
-}
-#imageModal .modal-controls button:hover {
-    background: rgba(0,0,0,0.5); /* Darker on hover */
-    box-shadow: var(--shadow-medium);
-}
-#imageModal .modal-controls button:active {
-    transform: scale(0.9) translateY(-50%); /* Adjusted active transform */
-}
-#imageModal .modal-controls button:disabled {
-    opacity: 0.3;
-    cursor: default;
+    background: var(--primary);
+    color: #ffffff;
+    user-select: none;
+    transition: all 0.1s ease; /* Faster transition */
+    /* Applied even stronger 3D shadow to grid buttons */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
+    text-shadow: none;
+  }
+  .grid button.empty-category {
+    background: var(--card-bg); /* White background for empty */
+    color: var(--text);
+    border-color: var(--text); /* Strong black border for empty category button */
     box-shadow: none;
-}
-
-/* Style for the delete image button in the modal */
-.delete-image-btn {
-  position: absolute;
-  top: 10px; /* Adjust as needed */
-  right: 10px; /* Adjust as needed */
-  z-index: 10001; /* Ensure it's above other elements */
-  background: var(--danger) !important; /* Red background for delete */
-  color: white !important;
-  border: none !important;
-  border-radius: 50% !important; /* Make it circular */
-  width: 40px; /* Fixed width */
-  height: 40px; /* Fixed height */
-  padding: 0; /* Remove padding for fixed size */
-  font-size: 1.2em; /* Icon size */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: var(--shadow-soft);
-  transition: all 0.2s ease;
-}
-.delete-image-btn:hover {
-  background: #c82333 !important; /* Darker red on hover */
-  box-shadow: var(--shadow-medium) !important;
-  transform: scale(1.1); /* Slightly larger on hover */
-}
-.delete-image-btn:active {
-  transform: scale(0.95);
-  box-shadow: var(--shadow-active);
-}
-
-
-#scannerDetectedCode {
-  margin-top: 18px;
-  font-size: 1.2em;
-  font-weight: 700;
-  color: var(--primary); /* Primary blue for detected code */
-  background: var(--card-bg);
-  padding: 10px 20px;
-  border-radius: 8px;
-  min-height: 2.5em;
-  text-align: center;
-  line-height: 2.5em;
-  box-shadow: var(--shadow-soft); /* Applied stronger soft shadow */
-  border: 1px solid var(--border-color);
-}
-
-#imageModal img {
-  max-width: 90vw;
-  max-height: 90vh;
-  border-radius: 8px;
-  box-shadow: var(--shadow-medium); /* Applied stronger shadow */
-  background: #000;
-  border: 1px solid var(--border-color);
-}
-
-.note-modal-content {
-  position: relative;
-  background: var(--card-bg);
-  padding: 25px;
-  border-radius: 8px;
-  width: 90vw;
-  max-width: 680px;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-  box-shadow: var(--shadow-medium); /* Applied stronger shadow */
-  border: 1px solid var(--border-color);
-}
-.note-modal-content h2 {
-  margin: 0 0 10px;
-  font-size: 1.8em;
-  color: var(--primary);
-}
-.note-modal-content p {
-  color: var(--text);
-}
-.note-modal-content textarea {
-  width: 100%;
-  height: 160px;
-  font-size: 1.5em; /* Increased font size to 1.5em */
-  padding: 12px;
-  box-sizing: border-box;
-  border: 1px solid var(--border-color);
-  border-radius: 5px;
-  background: var(--bg);
-  color: var(--text);
-  resize: vertical;
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); /* Stronger inset shadow */
-  font-weight: bold;
-}
-.note-modal-content button {
-  font-size: 1.05em;
-  padding: 12px 20px;
-  border-radius: 5px;
-  background: var(--primary);
-  color: #fff;
-  border: none;
-  align-self: flex-end;
-  box-shadow: var(--shadow-soft);
-  transition: all 0.2s ease;
-}
-.note-modal-content button:hover { background: var(--primary-dark); box-shadow: var(--shadow-medium); }
-.note-modal-content button:active { transform: scale(0.98); }
-
-.modal-category-number {
-  position: static;
-  font-size: 6em;
-  font-weight: 700;
-  line-height: 1;
-  color: var(--muted);
-}
-
-/* Custom Alert/Confirm/Prompt Modals */
-#customAlertModal .note-modal-content,
-#customConfirmModal .note-modal-content {
-  background: var(--card-bg);
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-medium); /* Applied stronger shadow */
-}
-  
-#customPromptModal .note-modal-content {
-  max-width: 456px;
-  align-items: center;
-  gap: 20px;
-}
-
-#customAlertModal h2, #customConfirmModal h2, #customPromptModal h2 {
-  display: none;
-}
-#customPromptMessage {
-  display: none;
-}
-
-#customPromptInput {
-  background: var(--bg);
-  border: 1px solid var(--border-color);
-  color: var(--text);
-  box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); /* Stronger inset inset shadow */
-  font-size: 2em; /* Kétszeres betűméret */
-  font-weight: bold;
-}
-#customAlertCloseBtn, #customConfirmOkBtn, #customPromptOkBtn {
-  background: var(--primary) !important;
-  color: white !important;
-  border: none !important;
-  box-shadow: var(--shadow-soft) !important;
-}
-#customConfirmCancelBtn, #customPromptCancelBtn {
-  background: #cccccc !important; /* Light gray for cancel */
-  color: var(--text) !important;
-  border: none !important;
-  box-shadow: none !important;
-}
-#customAlertCloseBtn:hover, #customConfirmOkBtn:hover, #customPromptOkBtn:hover {
-  background: var(--primary-dark) !important;
-  box-shadow: var(--shadow-medium) !important;
-}
-#customConfirmCancelBtn:hover, #customPromptCancelBtn:hover {
-  background: #bbbbbb !important;
-}
+  }
+  .grid button:active {
+    transform: scale(0.96); /* More pronounced press effect */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); /* Deeper inset shadow on active */
+  }
+  .grid button:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    /* Even stronger shadow on hover */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3);
+  }
+  .grid button.empty-category:hover {
+    background: var(--row-alt-bg); /* Light hover for empty */
+    border-color: var(--muted); /* Darker border on hover */
+    box-shadow: none;
+  }
+  /* Modified active state to show content status */
+  .grid button.active {
+    border: 4px solid var(--success); /* Thicker green border to indicate active */
+    box-shadow: var(--shadow-medium); /* Stronger shadow for active */
+    /* Background and text color will be determined by .empty-category class */
+  }
+  .grid button.active.empty-category {
+    background: var(--card-bg); /* Keep white background for empty active */
+    color: var(--text); /* Keep dark text for visibility on white background */
+    border-color: var(--success); /* Ensure green border */
+  }
+  .grid button.active:not(.empty-category) {
+    background: var(--primary); /* Keep blue background for non-empty active */
+    color: #fff; /* Keep white text for visibility on blue background */
+    border-color: var(--success); /* Ensure green border */
+  }
 
 
-@media (max-width: 700px) {
-  body { padding: 0 15px 30px; }
-  .grid { padding: 15px; gap: 10px; }
-  .grid button { padding: 16px 8px; font-size: 1.1em; }
-  .controls { padding: 15px; gap: 10px; }
-  .controls button { padding: 12px 18px; font-size: 1em; }
-  table { display: block; overflow-x: auto; white-space: nowrap; border-radius: 8px; }
+  #mainControls {
+    position: fixed; /* Fixed position */
+    bottom: 0; /* Align to the bottom */
+    left: 0;
+    width: 100%; /* Full width */
+    z-index: 1000; /* Ensure it's above other content */
+    display: none; /* Keep hidden initially */
+    box-sizing: border-box; /* Include padding in width */
+    padding: 0; /* Removed padding from here */
+    background: none; /* Make background transparent */
+    border-top: none; /* Removed border from here */
+    box-shadow: none; /* Removed shadow from here */
+    flex-shrink: 0; /* Prevent footer from shrinking */
+  }
+
+  .controls {
+    display: flex;
+    justify-content: center; /* Center the entire group of labels and buttons */
+    align-items: center;
+    padding: 10px; /* Reduced padding for a smaller frame */
+    background: var(--card-bg); /* Background for the inner frame */
+    border-radius: 8px; /* Border-radius for the inner frame */
+    box-shadow: var(--shadow-soft); /* Shadow for the inner frame */
+    border: 1px solid var(--border-color); /* Border for the inner frame */
+    box-sizing: border-box; /* Include padding/border in element's total width/height */
+    max-width: fit-content; /* Make the inner frame fit its content */
+    margin: 10px auto; /* Center the inner frame and add some vertical margin */
+    flex-wrap: nowrap; /* Ensure elements stay in one line */
+  }
+  /* Specific style for the category label within controls */
+  .controls .category-display-label { /* New common class for labels */
+    font-weight: bold;
+    font-size: 2.2em; /* Doubled font size for category label */
+    text-align: center;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+    border: none;
+    height: auto; /* Allow height to adjust to content */
+    flex-shrink: 1; /* Allow label to shrink */
+    flex-basis: auto; /* Allow label to determine its own base size */
+    margin: 0 10px; /* Space between label and button group */
+  }
+
+  /* Hide right label on all screens */
+  #categoryLabelRight {
+    display: none;
+  }
+
+  .controls .control-buttons { /* New container for the buttons */
+    display: flex;
+    gap: 15px; /* Gap between buttons */
+    flex-wrap: nowrap; /* Ensure buttons stay in one row */
+    justify-content: center;
+    align-items: center;
+  }
+
+  /* Styles for control buttons based on category content */
+  .controls button {
+    font-size: 1.1em;
+    padding: 14px 22px;
+    border-radius: 6px;
+    border: none;
+    background: var(--primary); /* Default blue */
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.1s ease; /* Faster transition */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
+    text-shadow: none;
+  }
+
+  .controls button.empty-category-control { /* New class for empty category control buttons */
+    background: var(--muted) !important; /* Light grey for empty category controls, !important to override specific IDs */
+    color: #fff; /* White icon/text on grey */
+    box-shadow: none !important; /* No shadow for empty state, !important to override specific IDs */
+  }
+
+  .controls button:active {
+    transform: scale(0.96); /* More pronounced press effect */
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); /* Deeper inset shadow on active */
+  }
+  .controls button:hover {
+    background: var(--primary-dark);
+    /* Even stronger shadow on hover */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3);
+  }
+  .controls button.empty-category-control:hover { /* Hover for empty state */
+    background: #888 !important; /* Slightly darker grey on hover, !important to override specific IDs */
+    box-shadow: none !important;
+  }
+
+  /* Style for the QR code icon within the button */
+  .controls button i {
+    margin: 0 4px; /* Space between icons */
+  }
+
+  /* Specific styles for the prominent Scannen button */
+  /* Moved these styles to .controls button directly for consistency */
+  #openScannerBtn {
+      padding: 18px 25px; /* Larger padding */
+      font-size: 1.25em; /* Larger font size */
+      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3), 0 20px 40px rgba(0, 0, 0, 0.25); /* Even stronger shadow */
+  }
+  #openScannerBtn:hover {
+      background-color: var(--primary-dark);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3); /* Stronger hover shadow */
+  }
+  #openScannerBtn:active {
+      transform: scale(0.94); /* More pronounced active effect */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.25); /* Deeper active shadow */
+  }
+
+  #clearCategoryBtn {
+    background: var(--danger);
+    /* Specific styles for the trash icon button */
+    padding: 14px 22px; /* Match other control buttons' padding */
+    font-size: 1.1em; /* Match other control buttons' font size */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15); /* Match other control buttons' shadow */
+    color: #fff; /* White icon color */
+  }
+  #clearCategoryBtn:hover {
+    background: #c82333; /* Darker red on hover */
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3); /* Stronger hover hover shadow */
+  }
+  #clearCategoryBtn:active {
+    transform: scale(0.96);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2);
+  }
+
+
+  #listSection {
+    margin-top: 30px;
+    display: block; /* Ensure it's block to take width */
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    margin-top: 20px;
+    background: var(--card-bg);
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow for table */
+    table-layout: fixed; /* Ensures columns take up available space evenly */
+  }
+  th, td {
+    border-bottom: 1px solid var(--border-color);
+    padding: 15px 12px;
+    text-align: center; /* Centered text for all table cells */
+    vertical-align: middle;
+    color: var(--text);
+    /* overflow: hidden; /* Removed to allow text to wrap */
+    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
+    white-space: normal; /* Allow text to wrap within the cell */
+    word-wrap: break-word; /* Ensure long words break */
+  }
+  th {
+    background: #f0f0f0; /* Lighter gray header */
+    font-weight: 700;
+    color: var(--muted); /* Muted text for headers */
+    font-size: 0.9em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-shadow: none;
+  }
   th:first-child { border-top-left-radius: 8px; }
   th:last-child { border-top-right-radius: 8px; }
-  .photoRow img, .photo-cell img { width: 50px; height: 50px; border-radius: 4px; }
-  .app-title { font-size: 1.2em; } /* Adjusted for mobile */
-}
+  tr:last-child td { border-bottom: none; }
+
+  /* Column widths for better layout */
+  th:nth-child(1), td:nth-child(1) { width: 5%; } /* # */
+  th:nth-child(2), td:nth-child(2) { width: 23%; } /* Auftrag */
+  th:nth-child(3), td:nth-child(3) { width: 15%; } /* Datum */
+  th:nth-child(4), td:nth-child(4) { width: 8%; } /* Notiz */
+  th:nth-child(5), td:nth-child(5) { width: 28%; } /* Bilder */
+  th:nth-child(6), td:nth-child(6) { width: 5%; } /* Camera Icon */
+  th:nth-child(7), td:nth-child(7) { width: 8%; } /* Folder Icon */
+  th:nth-child(8), td:nth-child(8) { width: 8%; } /* Trash Icon */
+
+
+  #logBody tr:nth-child(even) { background-color: var(--row-alt-bg); }
+
+  /* Removed subtle-blink animation from td.has-text-cell */
+  td.has-text-cell {
+    animation: none;
+  }
+
+  /* New style for Auftrag numbers starting with FA or NA */
+  .auftrag-colored {
+    color: var(--primary); /* Blue color */
+    font-weight: bold; /* Make it bold for emphasis */
+  }
+
+  /* New style for manually entered Auftrag numbers */
+  .auftrag-manual-bold {
+    color: var(--text); /* Dark gray (effectively black) */
+    font-weight: bold;
+  }
+
+  button:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
+  .deleteBtn {
+    background: #f8d7da; /* Light red background */
+    color: var(--danger);
+    border: 1px solid #f5c6cb;
+    border-radius: 5px;
+    padding: 8px 8px;
+    font-size: 0.85em;
+    font-weight: bold;
+    transition: all 0.2s ease;
+    box-shadow: none;
+    display: inline-block; /* Ensure it's inline-block for centering with text-align */
+    margin: 0 auto;
+    box-shadow: none;
+    border-radius: 6px; /* Match other buttons slightly */
+  }
+  .deleteBtn:hover {
+    background: var(--danger);
+    color: #fff;
+    box-shadow: var(--shadow-soft);
+  }
+  .deleteBtn:active { transform: scale(0.95); }
+
+  .noteToggleBtn {
+    background: none;
+    border: 1px solid transparent; /* Default transparent border */
+    cursor: pointer;
+    color: var(--muted); /* Muted color by default */
+    line-height: 1;
+    transition: transform 0.15s ease, color 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    display: inline-block; /* Ensure it's inline-block for centering with text-align */
+    margin: 0 auto;
+    box-shadow: none;
+    border-radius: 6px; /* Match other buttons slightly */
+    padding: 8px 8px;
+    font-size: 1.5em; /* Set font-size to match addExtraPhotoBtn */
+  }
+  .noteToggleBtn:hover { transform: scale(1.15); color: var(--primary); }
+
+  /* New style for noteToggleBtn when it has a note */
+  .noteToggleBtn.note-filled {
+    background: var(--danger); /* Red background for filled notes */
+    color: #fff; /* White icon for filled notes */
+    border-color: var(--danger); /* Red border */
+    box-shadow: var(--shadow-soft); /* Soft shadow for filled notes */
+    animation: blink-red-white 1.5s infinite alternate; /* Apply blinking animation */
+  }
+  .noteToggleBtn.note-filled:hover {
+    background: #c82333; /* Darker red on hover */
+    border-color: #c82333;
+    color: #fff;
+    box-shadow: var(--shadow-medium);
+    transform: scale(1.15); /* Keep hover effect */
+    animation: none; /* Stop blinking on hover */
+  }
+
+  /* Keyframes for blinking animation - MODIFIED */
+  @keyframes blink-red-white {
+    from {
+        background-color: var(--danger);
+        color: #fff;
+    }
+    to {
+        background-color: #ffffff;
+        color: var(--danger);
+    }
+  }
+
+
+  td.photo-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+  }
+  .photoRow img, .photo-cell img {
+    width: 60px;
+    height: 60px;
+    border-radius: 5px;
+    border: 1px solid var(--border-color);
+    cursor: pointer;
+    object-fit: cover;
+    background: var(--card-bg);
+    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow for images */
+  }
+
+  .addExtraPhotoBtn, .uploadPhotoBtn { /* Combined style for camera and folder buttons */
+    display: inline-flex; /* Use flex to align icon and text/plus if any */
+    align-items: center;
+    justify-content: center;
+    padding: 8px 8px;
+    font-size: 1.5em; /* Larger icon size */
+    border-radius: 5px;
+    border: 1px solid var(--primary);
+    background: var(--primary);
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-soft);
+    margin: 0 auto;
+    box-shadow: none;
+    border-radius: 6px; /* Match other buttons slightly */
+  }
+  .addExtraPhotoBtn:hover, .uploadPhotoBtn:hover {
+    background: var(--primary-dark);
+    border-color: var(--primary-dark);
+    box-shadow: var(--shadow-medium);
+  }
+  .addExtraPhotoBtn:active, .uploadPhotoBtn:active {
+    transform: scale(0.95);
+    box-shadow: var(--shadow-active);
+  }
+
+  .getProductInfoBtn { /* Style for the new product info button */
+    background: none;
+    border: 1px solid transparent;
+    cursor: pointer;
+    color: var(--primary); /* Blue icon by default */
+    font-size: 1.5em;
+    padding: 6px 10px;
+    line-height: 1;
+    transition: transform 0.15s ease, color 0.15s ease;
+    display: inline-block;
+    margin: 0 auto;
+    box-shadow: none;
+    border-radius: 6px;
+  }
+  .getProductInfoBtn:hover {
+    transform: scale(1.15);
+    color: var(--primary-dark);
+  }
+
+
+  .modal-overlay {
+    position: fixed;
+    top:0; left:0; right:0; bottom:0;
+    background: rgba(0,0,0,0.6);
+    display: none;
+    flex-direction: column;
+    justify-content: flex-start; /* VERTICAL-TOP */
+    align-items: center; /* HORIZONTAL-CENTER */
+    z-index: 9999;
+    padding: 20px;
+    padding-top: 5vh;
+    box-sizing: border-box;
+    overflow-y: auto;
+  }
+  #customPromptModal, #noteModal {
+    padding-top: 20vh;
+  }
+  #customConfirmModal {
+    justify-content: center;
+    padding-top: 0;
+  }
+  .modal-overlay video {
+    width: 82vw; /* Increased size by 2% */
+    max-width: 700px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: var(--shadow-medium); /* Applied stronger shadow for video modal */
+    border: 1px solid var(--border-color);
+  }
+  .modal-controls {
+    margin-top: 20px;
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  .modal-controls button {
+    font-size: 1.05em;
+    padding: 12px 20px;
+    border-radius: 5px;
+    border: none;
+    background: var(--primary);
+    color: #fff;
+    backdrop-filter: none; /* No blur */
+    box-shadow: var(--shadow-soft);
+  }
+  .modal-controls button:hover { background: var(--primary-dark); box-shadow: var(--shadow-medium); }
+  .modal-controls button:active { transform: scale(0.98); }
+
+  /* Image Modal Navigation Buttons */
+  #imageModal .modal-controls {
+      position: absolute; /* Position relative to .modal-overlay */
+      width: 100%;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      justify-content: space-between;
+      padding: 0 20px; /* Padding from edges */
+      pointer-events: none; /* Allow clicks to pass through to underlying image if no button */
+  }
+
+  #imageModal .modal-controls button {
+      font-size: 2em; /* Larger arrows */
+      padding: 10px 15px;
+      border-radius: 50%; /* Round buttons */
+      background: rgba(0,0,0,0.3); /* Darker translucent background for arrows */
+      color: #fff;
+      border: 2px solid rgba(255,255,255,0.5); /* Semi-transparent white border */
+      backdrop-filter: blur(5px);
+      cursor: pointer;
+      pointer-events: all; /* Make buttons clickable */
+      transition: background-color 0.2s ease, transform 0.2s ease;
+      box-shadow: var(--shadow-soft); /* Soft shadow for arrows */
+  }
+  #imageModal .modal-controls button:hover {
+      background: rgba(0,0,0,0.5); /* Darker on hover */
+      box-shadow: var(--shadow-medium);
+  }
+  #imageModal .modal-controls button:active {
+      transform: scale(0.9) translateY(-50%); /* Adjusted active transform */
+  }
+  #imageModal .modal-controls button:disabled {
+      opacity: 0.3;
+      cursor: default;
+      box-shadow: none;
+  }
+
+  /* Style for the delete image button in the modal */
+  .delete-image-btn {
+    position: absolute;
+    top: 10px; /* Adjust as needed */
+    right: 10px; /* Adjust as needed */
+    z-index: 10001; /* Ensure it's above other elements */
+    background: var(--danger) !important; /* Red background for delete */
+    color: white !important;
+    border: none !important;
+    border-radius: 50% !important; /* Make it circular */
+    width: 40px; /* Fixed width */
+    height: 40px; /* Fixed height */
+    padding: 0; /* Remove padding for fixed size */
+    font-size: 1.2em; /* Icon size */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.2s ease;
+  }
+  .delete-image-btn:hover {
+    background: #c82333 !important; /* Darker red on hover */
+    box-shadow: var(--shadow-medium) !important;
+    transform: scale(1.1); /* Slightly larger on hover */
+  }
+  .delete-image-btn:active {
+    transform: scale(0.95);
+    box-shadow: var(--shadow-active);
+  }
+
+
+  #scannerDetectedCode {
+    margin-top: 18px;
+    font-size: 1.2em;
+    font-weight: 700;
+    color: var(--primary); /* Primary blue for detected code */
+    background: var(--card-bg);
+    padding: 10px 20px;
+    border-radius: 8px;
+    min-height: 2.5em;
+    text-align: center;
+    line-height: 2.5em;
+    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow */
+    border: 1px solid var(--border-color);
+  }
+
+  #imageModal img {
+    max-width: 90vw;
+    max-height: 90vh;
+    border-radius: 8px;
+    box-shadow: var(--shadow-medium); /* Applied stronger shadow */
+    background: #000;
+    border: 1px solid var(--border-color);
+  }
+
+  .note-modal-content {
+    position: relative;
+    background: var(--card-bg);
+    padding: 25px;
+    border-radius: 8px;
+    width: 90vw;
+    max-width: 680px;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    box-shadow: var(--shadow-medium); /* Applied stronger shadow */
+    border: 1px solid var(--border-color);
+  }
+  .note-modal-content h2 {
+    margin: 0 0 10px;
+    font-size: 1.8em;
+    color: var(--primary);
+  }
+  .note-modal-content p {
+    color: var(--text);
+  }
+  .note-modal-content textarea {
+    width: 100%;
+    height: 160px;
+    font-size: 1.5em; /* Increased font size to 1.5em */
+    padding: 12px;
+    box-sizing: border-box;
+    border: 1px solid var(--border-color);
+    border-radius: 5px;
+    background: var(--bg);
+    color: var(--text);
+    resize: vertical;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); /* Stronger inset shadow */
+    font-weight: bold;
+  }
+  .note-modal-content button {
+    font-size: 1.05em;
+    padding: 12px 20px;
+    border-radius: 5px;
+    background: var(--primary);
+    color: #fff;
+    border: none;
+    align-self: flex-end;
+    box-shadow: var(--shadow-soft);
+    transition: all 0.2s ease;
+  }
+  .note-modal-content button:hover { background: var(--primary-dark); box-shadow: var(--shadow-medium); }
+  .note-modal-content button:active { transform: scale(0.98); }
+
+  .modal-category-number {
+    position: static;
+    font-size: 6em;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--muted);
+  }
+
+  /* Custom Alert/Confirm/Prompt Modals */
+  #customAlertModal .note-modal-content,
+  #customConfirmModal .note-modal-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    box-shadow: var(--shadow-medium); /* Applied stronger shadow */
+  }
+  
+  #customPromptModal .note-modal-content {
+    max-width: 456px;
+    align-items: center;
+    gap: 20px;
+  }
+
+  #customAlertModal h2, #customConfirmModal h2, #customPromptModal h2 {
+    display: none;
+  }
+  #customPromptMessage {
+    display: none;
+  }
+
+  #customPromptInput {
+    background: var(--bg);
+    border: 1px solid var(--border-color);
+    color: var(--text);
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); /* Stronger inset inset shadow */
+    font-size: 2em; /* Kétszeres betűméret */
+    font-weight: bold;
+  }
+  #customAlertCloseBtn, #customConfirmOkBtn, #customPromptOkBtn {
+    background: var(--primary) !important;
+    color: white !important;
+    border: none !important;
+    box-shadow: var(--shadow-soft) !important;
+  }
+  #customConfirmCancelBtn, #customPromptCancelBtn {
+    background: #cccccc !important; /* Light gray for cancel */
+    color: var(--text) !important;
+    border: none !important;
+    box-shadow: none !important;
+  }
+  #customAlertCloseBtn:hover, #customConfirmOkBtn:hover, #customPromptOkBtn:hover {
+    background: var(--primary-dark) !important;
+    box-shadow: var(--shadow-medium) !important;
+  }
+  #customConfirmCancelBtn:hover, #customPromptCancelBtn:hover {
+    background: #bbbbbb !important;
+  }
+
+
+  @media (max-width: 700px) {
+    body { padding: 0 15px 30px; }
+    .grid { padding: 15px; gap: 10px; }
+    .grid button { padding: 16px 8px; font-size: 1.1em; }
+    .controls { padding: 15px; gap: 10px; }
+    .controls button { padding: 12px 18px; font-size: 1em; }
+    table { display: block; overflow-x: auto; white-space: nowrap; border-radius: 8px; }
+    th:first-child { border-top-left-radius: 8px; }
+    th:last-child { border-top-right-radius: 8px; }
+    .photoRow img, .photo-cell img { width: 50px; height: 50px; border-radius: 4px; }
+    .app-title { font-size: 1.2em; } /* Adjusted for mobile */
+  }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
@@ -788,7 +789,9 @@ td.photo-cell {
             <th>Datum</th>
             <th>Notiz</th>
             <th>Bilder</th>
-            <th colspan="3">Műveletek</th>
+            <th><i class="fas fa-folder"></i></th>
+            <th><i class="fas fa-camera"></i></th>
+            <th><i class="fas fa-trash-alt"></i></th>
           </tr>
         </thead>
         <tbody id="logBody"></tbody>
@@ -1253,11 +1256,9 @@ const db = (() => {
         </td>
         <td><button class="noteToggleBtn ${e.note ? 'note-filled' : ''}" data-id="${e.id}" title="${noteTitle}" aria-label="${noteTitle}"><i class="fas ${e.note ? 'fa-book' : 'fa-plus'}"></i></button></td>
         <td class="photo-cell">${photosCellHtml}</td>
-        <td class="actions-cell">
-          <button class="uploadPhotoBtn" data-id="${e.id}" title="Bild hochladen"><i class="fas fa-folder"></i></button>
-          <button class="addExtraPhotoBtn" data-id="${e.id}" title="Zusätzliches Bild"><i class="fas fa-camera"></i></button>
-          <button class="deleteBtn" data-id="${e.id}" data-code="${e.code}" title="Löschen"><i class="fas fa-trash-alt"></i></button>
-        </td>
+        <td><button class="uploadPhotoBtn" data-id="${e.id}" title="Bild hochladen"><i class="fas fa-folder"></i></button></td>
+        <td><button class="addExtraPhotoBtn" data-id="${e.id}" title="Zusätzliches Bild"><i class="fas fa-camera"></i></button></td>
+        <td><button class="deleteBtn" data-id="${e.id}" data-code="${e.code}" title="Löschen"><i class="fas fa-trash-alt"></i></button></td>
       </tr>`;
     }).join('');
     attachTableEventListeners();
