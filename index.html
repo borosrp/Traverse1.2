@@ -118,6 +118,7 @@
   }
 
   .grid button {
+    position: relative; /* Needed for positioning the icon */
     padding: 20px 10px;
     font-size: 1.2em;
     border-radius: 6px; /* Slightly sharper button corners */
@@ -130,6 +131,12 @@
     /* Applied even stronger 3D shadow to grid buttons */
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
     text-shadow: none;
+  }
+  .grid button .time-icon {
+    position: absolute;
+    bottom: 5px;
+    right: 5px;
+    font-size: 0.8em;
   }
   .grid button.empty-category {
     background: var(--card-bg); /* White background for empty */
@@ -633,7 +640,7 @@
     min-height: 2.5em;
     text-align: center;
     line-height: 2.5em;
-    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow */
+    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow for images */
     border: 1px solid var(--border-color);
   }
 
@@ -1018,13 +1025,36 @@ const db = (() => {
   async function updateCategoryButtonColors() {
     const allCategoryButtons = document.querySelectorAll('.grid button'); // Select all buttons in any grid
     for (const button of allCategoryButtons) {
-      const categoryNum = parseInt(button.textContent);
-      const count = await db.getEntryCountForCategory(categoryNum);
-      if (count === 0) {
-        button.classList.add('empty-category');
-      } else {
-        button.classList.remove('empty-category');
-      }
+        const categoryNum = parseInt(button.textContent);
+        const entriesForCategory = await db.getEntriesForCategory(categoryNum);
+        
+        // Clear existing icon
+        const existingIcon = button.querySelector('.time-icon');
+        if (existingIcon) {
+            existingIcon.remove();
+        }
+
+        if (entriesForCategory.length > 0) {
+            button.classList.remove('empty-category');
+            
+            // Get the latest entry
+            const latestEntry = entriesForCategory.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
+            const entryHour = new Date(latestEntry.date).getHours();
+
+            const icon = document.createElement('i');
+            icon.classList.add('fas', 'time-icon');
+            if (entryHour < 14) {
+                icon.classList.add('fa-sun');
+                icon.style.color = 'yellow';
+            } else {
+                icon.classList.add('fa-moon');
+                icon.style.color = 'lightblue';
+            }
+            button.appendChild(icon);
+
+        } else {
+            button.classList.add('empty-category');
+        }
     }
   }
 
@@ -1111,7 +1141,7 @@ const db = (() => {
   }
 
   // Custom confirmation function
-  function showCustomConfirm(message, title = 'Bestätigung') {
+  function showCustomConfirm(message, title = 'Bestätigung', entry = null) {
     return new Promise(resolve => {
       const existingModal = document.getElementById('customConfirmModal');
       if (existingModal) existingModal.remove();
@@ -1119,13 +1149,22 @@ const db = (() => {
       const confirmModal = document.createElement('div');
       confirmModal.id = 'customConfirmModal';
       confirmModal.classList.add('modal-overlay');
+      
+      const isCheckedByDefault = !(entry && (entry.code.startsWith('FA') || entry.code.startsWith('NA')));
+
       confirmModal.innerHTML = `
         <div class="note-modal-content">
           <h2>${title}</h2>
           <p>${message}</p>
-          <div style="display: flex; justify-content: flex-end; gap: 10px;">
-            <button id="customConfirmCancelBtn" style="background: #ccc; color: var(--text); border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">Abbrechen</button>
-            <button id="customConfirmOkBtn" style="background: var(--danger); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">Löschen</button>
+          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 20px; flex-wrap: wrap; gap: 10px;">
+            <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.9em;">
+              <input type="checkbox" id="exportPdfCheckbox" ${isCheckedByDefault ? 'checked' : ''} style="margin-right: 8px; width: 18px; height: 18px; transform: scale(1.2);">
+              PDF exportieren
+            </label>
+            <div style="display: flex; gap: 10px;">
+              <button id="customConfirmCancelBtn">Abbrechen</button>
+              <button id="customConfirmOkBtn">Löschen</button>
+            </div>
           </div>
         </div>
       `;
@@ -1134,22 +1173,24 @@ const db = (() => {
       document.body.classList.add('modal-open');
 
       document.getElementById('customConfirmOkBtn').addEventListener('click', () => {
+        const exportPdf = document.getElementById('exportPdfCheckbox').checked;
         confirmModal.style.display = 'none';
         document.body.classList.remove('modal-open');
         confirmModal.remove();
-        resolve(true);
+        resolve({ confirmed: true, exportPdf: exportPdf });
       });
       document.getElementById('customConfirmCancelBtn').addEventListener('click', () => {
         confirmModal.style.display = 'none';
         document.body.classList.remove('modal-open');
         confirmModal.remove();
-        resolve(false);
+        resolve({ confirmed: false, exportPdf: false });
       });
       confirmModal.addEventListener('click', (e) => {
         if (e.target === confirmModal) {
-          promptModal.style.display = 'none';
+          confirmModal.style.display = 'none';
           document.body.classList.remove('modal-open');
-          promptModal.remove();
+          confirmModal.remove();
+          resolve({ confirmed: false, exportPdf: false });
         }
       });
     });
@@ -1316,21 +1357,117 @@ const db = (() => {
       logBody.querySelectorAll('.uploadPhotoBtn').forEach(btn => btn.addEventListener('click', handleUploadPhotoClick));
   }
 
+  // PDF generálása és mentése
+  async function generatePdfForEntry(entry) {
+    if (typeof window.jspdf === 'undefined') {
+        console.error('jsPDF is not loaded!');
+        showCustomAlert('PDF export fehlgeschlagen: jsPDF-Bibliothek nicht geladen.', 'Fehler');
+        return;
+    }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+
+    doc.setFontSize(16);
+    doc.text(`Traversennummer: ${entry.category}`, 10, 20);
+    doc.text(`Auftrag: ${entry.code}`, 10, 30);
+    doc.text(`Datum: ${new Date(entry.date).toLocaleString('de-DE')}`, 10, 40);
+
+    let yPos = 50;
+    if (entry.note) {
+        doc.text('Notiz:', 10, yPos);
+        yPos += 10;
+        const splitText = doc.splitTextToSize(entry.note, 180);
+        doc.text(splitText, 10, yPos);
+        yPos += (splitText.length * 10);
+    }
+
+    const allImages = [entry.image, ...(entry.kepek || [])].filter(Boolean);
+
+    for (let i = 0; i < allImages.length; i++) {
+        try {
+            if (yPos > 220) {
+                doc.addPage();
+                yPos = 10;
+            }
+            doc.text(`Bild ${i + 1}`, 10, yPos);
+            yPos += 5;
+
+            const imageData = await new Promise((resolve, reject) => {
+                const img = new Image();
+                img.onload = () => resolve(img);
+                img.onerror = reject;
+                img.src = allImages[i];
+            });
+
+            const imgProps = doc.getImageProperties(imageData);
+            const pdfWidth = doc.internal.pageSize.getWidth();
+            const pdfHeight = doc.internal.pageSize.getHeight();
+            const maxWidth = pdfWidth - 20;
+            const maxHeight = pdfHeight - yPos - 10;
+
+            let imgWidth = imgProps.width;
+            let imgHeight = imgProps.height;
+            const ratio = imgWidth / imgHeight;
+
+            if (imgWidth > maxWidth) {
+                imgWidth = maxWidth;
+                imgHeight = imgWidth / ratio;
+            }
+            if (imgHeight > maxHeight) {
+                imgHeight = maxHeight;
+                imgWidth = imgHeight * ratio;
+            }
+
+            if (yPos + imgHeight > pdfHeight - 10) {
+                doc.addPage();
+                yPos = 10;
+            }
+
+            doc.addImage(imageData, 'JPEG', 10, yPos, imgWidth, imgHeight);
+            yPos += imgHeight + 10;
+
+        } catch (error) {
+            console.error('Error adding image to PDF:', error);
+            if (yPos + 10 > 290) {
+                doc.addPage();
+                yPos = 10;
+            }
+            doc.text(`Bild ${i + 1} konnte nicht geladen werden.`, 10, yPos);
+            yPos += 10;
+        }
+    }
+    doc.save(`${entry.code}.pdf`);
+  }
+
   // Törlés
   async function handleDelete(event) {
       const id = parseInt(event.currentTarget.dataset.id);
-      const confirmed = await showCustomConfirm(`Sind Sie sicher, dass Sie den Eintrag mit der Traverse ${currentCategory} löschen möchten?`, 'Bestätigung'); // Changed to German
-      if (confirmed) {
-          await db.deleteEntry(id);
-          entries = entries.filter(e => e.id !== id);
-          renderTable();
-          await updateCategoryButtonColors(); // Update colors after clearing category
-          // Update the categoryLabel colors after clearing the category
-          categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey after clearing */
-          // categoryLabelRight.style.color = 'var(--muted)'; /* Removed update for right label */
-          // Update control buttons color after clearing
-          updateControlButtonsColor(true);
-        }
+      const entryToDelete = entries.find(e => e.id === id);
+      if (!entryToDelete) return;
+
+      const result = await showCustomConfirm(`Möchten Sie den Eintrag "${entryToDelete.code}" wirklich löschen?`, 'Bestätigung', entryToDelete);
+      
+      if (result.confirmed) {
+          try {
+              if (result.exportPdf) {
+                  await generatePdfForEntry(entryToDelete); // Generate PDF only if checked
+              }
+              
+              await db.deleteEntry(id);
+              entries = entries.filter(e => e.id !== id);
+              renderTable();
+              await updateCategoryButtonColors();
+
+              const count = await db.getEntryCountForCategory(currentCategory);
+              if (count === 0) {
+                  categoryLabelLeft.style.color = 'var(--muted)';
+                  updateControlButtonsColor(true);
+              }
+          } catch (error) {
+              console.error("Fehler beim Löschen oder Exportieren:", error);
+              showCustomAlert('Ein Fehler ist beim Löschen oder Exportieren aufgetreten.', 'Fehler');
+          }
+      }
   }
 
   // Jegyzet modal
@@ -1643,17 +1780,30 @@ const db = (() => {
   });
 
   clearCategoryBtn.addEventListener('click', async () => {
-    const confirmed = await showCustomConfirm(`Sind Sie sicher, dass Sie den Eintrag mit der Traverse ${currentCategory} löschen möchten?`, 'Bestätigung'); // Changed to German
-    if(confirmed){
-      await db.clearCategory(currentCategory);
-      entries = [];
-      renderTable();
-      await updateCategoryButtonColors(); // Update colors after clearing category
-      // Update the categoryLabel colors after clearing the category
-      categoryLabelLeft.style.color = 'var(--muted)'; /* Light grey after clearing */
-      // categoryLabelRight.style.color = 'var(--muted)'; /* Removed update for right label */
-      // Update control buttons color after clearing
-      updateControlButtonsColor(true);
+    const allAreFANA = entries.length > 0 && entries.every(e => e.code.startsWith('FA') || e.code.startsWith('NA'));
+    const dummyEntryForCheckbox = allAreFANA ? { code: 'FA' } : null;
+    const result = await showCustomConfirm(`Möchten Sie wirklich alle Einträge für Traverse ${currentCategory} löschen?`, 'Bestätigung', dummyEntryForCheckbox);
+    
+    if (result.confirmed) {
+        try {
+            if (result.exportPdf && entries.length > 0) {
+                for (const entry of entries) {
+                    await generatePdfForEntry(entry);
+                }
+            }
+            
+            await db.clearCategory(currentCategory);
+            entries = [];
+            renderTable();
+            await updateCategoryButtonColors();
+            
+            categoryLabelLeft.style.color = 'var(--muted)';
+            updateControlButtonsColor(true);
+
+        } catch (error) {
+            console.error("Fehler beim Löschen oder Exportieren der Kategorie:", error);
+            showCustomAlert('Ein Fehler ist beim Löschen oder Exportieren der Kategorie aufgetreten.', 'Fehler');
+        }
     }
   });
 
