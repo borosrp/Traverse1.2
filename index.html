@@ -156,10 +156,16 @@
   .grid button.active {
     border: 4px solid var(--success); /* Thicker green border to indicate active */
     box-shadow: var(--shadow-medium); /* Stronger shadow for active */
-    background: var(--card-bg); /* White background for ALL active buttons */
-    color: var(--success); /* Green text for ALL active buttons */
     font-size: 1.5em; /* Larger font size */
     font-weight: 700; /* Bolder text */
+  }
+  .grid button.active:not(.empty-category) {
+    background: var(--primary); /* Keep blue background for non-empty */
+    color: var(--success); /* Green text */
+  }
+  .grid button.active.empty-category {
+    background: var(--card-bg); /* White background for empty */
+    color: var(--success); /* Green text */
   }
 
 
@@ -954,6 +960,43 @@ const db = (() => {
   let currentModalImageIndex = 0;
   let currentImageEntryId = null; // Store the ID of the entry whose image is currently displayed
 
+  // Lézer szkenner kezelése
+  let laserScannerBuffer = [];
+  let laserScannerTimer = null;
+
+  window.addEventListener('keydown', (e) => {
+    // Ne fusson, ha egy modális ablak nyitva van, vagy nincs kategória kiválasztva
+    if (document.querySelector('.modal-overlay[style*="display: flex"]') || !currentCategory) {
+      return;
+    }
+
+    // Ha az "Enter" billentyűt nyomják le, és van valami a pufferben
+    if (e.key === 'Enter' && laserScannerBuffer.length > 0) {
+      e.preventDefault(); // Megakadályozza az alapértelmezett műveletet
+      const scannedCode = laserScannerBuffer.join('');
+      
+      // Új bejegyzés hozzáadása kép nélkül, 'laser' forrással
+      addNewEntry(scannedCode, null, 'laser');
+
+      // Puffer ürítése
+      laserScannerBuffer = [];
+      clearTimeout(laserScannerTimer);
+      return;
+    }
+
+    // Csak a nyomtatható karaktereket vegye figyelembe
+    if (e.key.length === 1) {
+      laserScannerBuffer.push(e.key);
+
+      // Időzítő újraindítása minden billentyűlenyomáskor
+      clearTimeout(laserScannerTimer);
+      laserScannerTimer = setTimeout(() => {
+        // Ha a felhasználó lassan gépel, a puffer 100 ms után törlődik
+        laserScannerBuffer = [];
+      }, 100);
+    }
+  });
+
   const detector = ('BarcodeDetector' in window) ? new BarcodeDetector({formats: ['qr_code','ean_13','ean_8','code_128','code_39','upc_a','upc_e']}) : null;
 
   // Kategóriagombok létrehozása és inicializálása
@@ -1233,7 +1276,7 @@ const db = (() => {
       let codeClass = '';
       if (e.code && (e.code.startsWith('FA') || e.code.startsWith('NA'))) {
           codeClass = 'auftrag-colored'; // Blue and bold for FA/NA
-      } else if (e.source === 'scanner' || e.source === 'manual') { // If it's scanned OR manual (and not FA/NA)
+      } else if (e.source === 'scanner' || e.source === 'manual' || e.source === 'laser') { // If it's scanned, manual, or laser (and not FA/NA)
           codeClass = 'auftrag-manual-bold'; // Black and bold
       }
 
@@ -1626,5 +1669,4 @@ const db = (() => {
 </script>
 </body>
 </html>
-"
-a vonalkód ikon legyen olyan hogy a böngészö sötét és világos modjában is látszodjon, de legyen benne kék szín
+" in the document. How can I modify the code so that the background color of the selected button remains blue if it contains data, and white if it is empty, while the border and number turn gre
