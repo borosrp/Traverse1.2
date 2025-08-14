@@ -5,48 +5,44 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
 <title>Traversendaten</title>
 <link rel="icon" href='data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16"><rect fill="white" width="16" height="16"/><g fill="%230056b3"><path d="M1 3h1v10H1z"/><path d="M3 3h2v10H3z"/></g><g fill="black"><path d="M6 3h1v10H6z"/><path d="M8 3h2v10H8z"/><path d="M11 3h1v10h-1z"/><path d="M13 3h2v10h-2z"/></g></svg>'>
-<!-- Font Awesome for icons -->
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 <style>
   /* Otto Lehmann inspired design - Maximum 3D Effect */
   :root {
     --bg: #f5f5f5; /* Light gray background */
     --text: #333333; /* Dark gray text */
-    --muted: #666666; /* Medium gray for muted elements */
+    --muted: #6c757d; /* Medium gray for muted elements */
     --primary: #0056b3; /* Otto Lehmann's blue */
     --primary-dark: #004085; /* Darker blue for hover */
     --accent: #28a745; /* A professional green for accent/success */
     --success: #28a745; /* Green for success messages */
     --danger: #dc3545; /* Red for danger/delete */
-    --border-color: #e0e0e0; /* Light gray border - This is for general borders, not grid specific now */
+    --warning: #ffc107; /* Yellow for warning states */
+    --border-color: #e0e0e0; /* Light gray border */
     --card-bg: #ffffff; /* White card backgrounds */
     --row-alt-bg: #f8f8f8; /* Very light gray for alternating table rows */
-    --note1: #fff3cd; /* Light yellow for notes */
-    --note2: #ffeeba; /* Slightly darker yellow for notes */
-    --secondary-grid-bg: #e0f2f7; /* Lighter blue for the second grid */
-
-    /* Even more pronounced, layered shadows for maximum 3D effect */
-    --shadow-soft: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15); /* Very strong base shadow */
-    --shadow-medium: 0 15px 30px rgba(0, 0, 0, 0.35), 0 25px 50px rgba(0, 0, 0, 0.25); /* Extremely deep shadow for modals/hover */
-    --shadow-active: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); /* Very strong pressed state shadow */
+    
+    --shadow-soft: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
+    --shadow-medium: 0 15px 30px rgba(0, 0, 0, 0.35), 0 25px 50px rgba(0, 0, 0, 0.25);
+    --shadow-active: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2);
   }
 
   html, body {
-    height: 100%; /* Ensure html and body take full height */
+    height: 100%;
     margin: 0;
     padding: 0;
   }
 
   body {
-    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif; /* Professional sans-serif font */
+    font-family: 'Segoe UI', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
     color: var(--text);
     background: var(--bg);
-    line-height: 1.6; /* Improved line height */
-    max-width: 960px; /* Slightly wider layout */
-    margin: 5px auto; /* Further reduced top margin for the body */
-    display: flex; /* Use flexbox for overall layout */
-    flex-direction: column; /* Arrange children vertically */
-    padding-bottom: 0; /* Remove padding from body, handled by main-scrollable-area */
+    line-height: 1.6;
+    max-width: 960px;
+    margin: 5px auto;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 0;
   }
   body.modal-open {
       overflow: hidden;
@@ -55,80 +51,69 @@
   .app-header {
     position: relative;
     text-align: center;
-    margin-bottom: 5px; /* Further reduced space below header */
-    padding-bottom: 10px; /* Reduced padding for visual separation */
-    border-bottom: 1px solid var(--border-color); /* Subtle line below header */
-    flex-shrink: 0; /* Prevent header from shrinking */
+    margin-bottom: 5px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0;
   }
 
   .app-title {
     margin: 0;
-    font-size: 1.32em; /* Increased font size by 10% (1.2em * 1.10 = 1.32em) */
-    font-weight: 700; /* Bold title */
-    letter-spacing: -0.5px; /* Tighter letter spacing */
-    color: var(--primary); /* Otto Lehmann's primary blue */
-    text-shadow: none; /* No text shadow */
+    font-size: 1.32em;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: var(--primary);
+    text-shadow: none;
   }
 
-  /* .app-logo was here, removed */
-
-  .category-label-container { /* This container is no longer needed as label is moved into .controls */
-    display: none; /* Hide if not used */
-  }
-
-  /* New flex container for the main scrollable content area */
   #main-scrollable-area {
-    flex: 1; /* Allow this area to grow and shrink */
-    overflow-y: auto; /* Enable vertical scrolling within this area */
-    padding: 0 20px 130px; /* Apply main content padding here, increased for safety */
-    box-sizing: border-box; /* Include padding in element's total width and height */
+    flex: 1;
+    overflow-y: auto;
+    padding: 0 20px 20px; /* Adjusted padding */
+    box-sizing: border-box;
   }
 
-  .grid { /* This style applies to both category grids */
+  .grid {
     display: grid;
-    gap: 15px; /* More gap */
-    margin-bottom: 10px; /* Reduced margin between grids */
-    background: var(--card-bg); /* Default white background for grids */
+    gap: 15px;
+    margin-bottom: 10px;
+    background: var(--card-bg);
     padding: 20px;
-    border-radius: 8px; /* Softly rounded corners */
-    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow */
-    border: 1px solid var(--text); /* Stronger black border for the grid containers */
+    border-radius: 8px;
+    box-shadow: var(--shadow-soft);
+    border: 1px solid var(--text);
   }
-  /* Specific style for the second grid to have a light blue background */
   #categoryGrid2 {
-    background: #70A4D5; /* Changed to the intermediate blue color */
+    background: #70A4D5;
   }
 
-  /* Default grid columns for small screens (under 768px) */
   #categoryGrid1 {
-    grid-template-columns: repeat(4, minmax(70px, 1fr)); /* 4 columns for 16 buttons (4 rows) */
+    grid-template-columns: repeat(4, minmax(70px, 1fr));
   }
   #categoryGrid2 {
-    grid-template-columns: repeat(4, minmax(70px, 1fr)); /* 4 columns for 12 buttons (3 rows) */
+    grid-template-columns: repeat(4, minmax(70px, 1fr));
   }
 
-  /* Media query for larger screens (768px and above) */
-  @media (min-width: 768px) { /* Adjusted breakpoint to 768px */
+  @media (min-width: 768px) {
     #categoryGrid1 {
-      grid-template-columns: repeat(8, minmax(70px, 1fr)); /* 8 columns for 16 buttons (2 rows) */
+      grid-template-columns: repeat(8, minmax(70px, 1fr));
     }
     #categoryGrid2 {
-      grid-template-columns: repeat(6, minmax(70px, 1fr)); /* 6 columns for 12 buttons (2 rows) */
+      grid-template-columns: repeat(6, minmax(70px, 1fr));
     }
   }
 
   .grid button {
-    position: relative; /* Needed for positioning the icon */
+    position: relative;
     padding: 20px 10px;
     font-size: 1.2em;
-    border-radius: 6px; /* Slightly sharper button corners */
-    border: 1px solid var(--text); /* Changed to strong black border */
+    border-radius: 6px;
+    border: 1px solid var(--text);
     cursor: pointer;
     background: var(--primary);
     color: #ffffff;
     user-select: none;
-    transition: all 0.1s ease; /* Faster transition */
-    /* Applied even stronger 3D shadow to grid buttons */
+    transition: all 0.1s ease;
     box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
     text-shadow: none;
   }
@@ -138,180 +123,33 @@
     right: 5px;
     font-size: 0.8em;
   }
+  
+  .grid button .time-icon.past-date {
+      color: var(--danger); /* Red color for past dates */
+      font-weight: bold;
+  }
+
   .grid button.empty-category {
-    background: var(--card-bg); /* White background for empty */
+    background: var(--card-bg);
     color: var(--text);
-    border-color: var(--text); /* Strong black border for empty category button */
+    border-color: var(--text);
     box-shadow: none;
   }
   .grid button:active {
-    transform: scale(0.96); /* More pronounced press effect */
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); /* Deeper inset shadow on active */
+    transform: scale(0.96);
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2);
   }
   .grid button:hover {
     background: var(--primary-dark);
     border-color: var(--primary-dark);
-    /* Even stronger shadow on hover */
     box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3);
   }
   .grid button.empty-category:hover {
-    background: var(--row-alt-bg); /* Light hover for empty */
-    border-color: var(--muted); /* Darker border on hover */
+    background: var(--row-alt-bg);
+    border-color: var(--muted);
     box-shadow: none;
   }
-  /* Modified active state to show content status */
-  .grid button.active {
-    border: 4px solid var(--success); /* Thicker green border to indicate active */
-    box-shadow: var(--shadow-medium); /* Stronger shadow for active */
-    font-size: 1.5em; /* Larger font size */
-    font-weight: 700; /* Bolder text */
-  }
-  .grid button.active:not(.empty-category) {
-    background: var(--primary); /* Keep blue background for non-empty */
-    color: var(--success); /* Green text */
-  }
-  .grid button.active.empty-category {
-    background: var(--card-bg); /* White background for empty */
-    color: var(--success); /* Green text */
-  }
-
-
-  #mainControls {
-    position: fixed; /* Fixed position */
-    bottom: 0; /* Align to the bottom */
-    left: 0;
-    width: 100%; /* Full width */
-    z-index: 1000; /* Ensure it's above other content */
-    display: none; /* Keep hidden initially */
-    box-sizing: border-box; /* Include padding in width */
-    padding: 0; /* Removed padding from here */
-    background: none; /* Make background transparent */
-    border-top: none; /* Removed border from here */
-    box-shadow: none; /* Removed shadow from here */
-    flex-shrink: 0; /* Prevent footer from shrinking */
-  }
-
-  .controls {
-    display: flex;
-    justify-content: center; /* Center the entire group of labels and buttons */
-    align-items: center;
-    padding: 10px; /* Reduced padding for a smaller frame */
-    background: var(--card-bg); /* Background for the inner frame */
-    border-radius: 8px; /* Border-radius for the inner frame */
-    box-shadow: var(--shadow-soft); /* Shadow for the inner frame */
-    border: 1px solid var(--border-color); /* Border for the inner frame */
-    box-sizing: border-box; /* Include padding/border in element's total width/height */
-    max-width: fit-content; /* Make the inner frame fit its content */
-    margin: 10px auto; /* Center the inner frame and add some vertical margin */
-    flex-wrap: nowrap; /* Ensure elements stay in one line */
-  }
-  /* Specific style for the category label within controls */
-  .controls .category-display-label { /* New common class for labels */
-    font-weight: bold;
-    font-size: 2.2em; /* Doubled font size for category label */
-    text-align: center;
-    background: none;
-    padding: 0;
-    border-radius: 0;
-    box-shadow: none;
-    border: none;
-    height: auto; /* Allow height to adjust to content */
-    flex-shrink: 1; /* Allow label to shrink */
-    flex-basis: auto; /* Allow label to determine its own base size */
-    margin: 0 10px; /* Space between label and button group */
-  }
-
-  /* Hide right label on all screens */
-  #categoryLabelRight {
-    display: none;
-  }
-
-  .controls .control-buttons { /* New container for the buttons */
-    display: flex;
-    gap: 15px; /* Gap between buttons */
-    flex-wrap: nowrap; /* Ensure buttons stay in one row */
-    justify-content: center;
-    align-items: center;
-  }
-
-  /* Styles for control buttons based on category content */
-  .controls button {
-    font-size: 1.1em;
-    padding: 14px 22px;
-    border-radius: 6px;
-    border: none;
-    background: var(--primary); /* Default blue */
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.1s ease; /* Faster transition */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15);
-    text-shadow: none;
-  }
-
-  .controls button.empty-category-control { /* New class for empty category control buttons */
-    background: var(--muted) !important; /* Light grey for empty category controls, !important to override specific IDs */
-    color: #fff; /* White icon/text on grey */
-    box-shadow: none !important; /* No shadow for empty state, !important to override specific IDs */
-  }
-
-  .controls button:active {
-    transform: scale(0.96); /* More pronounced press effect */
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2); /* Deeper inset shadow on active */
-  }
-  .controls button:hover {
-    background: var(--primary-dark);
-    /* Even stronger shadow on hover */
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3);
-  }
-  .controls button.empty-category-control:hover { /* Hover for empty state */
-    background: #888 !important; /* Slightly darker grey on hover, !important to override specific IDs */
-    box-shadow: none !important;
-  }
-
-  /* Style for the QR code icon within the button */
-  .controls button i {
-    margin: 0 4px; /* Space between icons */
-  }
-
-  /* Specific styles for the prominent Scannen button */
-  /* Moved these styles to .controls button directly for consistency */
-  #openScannerBtn {
-      padding: 18px 25px; /* Larger padding */
-      font-size: 1.25em; /* Larger font size */
-      box-shadow: 0 12px 25px rgba(0, 0, 0, 0.3), 0 20px 40px rgba(0, 0, 0, 0.25); /* Even stronger shadow */
-  }
-  #openScannerBtn:hover {
-      background-color: var(--primary-dark);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3); /* Stronger hover shadow */
-  }
-  #openScannerBtn:active {
-      transform: scale(0.94); /* More pronounced active effect */
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 8px 16px rgba(0, 0, 0, 0.25); /* Deeper active shadow */
-  }
-
-  #clearCategoryBtn {
-    background: var(--danger);
-    /* Specific styles for the trash icon button */
-    padding: 14px 22px; /* Match other control buttons' padding */
-    font-size: 1.1em; /* Match other control buttons' font size */
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.25), 0 15px 30px rgba(0, 0, 0, 0.15); /* Match other control buttons' shadow */
-    color: #fff; /* White icon color */
-  }
-  #clearCategoryBtn:hover {
-    background: #c82333; /* Darker red on hover */
-    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.4), 0 25px 50px rgba(0, 0, 0, 0.3); /* Stronger hover hover shadow */
-  }
-  #clearCategoryBtn:active {
-    transform: scale(0.96);
-    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3), 0 6px 12px rgba(0, 0, 0, 0.2);
-  }
-
-
-  #listSection {
-    margin-top: 30px;
-    display: block; /* Ensure it's block to take width */
-  }
-
+  
   table {
     width: 100%;
     border-collapse: separate;
@@ -321,1505 +159,167 @@
     border-radius: 8px;
     overflow: hidden;
     border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow for table */
-    table-layout: fixed; /* Ensures columns take up available space evenly */
+    box-shadow: var(--shadow-soft);
+    table-layout: fixed;
   }
   th, td {
     border-bottom: 1px solid var(--border-color);
     padding: 15px 12px;
-    text-align: center; /* Centered text for all table cells */
+    text-align: center;
     vertical-align: middle;
     color: var(--text);
-    /* overflow: hidden; /* Removed to allow text to wrap */
-    text-overflow: ellipsis; /* Add ellipsis for overflowing text */
-    white-space: normal; /* Allow text to wrap within the cell */
-    word-wrap: break-word; /* Ensure long words break */
   }
   th {
-    background: #f0f0f0; /* Lighter gray header */
+    background: #f0f0f0;
     font-weight: 700;
-    color: var(--muted); /* Muted text for headers */
+    color: var(--muted);
     font-size: 0.9em;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    text-shadow: none;
   }
   th:first-child { border-top-left-radius: 8px; }
   th:last-child { border-top-right-radius: 8px; }
-  tr:last-child td { border-bottom: none; }
 
-  /* Column widths for better layout */
-  th:nth-child(1), td:nth-child(1) { width: 5%; } /* # */
-  th:nth-child(2), td:nth-child(2) { width: 23%; } /* Auftrag */
-  th:nth-child(3), td:nth-child(3) { width: 15%; } /* Datum */
-  th:nth-child(4), td:nth-child(4) { width: 8%; } /* Notiz */
-  th:nth-child(5), td:nth-child(5) { width: 28%; } /* Bilder */
-  th:nth-child(6), td:nth-child(6) { width: 5%; } /* Camera Icon */
-  th:nth-child(7), td:nth-child(7) { width: 8%; } /* Folder Icon */
-  th:nth-child(8), td:nth-child(8) { width: 8%; } /* Trash Icon */
-
-
-  #logBody tr:nth-child(even) { background-color: var(--row-alt-bg); }
-
-  /* Removed subtle-blink animation from td.has-text-cell */
-  td.has-text-cell {
-    animation: none;
-  }
-
-  /* New style for Auftrag numbers starting with FA or NA */
-  .auftrag-colored {
-    color: var(--primary); /* Blue color */
-    font-weight: bold; /* Make it bold for emphasis */
-  }
-
-  /* New style for manually entered Auftrag numbers */
-  .auftrag-manual-bold {
-    color: var(--text); /* Dark gray (effectively black) */
+  /* These classes control the color of the Traverse Header */
+  #traverse-header.has-data {
+    color: var(--primary); /* Blue when there is data */
     font-weight: bold;
   }
-
-  button:disabled { opacity: 0.6; cursor: not-allowed; box-shadow: none; }
-  .deleteBtn {
-    background: #f8d7da; /* Light red background */
-    color: var(--danger);
-    border: 1px solid #f5c6cb;
-    border-radius: 5px;
-    padding: 8px 8px;
-    font-size: 0.85em;
-    font-weight: bold;
-    transition: all 0.2s ease;
-    box-shadow: none;
-    display: inline-block; /* Ensure it's inline-block for centering with text-align */
-    margin: 0 auto;
-    box-shadow: none;
-    border-radius: 6px; /* Match other buttons slightly */
-  }
-  .deleteBtn:hover {
-    background: var(--danger);
-    color: #fff;
-    box-shadow: var(--shadow-soft);
-  }
-  .deleteBtn:active { transform: scale(0.95); }
-
-  .noteToggleBtn {
-    background: none;
-    border: 1px solid transparent; /* Default transparent border */
-    cursor: pointer;
-    color: var(--muted); /* Muted color by default */
-    line-height: 1;
-    transition: transform 0.15s ease, color 0.15s ease, background-color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-    display: inline-block; /* Ensure it's inline-block for centering with text-align */
-    margin: 0 auto;
-    box-shadow: none;
-    border-radius: 6px; /* Match other buttons slightly */
-    padding: 8px 8px;
-    font-size: 1.5em; /* Set font-size to match addExtraPhotoBtn */
-  }
-  .noteToggleBtn:hover { transform: scale(1.15); color: var(--primary); }
-
-  /* New style for noteToggleBtn when it has a note */
-  .noteToggleBtn.note-filled {
-    background: var(--danger); /* Red background for filled notes */
-    color: #fff; /* White icon for filled notes */
-    border-color: var(--danger); /* Red border */
-    box-shadow: var(--shadow-soft); /* Soft shadow for filled notes */
-    animation: blink-red-white 1.5s infinite alternate; /* Apply blinking animation */
-  }
-  .noteToggleBtn.note-filled:hover {
-    background: #c82333; /* Darker red on hover */
-    border-color: #c82333;
-    color: #fff;
-    box-shadow: var(--shadow-medium);
-    transform: scale(1.15); /* Keep hover effect */
-    animation: none; /* Stop blinking on hover */
-  }
-
-  /* Keyframes for blinking animation - MODIFIED */
-  @keyframes blink-red-white {
-    from {
-        background-color: var(--danger);
-        color: #fff;
-    }
-    to {
-        background-color: #ffffff;
-        color: var(--danger);
-    }
-  }
-
-
-  td.photo-cell {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-  }
-  .photoRow img, .photo-cell img {
-    width: 60px;
-    height: 60px;
-    border-radius: 5px;
-    border: 1px solid var(--border-color);
-    cursor: pointer;
-    object-fit: cover;
-    background: var(--card-bg);
-    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow for images */
-  }
-
-  .addExtraPhotoBtn, .uploadPhotoBtn { /* Combined style for camera and folder buttons */
-    display: inline-flex; /* Use flex to align icon and text/plus if any */
-    align-items: center;
-    justify-content: center;
-    padding: 8px 8px;
-    font-size: 1.5em; /* Larger icon size */
-    border-radius: 5px;
-    border: 1px solid var(--primary);
-    background: var(--primary);
-    color: #fff;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    box-shadow: var(--shadow-soft);
-    margin: 0 auto;
-    box-shadow: none;
-    border-radius: 6px; /* Match other buttons slightly */
-  }
-  .addExtraPhotoBtn:hover, .uploadPhotoBtn:hover {
-    background: var(--primary-dark);
-    border-color: var(--primary-dark);
-    box-shadow: var(--shadow-medium);
-  }
-  .addExtraPhotoBtn:active, .uploadPhotoBtn:active {
-    transform: scale(0.95);
-    box-shadow: var(--shadow-active);
-  }
-
-  .getProductInfoBtn { /* Style for the new product info button */
-    background: none;
-    border: 1px solid transparent;
-    cursor: pointer;
-    color: var(--primary); /* Blue icon by default */
-    font-size: 1.5em;
-    padding: 6px 10px;
-    line-height: 1;
-    transition: transform 0.15s ease, color 0.15s ease;
-    display: inline-block;
-    margin: 0 auto;
-    box-shadow: none;
-    border-radius: 6px;
-  }
-  .getProductInfoBtn:hover {
-    transform: scale(1.15);
-    color: var(--primary-dark);
-  }
-
-
-  .modal-overlay {
-    position: fixed;
-    top:0; left:0; right:0; bottom:0;
-    background: rgba(0,0,0,0.6);
-    display: none;
-    flex-direction: column;
-    justify-content: flex-start; /* VERTICAL-TOP */
-    align-items: center; /* HORIZONTAL-CENTER */
-    z-index: 9999;
-    padding: 20px;
-    padding-top: 5vh;
-    box-sizing: border-box;
-    overflow-y: auto; /* Allow scrolling for zoomed images */
-  }
-  #customPromptModal, #noteModal {
-    padding-top: 20vh;
-  }
-  #customConfirmModal {
-    justify-content: center;
-    padding-top: 0;
-  }
-  .modal-overlay video {
-    width: 82vw; /* Increased size by 2% */
-    max-width: 700px;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: var(--shadow-medium); /* Applied stronger shadow for video modal */
-    border: 1px solid var(--border-color);
-  }
-  .modal-controls {
-    margin-top: 20px;
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-  .modal-controls button {
-    font-size: 1.05em;
-    padding: 12px 20px;
-    border-radius: 5px;
-    border: none;
-    background: var(--primary);
-    color: #fff;
-    backdrop-filter: none; /* No blur */
-    box-shadow: var(--shadow-soft);
-  }
-  .modal-controls button:hover { background: var(--primary-dark); box-shadow: var(--shadow-medium); }
-  .modal-controls button:active { transform: scale(0.98); }
-
-  /* Image Modal Navigation Buttons */
-  #imageModal .modal-controls {
-      position: absolute; /* Position relative to .modal-overlay */
-      width: 100%;
-      top: 50%;
-      transform: translateY(-50%);
-      display: flex;
-      justify-content: space-between;
-      padding: 0 20px; /* Padding from edges */
-      pointer-events: none; /* Allow clicks to pass through to underlying image if no button */
-  }
-
-  #imageModal .modal-controls button {
-      font-size: 2em; /* Larger arrows */
-      padding: 10px 15px;
-      border-radius: 50%; /* Round buttons */
-      background: rgba(0,0,0,0.3); /* Darker translucent background for arrows */
-      color: #fff;
-      border: 2px solid rgba(255,255,255,0.5); /* Semi-transparent white border */
-      backdrop-filter: blur(5px);
-      cursor: pointer;
-      pointer-events: all; /* Make buttons clickable */
-      transition: background-color 0.2s ease, transform 0.2s ease;
-      box-shadow: var(--shadow-soft); /* Soft shadow for arrows */
-  }
-  #imageModal .modal-controls button:hover {
-      background: rgba(0,0,0,0.5); /* Darker on hover */
-      box-shadow: var(--shadow-medium);
-  }
-  #imageModal .modal-controls button:active {
-      transform: scale(0.9) translateY(-50%); /* Adjusted active transform */
-  }
-  #imageModal .modal-controls button:disabled {
-      opacity: 0.3;
-      cursor: default;
-      box-shadow: none;
-  }
-
-  /* Style for the delete image button in the modal */
-  .delete-image-btn {
-    position: absolute;
-    top: 10px; /* Adjust as needed */
-    right: 10px; /* Adjust as needed */
-    z-index: 10001; /* Ensure it's above other elements */
-    background: var(--danger) !important; /* Red background for delete */
-    color: white !important;
-    border: none !important;
-    border-radius: 50% !important; /* Make it circular */
-    width: 40px; /* Fixed width */
-    height: 40px; /* Fixed height */
-    padding: 0; /* Remove padding for fixed size */
-    font-size: 1.2em; /* Icon size */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: var(--shadow-soft);
-    transition: all 0.2s ease;
-  }
-  .delete-image-btn:hover {
-    background: #c82333 !important; /* Darker red on hover */
-    box-shadow: var(--shadow-medium) !important;
-    transform: scale(1.1); /* Slightly larger on hover */
-  }
-  .delete-image-btn:active {
-    transform: scale(0.95);
-    box-shadow: var(--shadow-active);
-  }
-
-
-  #scannerDetectedCode {
-    margin-top: 18px;
-    font-size: 1.2em;
-    font-weight: 700;
-    color: var(--primary); /* Primary blue for detected code */
-    background: var(--card-bg);
-    padding: 10px 20px;
-    border-radius: 8px;
-    min-height: 2.5em;
-    text-align: center;
-    line-height: 2.5em;
-    box-shadow: var(--shadow-soft); /* Applied stronger soft shadow */
-    border: 1px solid var(--border-color);
-  }
-
-  #imageModal img {
-    max-width: 90vw;
-    max-height: 90vh;
-    border-radius: 8px;
-    box-shadow: var(--shadow-medium); /* Applied stronger shadow */
-    background: #000;
-    border: 1px solid var(--border-color);
-    cursor: zoom-in; /* Add zoom-in cursor */
-    transition: max-width 0.3s ease, max-height 0.3s ease; /* Smooth transition for zoom */
-  }
-
-  /* NEW: Style for zoomed-in image */
-  #imageModal img.zoomed {
-    max-width: none;
-    max-height: none;
-    cursor: zoom-out;
-  }
-
-  .note-modal-content {
-    position: relative;
-    background: var(--card-bg);
-    padding: 25px;
-    border-radius: 8px;
-    width: 90vw;
-    max-width: 680px;
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    box-shadow: var(--shadow-medium); /* Applied stronger shadow */
-    border: 1px solid var(--border-color);
-  }
-  .note-modal-content h2 {
-    margin: 0 0 10px;
-    font-size: 1.8em;
-    color: var(--primary);
-  }
-  .note-modal-content p {
-    color: var(--text);
-  }
-  .note-modal-content textarea {
-    width: 100%;
-    height: 160px;
-    font-size: 1.5em; /* Increased font size to 1.5em */
-    padding: 12px;
-    box-sizing: border-box;
-    border: 1px solid var(--border-color);
-    border-radius: 5px;
-    background: var(--bg);
-    color: var(--text);
-    resize: vertical;
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); /* Stronger inset shadow */
-    font-weight: bold;
-  }
-  .note-modal-content button {
-    font-size: 1.05em;
-    padding: 12px 20px;
-    border-radius: 5px;
-    background: var(--primary);
-    color: #fff;
-    border: none;
-    align-self: flex-end;
-    box-shadow: var(--shadow-soft);
-    transition: all 0.2s ease;
-  }
-  .note-modal-content button:hover { background: var(--primary-dark); box-shadow: var(--shadow-medium); }
-  .note-modal-content button:active { transform: scale(0.98); }
-
-  .modal-category-number {
-    position: static;
-    font-size: 6em;
-    font-weight: 700;
-    line-height: 1;
-    color: var(--muted);
-  }
-
-  /* Custom Alert/Confirm/Prompt Modals */
-  #customAlertModal .note-modal-content,
-  #customConfirmModal .note-modal-content {
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    box-shadow: var(--shadow-medium); /* Applied stronger shadow */
+  #traverse-header.is-empty {
+    color: var(--muted); /* Gray when there is no data */
+    font-weight: normal;
   }
   
-  #customPromptModal .note-modal-content {
-    max-width: 456px;
-    align-items: center;
-    gap: 20px;
+  /* Demo button for testing */
+  #demo-button {
+      margin: 20px 0;
+      padding: 10px 15px;
+      font-size: 1em;
+      cursor: pointer;
+      background: var(--accent);
+      color: white;
+      border: none;
+      border-radius: 5px;
+      box-shadow: var(--shadow-soft);
   }
-
-  #customAlertModal h2, #customConfirmModal h2, #customPromptModal h2 {
-    display: none;
-  }
-  #customPromptMessage {
-    display: none;
-  }
-
-  #customPromptInput {
-    background: var(--bg);
-    border: 1px solid var(--border-color);
-    color: var(--text);
-    box-shadow: inset 0 2px 5px rgba(0,0,0,0.2); /* Stronger inset inset shadow */
-    font-size: 2em; /* Kétszeres betűméret */
-    font-weight: bold;
-  }
-  #customAlertCloseBtn, #customConfirmOkBtn, #customPromptOkBtn {
-    background: var(--primary) !important;
-    color: white !important;
-    border: none !important;
-    box-shadow: var(--shadow-soft) !important;
-  }
-  #customConfirmCancelBtn, #customPromptCancelBtn {
-    background: #cccccc !important; /* Light gray for cancel */
-    color: var(--text) !important;
-    border: none !important;
-    box-shadow: none !important;
-  }
-  #customAlertCloseBtn:hover, #customConfirmOkBtn:hover, #customPromptOkBtn:hover {
-    background: var(--primary-dark) !important;
-    box-shadow: var(--shadow-medium) !important;
-  }
-  #customConfirmCancelBtn:hover, #customPromptCancelBtn:hover {
-    background: #bbbbbb !important;
-  }
-
-
-  @media (max-width: 700px) {
-    body { padding: 0 15px 30px; }
-    .grid { padding: 15px; gap: 10px; }
-    .grid button { padding: 16px 8px; font-size: 1.1em; }
-    .controls { padding: 15px; gap: 10px; }
-    .controls button { padding: 12px 18px; font-size: 1em; }
-    table { display: block; overflow-x: auto; white-space: nowrap; border-radius: 8px; }
-    th:first-child { border-top-left-radius: 8px; }
-    th:last-child { border-top-right-radius: 8px; }
-    .photoRow img, .photo-cell img { width: 50px; height: 50px; border-radius: 4px; }
-    .app-title { font-size: 1.2em; } /* Adjusted for mobile */
+  #demo-button:hover {
+      background: #218838;
   }
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
   <div class="app-header">
-    <h1 class="app-title">Traversendaten</h1> <!-- Changed to Traversendaten -->
-  </div>
-
-  <div id="main-scrollable-area">
-    <div class="grid" id="categoryGrid1"></div> <!-- First grid for buttons 1-16 -->
-    <div class="grid" id="categoryGrid2"></div> <!-- Second grid for buttons 17-28 -->
-
-    <div id="listSection">
-      <table>
-        <thead>
-          <tr>
-            <th>#</th>
-            <th>Auftrag</th>
-            <th>Datum</th>
-            <th>Notiz</th>
-            <th>Bilder</th>
-            <th><i class="fas fa-folder"></i></th>
-            <th><i class="fas fa-camera"></i></th>
-            <th><i class="fas fa-trash-alt"></i></th>
-          </tr>
-        </thead>
-        <tbody id="logBody"></tbody>
-      </table>
-    </div>
-  </div> <!-- End of main-scrollable-area -->
-
-  <div id="mainControls">
-    <div class="controls">
-        <div id="categoryLabelLeft" class="category-display-label"></div>
-        <div class="control-buttons">
-            <button id="manualEntryBtn"><i class="fas fa-keyboard"></i></button> <!-- Changed to keyboard icon -->
-            <button id="openScannerBtn"><i class="fas fa-barcode"></i></button> <!-- Only barcode icon -->
-            <button id="clearCategoryBtn"><i class="fas fa-trash-alt"></i></button>
-        </div>
-        <!-- Removed categoryLabelRight from here -->
-    </div>
-  </div>
-
-  <div id="imageModal" class="modal-overlay">
-    <img id="modalImage" src="" alt="Bild vergrötesn" />
-    <div class="modal-controls">
-      <button id="imageModalPrevBtn"><i class="fas fa-chevron-left"></i></button>
-      <button id="imageModalNextBtn"><i class="fas fa-chevron-right"></i></button>
-    </div>
-    <button id="deleteImageBtn" class="delete-image-btn"><i class="fas fa-trash-alt"></i></button> <!-- Moved delete button -->
-  </div>
-
-  <div id="cameraModal" class="modal-overlay">
-    <video id="cameraModalVideo" autoplay muted playsinline></video>
-    <div class="modal-controls">
-        <button id="cancelCameraButton"><i class="fas fa-times"></i></button> <!-- Icon for Abbrechen -->
-        <button id="takePhotoButton" style="padding: 14px 88px;"><i class="fas fa-camera"></i></button> <!-- Icon for Foto, increased padding -->
-    </div>
-  </div>
-
-  <div id="scannerModal" class="modal-overlay">
-    <video id="scannerVideo" autoplay muted playslines></video>
-    <div id="scannerDetectedCode">
-      <i class="fas fa-search"></i> <!-- Replaced "Suche..." with search icon -->
-    </div>
-    <div class="modal-controls">
-        <button id="scannerCancelBtn"><i class="fas fa-times"></i></button> <!-- Icon for Abbrechen -->
-        <button id="scannerSaveBtn" disabled style="padding: 14px 88px;"><i class="fas fa-save"></i></button> <!-- Icon for Speichern, increased padding -->
-    </div>
-  </div>
-
-  <div id="noteModal" class="modal-overlay">
-    <div class="note-modal-content">
-      <h2>Notiz bearbeiten</h2>
-      <textarea id="noteModalTextarea"></textarea>
-      <div style="display: flex; justify-content: flex-end; align-items: center; gap: 10px;">
-        <button id="noteModalSaveBtn">Speichern & Schließen</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="customPromptModal" class="modal-overlay">
-      <div class="note-modal-content">
-        <span id="promptCategoryNumber" class="modal-category-number"></span>
-        <h2 id="customPromptTitle">Manuelle Eingabe</h2>
-        <p id="customPromptMessage">Bitte geben Sie den Produktnamen oder die Kennung ein:</p>
-        <input type="text" id="customPromptInput" style="width: 100%; padding: 10px; border: 1px solid #d1d5db; border-radius: 8px;">
-        <div style="display: flex; justify-content: center; gap: 10px; width: 100%;">
-          <button id="customPromptCancelBtn" style="background: #ccc; color: var(--text); border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">Abbrechen</button>
-          <button id="customPromptOkBtn" style="background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer;">OK</button>
-        </div>
-      </div>
+    <h1 class="app-title">Traversen Daten</h1>
   </div>
   
-  <input type="file" id="imageUploadInput" accept="image/*" style="display: none;">
+  <div id="main-scrollable-area">
+    
+    <h3>Kategorien</h3>
+    <div id="categoryGrid1" class="grid">
+        <button data-date="2025-08-13">1 <span class="time-icon">☀️</span></button>
+        
+        <button data-date="2025-08-14">2 <span class="time-icon">🌙</span></button>
+        
+        <button data-date="2025-08-15">3 <span class="time-icon">☀️</span></button>
+        
+        <button data-date="2025-01-01">4 <span class="time-icon">🌙</span></button>
+    </div>
+    
+    <h3>Traverse-Daten</h3>
+    <table>
+        <thead>
+            <tr>
+                <th id="traverse-header">Traverse: 5</th>
+                <th>Info 1</th>
+                <th>Info 2</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Daten...</td>
+                <td>...</td>
+                <td>...</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button id="demo-button">Eintrag verarbeiten (klicken zum Testen)</button>
+
+  </div>
 
 <script>
-/* --- IndexedDB (lokális DB) --- */
-const db = (() => {
-    let dbInstance;
-    function openDB() {
-        return new Promise((resolve, reject) => {
-            if (dbInstance) { resolve(dbInstance); return; }
-            const request = indexedDB.open('BarcodeDB_v2', 1);
-            request.onerror = (event) => reject('Datenbankfehler: ' + event.target.errorCode);
-            request.onsuccess = (event) => { dbInstance = event.target.result; resolve(dbInstance); };
-            request.onupgradeneeded = (event) => {
-                const db = event.target.result;
-                const objectStore = db.createObjectStore('entries', { keyPath: 'id', autoIncrement: true });
-                objectStore.createIndex('category', 'category', { unique: false });
-                objectStore.createIndex('category_code', ['category', 'code'], { unique: true });
-            };
-        });
-    }
-    async function performTransaction(storeName, mode, action) {
-        const db = await openDB();
-        const transaction = db.transaction(storeName, mode);
-        const store = transaction.objectStore(storeName);
-        return new Promise((resolve, reject) => {
-            const request = action(store);
-            request.onsuccess = () => resolve(request.result);
-            request.onerror = (event) => reject(event.target.error);
-        });
-    }
-    return {
-        addEntry: (entry) => performTransaction('entries', 'readwrite', store => store.add(entry)),
-        getEntriesForCategory: (category) => performTransaction('entries', 'readonly', store => store.index('category').getAll(category)),
-        updateEntry: (entry) => performTransaction('entries', 'readwrite', store => store.put(entry)),
-        deleteEntry: (id) => performTransaction('entries', 'readwrite', store => store.delete(id)),
-        getEntryCountForCategory: (category) => performTransaction('entries', 'readonly', store => store.index('category').count(category)), // New function to count entries
-        clearCategory: async (category) => {
-            const db = await openDB();
-            const transaction = db.transaction('entries', 'readwrite');
-            const store = transaction.objectStore('entries');
-            const index = store.index('category');
-            const request = index.openCursor(IDBKeyRange.only(category));
-            request.onsuccess = (event) => {
-                const cursor = event.target.result;
-                if (cursor) { store.delete(cursor.primaryKey); cursor.continue(); }
-            };
-            return new Promise((resolve, reject) => { transaction.oncomplete = () => resolve(); transaction.onerror = (event) => reject(event.target.error); });
-        }
-    };
-})();
+document.addEventListener('DOMContentLoaded', () => {
 
-/* --- Fő alkalmazáslogika --- */
-(async function(){
-  // DOM elemek
-  const categoryGrid1 = document.getElementById('categoryGrid1');
-  const categoryGrid2 = document.getElementById('categoryGrid2');
-  const categoryLabelLeft = document.getElementById('categoryLabelLeft'); // Changed ID
-  const mainControls = document.getElementById('mainControls');
-  const listSection = document.getElementById('listSection');
-  const logBody = document.getElementById('logBody');
-
-  // Modálok
-  const imageModal = document.getElementById('imageModal');
-  const modalImage = document.getElementById('modalImage');
-  const cameraModal = document.getElementById('cameraModal');
-  const cameraModalVideo = document.getElementById('cameraModalVideo');
-  const takePhotoButton = document.getElementById('takePhotoButton');
-  const cancelCameraButton = document.getElementById('cancelCameraButton');
-  const scannerModal = document.getElementById('scannerModal');
-  const scannerVideo = document.getElementById('scannerVideo');
-  const scannerDetectedCode = document.getElementById('scannerDetectedCode');
-  const scannerSaveBtn = document.getElementById('scannerSaveBtn');
-  const scannerCancelBtn = document.getElementById('scannerCancelBtn');
-  const noteModal = document.getElementById('noteModal');
-  const noteModalTextarea = document.getElementById('noteModalTextarea');
-  const noteModalSaveBtn = document.getElementById('noteModalSaveBtn');
-  const deleteImageBtn = document.getElementById('deleteImageBtn');
-  const imageUploadInput = document.getElementById('imageUploadInput');
-
-  // Gombok
-  const openScannerBtn = document.getElementById('openScannerBtn');
-  const manualEntryBtn = document.getElementById('manualEntryBtn');
-  const clearCategoryBtn = document.getElementById('clearCategoryBtn');
-
-  // Állapot
-  let currentCategory = null;
-  let entries = [];
-  let modalStream = null;
-  let entryIdToUpdate = null;
-  let noteEntryIdToUpdate = null;
-  let scannerRafId = null;
-  let lastDetected = { code: null, image: null };
-  let lastDetectedCodeToDisplay = null;
-  let displayTimeoutId = null;
-
-  // Global state for image modal carousel
-  let currentModalImages = [];
-  let currentModalImageIndex = 0;
-  let currentImageEntryId = null;
-
-  // Lézer szkenner kezelése
-  let laserScannerBuffer = [];
-  let laserScannerTimer = null;
-
-  window.addEventListener('keydown', (e) => {
-    if (document.querySelector('.modal-overlay[style*="display: flex"]') || !currentCategory) {
-      return;
-    }
-    if (e.key === 'Enter' && laserScannerBuffer.length > 0) {
-      e.preventDefault();
-      const scannedCode = laserScannerBuffer.join('');
-      addNewEntry(scannedCode, null, 'laser');
-      laserScannerBuffer = [];
-      clearTimeout(laserScannerTimer);
-      return;
-    }
-    if (e.key.length === 1) {
-      laserScannerBuffer.push(e.key);
-      clearTimeout(laserScannerTimer);
-      laserScannerTimer = setTimeout(() => {
-        laserScannerBuffer = [];
-      }, 100);
-    }
-  });
-
-  const detector = ('BarcodeDetector' in window) ? new BarcodeDetector({formats: ['qr_code','ean_13','ean_8','code_128','code_39','upc_a','upc_e']}) : null;
-
-  // Kategóriagombok létrehozása és inicializálása
-  for(let i=1; i<=16; i++){
-    const btn = document.createElement('button');
-    btn.textContent = i;
-    btn.addEventListener('click', () => selectCategory(i, btn));
-    categoryGrid1.appendChild(btn);
-  }
-  for(let i=17; i<=28; i++){
-    const btn = document.createElement('button');
-    btn.textContent = i;
-    btn.addEventListener('click', () => selectCategory(i, btn));
-    categoryGrid2.appendChild(btn);
-  }
-
-  // Funkció a kategóriagombok színeinek frissítésére
-  async function updateCategoryButtonColors() {
-    const allCategoryButtons = document.querySelectorAll('.grid button');
-    for (const button of allCategoryButtons) {
-        const categoryNum = parseInt(button.textContent);
-        const entriesForCategory = await db.getEntriesForCategory(categoryNum);
+    // =========================================================================
+    // LÖSUNG 1: Icons rot färben, wenn das Datum in der Vergangenheit liegt
+    // =========================================================================
+    function updateIconStatus() {
+        const buttonsWithDate = document.querySelectorAll('button[data-date]');
         
-        const existingIcon = button.querySelector('.time-icon');
-        if (existingIcon) {
-            existingIcon.remove();
-        }
+        const today = new Date();
+        today.setHours(0, 0, 0, 0); // Wichtig: Nur das Datum vergleichen, nicht die Uhrzeit
 
-        if (entriesForCategory.length > 0) {
-            button.classList.remove('empty-category');
-            
-            const latestEntry = entriesForCategory.sort((a, b) => new Date(b.date) - new Date(a.date))[0];
-            const entryHour = new Date(latestEntry.date).getHours();
+        buttonsWithDate.forEach(button => {
+            const icon = button.querySelector('.time-icon');
+            if (!icon) return; // Überspringen, falls kein Icon vorhanden
 
-            const icon = document.createElement('i');
-            icon.classList.add('fas', 'time-icon');
-            if (entryHour < 14) {
-                icon.classList.add('fa-sun');
-                icon.style.color = 'yellow';
+            const buttonDate = new Date(button.dataset.date);
+            buttonDate.setHours(0,0,0,0); // Auch hier die Uhrzeit entfernen
+
+            if (buttonDate < today) {
+                // Das Datum des Buttons liegt in der Vergangenheit
+                icon.classList.add('past-date');
             } else {
-                icon.classList.add('fa-moon');
-                icon.style.color = 'lightblue';
+                // Das Datum ist heute oder in der Zukunft
+                icon.classList.remove('past-date');
             }
-            button.appendChild(icon);
+        });
+    }
 
+
+    // =========================================================================
+    // LÖSUNG 2: Traverse-Zahl (Header) grau färben, wenn keine Daten vorhanden
+    // =========================================================================
+    function updateTraverseHeader(count) {
+        const header = document.getElementById('traverse-header');
+        if (!header) return;
+
+        // Den Text des Headers aktualisieren
+        header.textContent = `Traverse: ${count}`;
+
+        if (count === 0) {
+            // Keine Daten mehr vorhanden -> grau färben
+            header.classList.remove('has-data');
+            header.classList.add('is-empty');
         } else {
-            button.classList.add('empty-category');
+            // Daten vorhanden -> blau/standard färben
+            header.classList.remove('is-empty');
+            header.classList.add('has-data');
         }
     }
-  }
-
-  // Funkció a vezérlőgombok színének frissítésére
-  function updateControlButtonsColor(isEmpty) {
-    if (isEmpty) {
-      manualEntryBtn.classList.add('empty-category-control');
-      openScannerBtn.classList.add('empty-category-control');
-    } else {
-      manualEntryBtn.classList.remove('empty-category-control');
-      openScannerBtn.classList.remove('empty-category-control');
-    }
-  }
-
-  // Kategóriaváltás
-  async function selectCategory(num, btn){
-    if(currentCategory === num) return;
-    const prevActive = document.querySelector('.grid button.active');
-    if(prevActive) prevActive.classList.remove('active');
-    btn.classList.add('active');
-    currentCategory = num;
-
-    try {
-        entries = await db.getEntriesForCategory(currentCategory);
-        categoryLabelLeft.textContent = `${num}`;
-        const isEmpty = entries.length === 0;
-        if (isEmpty) {
-            categoryLabelLeft.style.color = 'var(--muted)';
-        } else {
-            categoryLabelLeft.style.color = 'var(--primary)';
-        }
-        
-        updateControlButtonsColor(isEmpty);
-        mainControls.style.display = 'block';
-        listSection.style.display = 'block';
-        renderTable();
-        await updateCategoryButtonColors();
-    }
-    catch (e) {
-        console.error("Fehler beim Lesen der Datenbank:", e);
-        showCustomAlert('Fehler beim Laden der Traverse.', 'Fehler');
-    }
-  }
-
-  // Custom alert function
-  function showCustomAlert(message, title = 'Info') {
-    const existingModal = document.getElementById('customAlertModal');
-    if (existingModal) existingModal.remove();
-
-    const alertModal = document.createElement('div');
-    alertModal.id = 'customAlertModal';
-    alertModal.classList.add('modal-overlay');
-    alertModal.innerHTML = `
-      <div class="note-modal-content">
-        <h2>${title}</h2>
-        <p>${message}</p>
-        <button id="customAlertCloseBtn" style="background: var(--primary); color: white; border: none; padding: 10px 15px; border-radius: 8px; cursor: pointer; align-self: flex-end;">OK</button>
-      </div>
-    `;
-    document.body.appendChild(alertModal);
-    alertModal.style.display = 'flex';
-    document.body.classList.add('modal-open');
-
-    document.getElementById('customAlertCloseBtn').addEventListener('click', () => {
-      alertModal.style.display = 'none';
-      document.body.classList.remove('modal-open');
-      alertModal.remove();
-    });
-    alertModal.addEventListener('click', (e) => {
-      if (e.target === alertModal) {
-        alertModal.style.display = 'none';
-        document.body.classList.remove('modal-open');
-        alertModal.remove();
-      }
-    });
-  }
-
-  // Custom confirmation function
-  function showCustomConfirm(message, title = 'Bestätigung', entry = null) {
-    return new Promise(resolve => {
-      const existingModal = document.getElementById('customConfirmModal');
-      if (existingModal) existingModal.remove();
-
-      const confirmModal = document.createElement('div');
-      confirmModal.id = 'customConfirmModal';
-      confirmModal.classList.add('modal-overlay');
-      
-      const isCheckedByDefault = !(entry && (entry.code.startsWith('FA') || entry.code.startsWith('NA')));
-
-      confirmModal.innerHTML = `
-        <div class="note-modal-content">
-          <h2>${title}</h2>
-          <p>${message}</p>
-          <div style="display: flex; align-items: center; justify-content: space-between; width: 100%; margin-top: 20px; flex-wrap: wrap; gap: 10px;">
-            <label style="display: flex; align-items: center; cursor: pointer; font-size: 0.9em;">
-              <input type="checkbox" id="exportPdfCheckbox" ${isCheckedByDefault ? 'checked' : ''} style="margin-right: 8px; width: 18px; height: 18px; transform: scale(1.2);">
-              PDF exportieren
-            </label>
-            <div style="display: flex; gap: 10px;">
-              <button id="customConfirmCancelBtn">Abbrechen</button>
-              <button id="customConfirmOkBtn">Löschen</button>
-            </div>
-          </div>
-        </div>
-      `;
-      document.body.appendChild(confirmModal);
-      confirmModal.style.display = 'flex';
-      document.body.classList.add('modal-open');
-
-      document.getElementById('customConfirmOkBtn').addEventListener('click', () => {
-        const exportPdf = document.getElementById('exportPdfCheckbox').checked;
-        confirmModal.style.display = 'none';
-        document.body.classList.remove('modal-open');
-        confirmModal.remove();
-        resolve({ confirmed: true, exportPdf: exportPdf });
-      });
-      document.getElementById('customConfirmCancelBtn').addEventListener('click', () => {
-        confirmModal.style.display = 'none';
-        document.body.classList.remove('modal-open');
-        confirmModal.remove();
-        resolve({ confirmed: false, exportPdf: false });
-      });
-      confirmModal.addEventListener('click', (e) => {
-        if (e.target === confirmModal) {
-          confirmModal.style.display = 'none';
-          document.body.classList.remove('modal-open');
-          confirmModal.remove();
-          resolve({ confirmed: false, exportPdf: false });
-        }
-      });
-    });
-  }
-
-  // Function to open the image modal with carousel capability
-  function openImageModal(images, startIndex, entryId) {
-      currentModalImages = images;
-      currentModalImageIndex = startIndex;
-      currentImageEntryId = entryId;
-
-      modalImage.src = currentModalImages[currentModalImageIndex];
-      modalImage.classList.remove('zoomed'); // Reset zoom on open
-      imageModal.style.display = 'flex';
-      document.body.classList.add('modal-open');
-
-      updateImageModalNavigation();
-  }
-
-  // Function to update navigation button visibility
-  function updateImageModalNavigation() {
-      const prevBtn = document.getElementById('imageModalPrevBtn');
-      const nextBtn = document.getElementById('imageModalNextBtn');
-
-      if (currentModalImages.length <= 1) {
-          prevBtn.style.display = 'none';
-          nextBtn.style.display = 'none';
-      } else {
-          prevBtn.style.display = 'inline-flex';
-          nextBtn.style.display = 'inline-flex';
-          prevBtn.disabled = (currentModalImageIndex === 0);
-          nextBtn.disabled = (currentModalImageIndex === currentModalImages.length - 1);
-      }
-  }
-
-  // Navigation functions
-  function showNextImage() {
-      if (currentModalImageIndex < currentModalImages.length - 1) {
-          currentModalImageIndex++;
-          modalImage.src = currentModalImages[currentModalImageIndex];
-          modalImage.classList.remove('zoomed'); // Reset zoom
-          updateImageModalNavigation();
-      }
-  }
-
-  function showPrevImage() {
-      if (currentModalImageIndex > 0) {
-          currentModalImageIndex--;
-          modalImage.src = currentModalImages[currentModalImageIndex];
-          modalImage.classList.remove('zoomed'); // Reset zoom
-          updateImageModalNavigation();
-      }
-  }
-
-  // Function to delete the currently displayed image
-  async function deleteCurrentImage() {
-      if (!currentImageEntryId || currentModalImages.length === 0) {
-          showCustomAlert('Kein Bild zum Löschen vorhanden.', 'Fehler');
-          return;
-      }
-
-      const { confirmed } = await showCustomConfirm('Möchten Sie dieses Bild wirklich löschen?', 'Bild löschen');
-      if (!confirmed) {
-          return;
-      }
-
-      let entry = entries.find(e => e.id === currentImageEntryId);
-      if (entry) {
-          const imageUrlToDelete = currentModalImages[currentModalImageIndex];
-
-          if (entry.image === imageUrlToDelete) {
-              if (entry.kepek && entry.kepek.length > 0) {
-                  entry.image = entry.kepek.shift();
-              } else {
-                  entry.image = null;
-              }
-          } else if (entry.kepek) {
-              const indexToDelete = entry.kepek.indexOf(imageUrlToDelete);
-              if (indexToDelete > -1) {
-                  entry.kepek.splice(indexToDelete, 1);
-              }
-          }
-
-          await db.updateEntry(entry);
-          entries = entries.map(e => e.id === entry.id ? entry : e);
-          renderTable();
-
-          const allRemainingImages = [entry.image, ...(entry.kepek || [])].filter(Boolean);
-          if (allRemainingImages.length > 0) {
-              if (currentModalImageIndex >= allRemainingImages.length) {
-                  currentModalImageIndex = allRemainingImages.length - 1;
-              }
-              openImageModal(allRemainingImages, currentModalImageIndex, currentImageEntryId);
-          } else {
-              closeModal(imageModal);
-          }
-      }
-  }
 
 
-  // Táblázat renderelés
-  function renderTable(){
-    const sortedEntries = entries.slice().sort((a,b)=> new Date(b.date) - new Date(a.date));
-    logBody.innerHTML = sortedEntries.map((e,i) => {
-      const entryDate = new Date(e.date);
-      const formattedDate = entryDate.toLocaleDateString('de-DE');
-      const formattedTime = entryDate.toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' });
-
-      const allImageSources = [e.image, ...(e.kepek || [])].filter(Boolean);
-      let photosCellHtml = '';
-      for (let j = 0; j < allImageSources.length; j += 2) {
-        photosCellHtml += `<div class="photoRow">${allImageSources.slice(j, j + 2).map(src => `<img src="${src}" alt="Bild">`).join('')}</div>`;
-      }
-
-      const noteTitle = e.note ? 'Notiz öffnen' : 'Notiz hinzufügen';
-
-      let codeClass = '';
-      if (e.code && (e.code.startsWith('FA') || e.code.startsWith('NA'))) {
-          codeClass = 'auftrag-colored';
-      } else if (e.source === 'scanner' || e.source === 'manual' || e.source === 'laser') {
-          codeClass = 'auftrag-manual-bold';
-      }
-
-      return `
-      <tr data-id="${e.id}">
-        <td>${i+1}</td>
-        <td class="${codeClass}">${e.code}</td>
-        <td>
-          ${formattedDate}<br>
-          <span style="font-size: 0.85em; color: var(--muted);">${formattedTime}</span>
-        </td>
-        <td><button class="noteToggleBtn ${e.note ? 'note-filled' : ''}" data-id="${e.id}" title="${noteTitle}" aria-label="${noteTitle}"><i class="fas ${e.note ? 'fa-book' : 'fa-plus'}"></i></button></td>
-        <td class="photo-cell">${photosCellHtml}</td>
-        <td><button class="uploadPhotoBtn" data-id="${e.id}" title="Bild hochladen"><i class="fas fa-folder"></i></button></td>
-        <td><button class="addExtraPhotoBtn" data-id="${e.id}" title="Zusätzliches Bild"><i class="fas fa-camera"></i></button></td>
-        <td><button class="deleteBtn" data-id="${e.id}" data-code="${e.code}" title="Löschen"><i class="fas fa-trash-alt"></i></button></td>
-      </tr>`;
-    }).join('');
-    attachTableEventListeners();
-  }
-
-  function attachTableEventListeners() {
-      logBody.querySelectorAll('.deleteBtn').forEach(btn => btn.addEventListener('click', handleDelete));
-      logBody.querySelectorAll('.noteToggleBtn').forEach(btn => btn.addEventListener('click', openNoteModal));
-      logBody.querySelectorAll('.photo-cell img').forEach(img => img.addEventListener('click', (event) => {
-          const entryId = parseInt(event.target.closest('tr').dataset.id);
-          const entry = entries.find(e => e.id === entryId);
-          if (entry) {
-              const allImageSources = [entry.image, ...(entry.kepek || [])].filter(Boolean);
-              const clickedImageSrc = event.target.src;
-              const clickedImageIndex = allImageSources.indexOf(clickedImageSrc);
-              openImageModal(allImageSources, clickedImageIndex, entryId);
-          }
-      }));
-      logBody.querySelectorAll('.addExtraPhotoBtn').forEach(btn => btn.addEventListener('click', openCameraModal));
-      logBody.querySelectorAll('.uploadPhotoBtn').forEach(btn => btn.addEventListener('click', handleUploadPhotoClick));
-  }
-  
-  // Helper function to load an image and return a promise
-  function loadImage(src) {
-      return new Promise((resolve, reject) => {
-          const img = new Image();
-          img.crossOrigin = 'Anonymous'; 
-          img.onload = () => resolve(img);
-          img.onerror = (err) => reject(new Error(`Failed to load image with src: ${src.substring(0, 50)}...`));
-          img.src = src;
-      });
-  }
-
-  // --- PDF GENERATION (REVISED) ---
-  async function generatePdfForEntry(entry) {
-    if (typeof window.jspdf === 'undefined') {
-        console.error('jsPDF is not loaded!');
-        showCustomAlert('PDF export fehlgeschlagen: jsPDF-Bibliothek nicht geladen.', 'Fehler');
-        return;
-    }
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-
-    doc.setFontSize(16);
-    doc.text(`Traversennummer: ${entry.category}`, 10, 20);
-    doc.text(`Auftrag: ${entry.code}`, 10, 30);
-    doc.text(`Datum: ${new Date(entry.date).toLocaleString('de-DE')}`, 10, 40);
-
-    let yPos = 50;
-    if (entry.note) {
-        doc.text('Notiz:', 10, yPos);
-        yPos += 10;
-        const splitText = doc.splitTextToSize(entry.note, 180);
-        doc.text(splitText, 10, yPos);
-        yPos += (splitText.length * 10);
-    }
-
-    const allImageSources = [entry.image, ...(entry.kepek || [])].filter(Boolean);
+    // =========================================================================
+    // START & DEMO
+    // =========================================================================
     
-    const imageLoadResults = await Promise.allSettled(allImageSources.map(loadImage));
+    // Führe die Icon-Prüfung beim Laden der Seite aus
+    updateIconStatus();
     
-    const loadedImages = [];
-    let failedImageCount = 0;
-    imageLoadResults.forEach(result => {
-        if (result.status === 'fulfilled') {
-            loadedImages.push(result.value);
-        } else {
-            console.error("Ein Bild konnte nicht geladen werden:", result.reason);
-            failedImageCount++;
+    // Setze einen Startwert für die Traverse-Daten und aktualisiere den Header
+    let traverseCount = 5; 
+    updateTraverseHeader(traverseCount);
+
+    // Demo-Button, um die Traverse-Zahl zu verringern
+    const demoButton = document.getElementById('demo-button');
+    demoButton.addEventListener('click', () => {
+        if (traverseCount > 0) {
+            traverseCount--;
+            updateTraverseHeader(traverseCount);
         }
     });
 
-    if (failedImageCount > 0) {
-        showCustomAlert(`${failedImageCount} Bild(er) konnten nicht für den PDF-Export geladen werden und wurden übersprungen.`, 'Warnung');
-    }
-
-    for (let i = 0; i < loadedImages.length; i++) {
-        const imageData = loadedImages[i];
-        if (yPos > 220) {
-            doc.addPage();
-            yPos = 10;
-        }
-        doc.text(`Bild ${i + 1}`, 10, yPos);
-        yPos += 5;
-
-        try {
-            const imgProps = doc.getImageProperties(imageData);
-            const pdfWidth = doc.internal.pageSize.getWidth();
-            const pdfHeight = doc.internal.pageSize.getHeight();
-            const maxWidth = pdfWidth - 20;
-            const maxHeight = pdfHeight - yPos - 10;
-
-            let imgWidth = imgProps.width;
-            let imgHeight = imgProps.height;
-            const ratio = imgWidth / imgHeight;
-
-            if (imgWidth > maxWidth) {
-                imgWidth = maxWidth;
-                imgHeight = imgWidth / ratio;
-            }
-            if (imgHeight > maxHeight) {
-                imgHeight = maxHeight;
-                imgWidth = imgHeight * ratio;
-            }
-
-            if (yPos + imgHeight > pdfHeight - 10) {
-                doc.addPage();
-                yPos = 10;
-            }
-
-            doc.addImage(imageData, undefined, 10, yPos, imgWidth, imgHeight);
-            yPos += imgHeight + 10;
-        } catch (e) {
-            console.error("Fehler beim Hinzufügen eines Bildes zum PDF:", e);
-            if (yPos > 280) { doc.addPage(); yPos = 10; }
-            doc.text(`[Bild ${i + 1} konnte nicht verarbeitet werden]`, 10, yPos);
-            yPos += 10;
-        }
-    }
-    
-    doc.save(`${entry.code}.pdf`);
-  }
-
-  // Törlés
-  async function handleDelete(event) {
-      const id = parseInt(event.currentTarget.dataset.id);
-      const entryToDelete = entries.find(e => e.id === id);
-      if (!entryToDelete) return;
-
-      const result = await showCustomConfirm(`Möchten Sie den Eintrag "${entryToDelete.code}" wirklich löschen?`, 'Bestätigung', entryToDelete);
-      
-      if (result.confirmed) {
-          try {
-              if (result.exportPdf) {
-                  await generatePdfForEntry(entryToDelete);
-              }
-              
-              await db.deleteEntry(id);
-              entries = entries.filter(e => e.id !== id);
-              renderTable();
-              await updateCategoryButtonColors();
-
-              const count = await db.getEntryCountForCategory(currentCategory);
-              if (count === 0) {
-                  categoryLabelLeft.style.color = 'var(--muted)';
-                  updateControlButtonsColor(true);
-              }
-          } catch (error) {
-              console.error("Fehler beim Löschen oder Exportieren:", error);
-              showCustomAlert('Ein Fehler ist beim Löschen oder Exportieren aufgetreten.', 'Fehler');
-          }
-      }
-  }
-
-  // Jegyzet modal
-  function openNoteModal(event) {
-    noteEntryIdToUpdate = parseInt(event.currentTarget.dataset.id);
-    const entry = entries.find(e => e.id === noteEntryIdToUpdate);
-    if (entry) {
-      noteModalTextarea.value = entry.note || '';
-      noteModal.style.display = 'flex';
-      document.body.classList.add('modal-open');
-    }
-  }
-
-  async function saveNoteFromModal() {
-    const entry = entries.find(e => e.id === noteEntryIdToUpdate);
-    if (entry) {
-      entry.note = noteModalTextarea.value;
-      await db.updateEntry(entry);
-      renderTable();
-    }
-    noteModal.style.display = 'none';
-    document.body.classList.remove('modal-open');
-  }
-
-  // Extra fotó felvétele
-  async function openCameraModal(event) {
-      entryIdToUpdate = parseInt(event.currentTarget.dataset.id);
-      if(isNaN(entryIdToUpdate)) return;
-      await openModal(cameraModal, cameraModalVideo);
-  }
-
-  async function takePhotoAndSave() {
-      const imageDataUrl = captureFrame(cameraModalVideo);
-      const entry = entries.find(e => e.id === entryIdToUpdate);
-      if (entry) {
-          if (!entry.kepek) entry.kepek = [];
-          entry.kepek.push(imageDataUrl);
-          await db.updateEntry(entry);
-          renderTable();
-          navigator.vibrate?.(100);
-      }
-      closeModal(cameraModal);
-  }
-
-  function handleUploadPhotoClick(event) {
-    entryIdToUpdate = parseInt(event.currentTarget.dataset.id);
-    imageUploadInput.click();
-  }
-  
-  // NEW: Function to sanitize uploaded images
-  function sanitizeImage(imageDataUrl, quality = 0.95) {
-    return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => {
-            const canvas = document.createElement('canvas');
-            canvas.width = img.naturalWidth;
-            canvas.height = img.naturalHeight;
-            const ctx = canvas.getContext('2d');
-            ctx.drawImage(img, 0, 0);
-            resolve(canvas.toDataURL('image/jpeg', quality));
-        };
-        img.onerror = () => {
-            reject(new Error('Failed to load image for sanitization.'));
-        };
-        img.src = imageDataUrl;
-    });
-  }
-
-  // UPDATED: Use sanitizeImage for uploaded files
-  async function handleFileSelected(event) {
-    const file = event.target.files[0];
-    if (!file || !entryIdToUpdate) return;
-
-    const reader = new FileReader();
-    reader.onload = async (e) => {
-        try {
-            const sanitizedImageDataUrl = await sanitizeImage(e.target.result);
-            const entry = entries.find(entry => entry.id === entryIdToUpdate);
-            if (entry) {
-                if (!entry.kepek) entry.kepek = [];
-                entry.kepek.push(sanitizedImageDataUrl);
-                await db.updateEntry(entry);
-                renderTable();
-                navigator.vibrate?.(100);
-            }
-        } catch (error) {
-            console.error("Image sanitization failed:", error);
-            showCustomAlert('Das Bild konnte nicht verarbeitet werden. Es ist möglicherweise beschädigt.', 'Fehler');
-        }
-    };
-    reader.readAsDataURL(file);
-
-    event.target.value = null;
-  }
-
-  // Barcode szkenner
-  async function openScannerModal() {
-      if(!detector) { showCustomAlert('Ihr Browser unterstützt das Scannen von Barcodes nicht.', 'Fehler'); return; }
-      lastDetected = { code: null, image: null };
-      scannerSaveBtn.disabled = true;
-      scannerDetectedCode.innerHTML = '<i class="fas fa-search"></i>';
-      await openModal(scannerModal, scannerVideo);
-      scannerRafId = requestAnimationFrame(scannerLoop);
-  }
-  async function scannerLoop() {
-      if (!modalStream) return;
-      const canvas = document.createElement('canvas');
-      canvas.width = scannerVideo.videoWidth;
-      canvas.height = scannerVideo.videoHeight;
-      canvas.getContext('2d').drawImage(scannerVideo, 0, 0, canvas.width, canvas.height);
-      try {
-          const barcodes = await detector.detect(canvas);
-          const currentScanCode = barcodes.length > 0 ? barcodes[0].rawValue : null;
-
-          if (currentScanCode && currentScanCode !== lastDetectedCodeToDisplay) {
-              if (displayTimeoutId) {
-                  clearTimeout(displayTimeoutId);
-                  displayTimeoutId = null;
-              }
-              lastDetectedCodeToDisplay = currentScanCode;
-              lastDetected.code = currentScanCode;
-              lastDetected.image = captureFrame(scannerVideo, 0.95);
-              scannerDetectedCode.textContent = lastDetectedCodeToDisplay;
-              scannerSaveBtn.disabled = false;
-              navigator.vibrate?.(100);
-          } else if (!currentScanCode && lastDetectedCodeToDisplay) {
-              if (!displayTimeoutId) {
-                  displayTimeoutId = setTimeout(() => {
-                      scannerDetectedCode.innerHTML = '<i class="fas fa-search"></i>';
-                      scannerSaveBtn.disabled = true;
-                      lastDetectedCodeToDisplay = null;
-                      lastDetected.code = null;
-                      displayTimeoutId = null;
-                  }, 1500);
-              }
-          } else if (!currentScanCode && !lastDetectedCodeToDisplay && !displayTimeoutId) {
-              scannerDetectedCode.innerHTML = '<i class="fas fa-search"></i>';
-              scannerSaveBtn.disabled = true;
-          }
-      } catch (e) {
-          console.error(e);
-      }
-      scannerRafId = requestAnimationFrame(scannerLoop);
-  }
-
-  // Új bejegyzés mentés
-  async function addNewEntry(code, image, source) {
-      if (!code) return;
-      if (entries.find(e => e.code === code)) {
-          showCustomAlert('Diese ID ist bereits in der lokalen Liste vorhanden.', 'Hinweis');
-          return;
-      }
-      const newEntry = {
-          code: code,
-          date: new Date().toISOString(),
-          note: '',
-          image: image,
-          kepek: [],
-          category: currentCategory,
-          source: source
-      };
-
-      try {
-          const newId = await db.addEntry(newEntry);
-          newEntry.id = newId;
-          entries.push(newEntry);
-          renderTable();
-          await updateCategoryButtonColors();
-
-          if (entries.length === 1) {
-              categoryLabelLeft.style.color = 'var(--primary)'; 
-              updateControlButtonsColor(false);
-          }
-
-          const webAppUrl = 'https://script.google.com/macros/s/AKfycbz7cN31qlQVBxpMmJIpyyV-bDHaI-i3vxG06vPv3pKurSpdxVHDKcN95oJtfAME2P_5/exec';
-          const dataForSheet = {
-              code: newEntry.code,
-              date: new Date(newEntry.date).toLocaleString('de-DE'),
-              category: newEntry.category
-          };
-          fetch(webAppUrl, {
-              method: 'POST',
-              mode: 'no-cors',
-              body: JSON.stringify(dataForSheet)
-          }).catch(error => console.error('Fehler beim Senden an Google Tabelle:', error));
-
-      } catch(e) {
-          showCustomAlert('Fehler beim lokalen Speichern! Die Daten wurden nem mentve.', 'Fehler');
-          console.error('Fehler beim lokalen Speichern:', e);
-      }
-  }
-
-  // Eseménykezelők
-  function saveScannedBarcode() {
-      addNewEntry(lastDetected.code, lastDetected.image, 'scanner');
-      closeModal(scannerModal);
-  }
-  function handleManualEntry() {
-      showCustomPrompt('Bitte geben Sie den Produktnamen oder die Kennung ein:', 'Manuelle Eingabe').then(manualCode => {
-          if (manualCode && manualCode.trim() !== '') {
-              addNewEntry(manualCode.trim(), null, 'manual');
-          }
-      });
-  }
-
-  // Custom prompt function
-  function showCustomPrompt(message, title = 'Eingabe') {
-      return new Promise(async resolve => {
-          const promptModal = document.getElementById('customPromptModal');
-          const input = document.getElementById('customPromptInput');
-          const okBtn = document.getElementById('customPromptOkBtn');
-          const cancelBtn = document.getElementById('customPromptCancelBtn');
-          const categoryNumberSpan = document.getElementById('promptCategoryNumber');
-
-          categoryNumberSpan.textContent = currentCategory;
-
-          const count = await db.getEntryCountForCategory(currentCategory);
-          if (count === 0) {
-              categoryNumberSpan.style.color = 'var(--muted)';
-          } else {
-              categoryNumberSpan.style.color = 'var(--primary)';
-          }
-
-          input.value = '';
-          promptModal.style.display = 'flex';
-          document.body.classList.add('modal-open');
-          input.focus();
-
-          const okHandler = () => closeAndResolve(input.value);
-          const cancelHandler = () => closeAndResolve(null);
-          const overlayHandler = (e) => {
-              if (e.target === promptModal) closeAndResolve(null);
-          };
-
-          const closeAndResolve = (value) => {
-              promptModal.style.display = 'none';
-              document.body.classList.remove('modal-open');
-              okBtn.removeEventListener('click', okHandler);
-              cancelBtn.removeEventListener('click', cancelHandler);
-              promptModal.removeEventListener('click', overlayHandler);
-              resolve(value);
-          };
-
-          okBtn.addEventListener('click', okHandler);
-          cancelBtn.addEventListener('click', cancelHandler);
-          promptModal.addEventListener('click', overlayHandler);
-      });
-  }
-
-  // Modal/Kamera helper
-  async function openModal(modal, videoElement) {
-      try {
-          modalStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'environment' } });
-          videoElement.srcObject = modalStream;
-          modal.style.display = 'flex';
-          document.body.classList.add('modal-open');
-      } catch (e) {
-          showCustomAlert('Kamerafehler: ' + e.message, 'Fehler');
-      }
-  }
-  function closeModal(modal) {
-      if (modalStream) {
-          modalStream.getTracks().forEach(track => track.stop());
-          modalStream = null;
-      }
-      if (scannerRafId) {
-          cancelAnimationFrame(scannerRafId);
-          scannerRafId = null;
-      }
-      if (displayTimeoutId) {
-          clearTimeout(displayTimeoutId);
-          displayTimeoutId = null;
-      }
-      lastDetectedCodeToDisplay = null;
-      lastDetected.code = null;
-      modal.style.display = 'none';
-      document.body.classList.remove('modal-open');
-  }
-  function captureFrame(videoElement, quality = 0.95) {
-      const canvas = document.createElement('canvas');
-      canvas.width = 2448;
-      canvas.height = 3264;
-      canvas.getContext('2d').drawImage(videoElement, 0, 0, canvas.width, canvas.height);
-      return canvas.toDataURL('image/jpeg', quality);
-  }
-
-  // Listener-ek
-  openScannerBtn.addEventListener('click', openScannerModal);
-  scannerCancelBtn.addEventListener('click', () => closeModal(scannerModal));
-  scannerSaveBtn.addEventListener('click', saveScannedBarcode);
-  manualEntryBtn.addEventListener('click', handleManualEntry);
-  noteModalSaveBtn.addEventListener('click', saveNoteFromModal);
-  deleteImageBtn.addEventListener('click', deleteCurrentImage);
-
-  takePhotoButton.addEventListener('click', takePhotoAndSave);
-  cancelCameraButton.addEventListener('click', () => closeModal(cameraModal));
-  imageUploadInput.addEventListener('change', handleFileSelected);
-
-  // Image modal navigation listeners
-  document.getElementById('imageModalPrevBtn').addEventListener('click', showPrevImage);
-  document.getElementById('imageModalNextBtn').addEventListener('click', showNextImage);
-  
-  // NEW: Listener for image zoom
-  modalImage.addEventListener('click', () => {
-    modalImage.classList.toggle('zoomed');
-  });
-
-  imageModal.addEventListener('click', (e) => {
-      if (e.target === imageModal) {
-          imageModal.style.display = 'none';
-          document.body.classList.remove('modal-open');
-      }
-  });
-  noteModal.addEventListener('click', (e) => {
-      if (e.target === noteModal) {
-          noteModal.style.display = 'none'; document.body.classList.remove('modal-open');
-        }
-  });
-
-  clearCategoryBtn.addEventListener('click', async () => {
-    const allAreFANA = entries.length > 0 && entries.every(e => e.code.startsWith('FA') || e.code.startsWith('NA'));
-    const dummyEntryForCheckbox = allAreFANA ? { code: 'FA' } : null;
-    const result = await showCustomConfirm(`Möchten Sie wirklich alle Einträge für Traverse ${currentCategory} löschen?`, 'Bestätigung', dummyEntryForCheckbox);
-    
-    if (result.confirmed) {
-        try {
-            if (result.exportPdf && entries.length > 0) {
-                for (const entry of entries) {
-                    await generatePdfForEntry(entry);
-                }
-            }
-            
-            await db.clearCategory(currentCategory);
-            entries = [];
-            renderTable();
-            await updateCategoryButtonColors();
-            
-            categoryLabelLeft.style.color = 'var(--muted)';
-            updateControlButtonsColor(true);
-
-        } catch (error) {
-            console.error("Fehler beim Löschen oder Exportieren der Kategorie:", error);
-            showCustomAlert('Ein Fehler ist beim Löschen oder Exportieren der Kategorie aufgetreten.', 'Fehler');
-        }
-    }
-  });
-
-  window.addEventListener('beforeunload', function (e) {
-    e.preventDefault();
-    e.returnValue = '';
-  });
-
-  // Initial call to update button colors when the page loads
-  window.onload = updateCategoryButtonColors;
-
-})();
+});
 </script>
+
 </body>
 </html>
